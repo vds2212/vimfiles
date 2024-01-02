@@ -1,0 +1,118 @@
+x Test todo.txt file with a number of test cases from the vader unit tests for quick manual checks.
+x   .    1    .    2    .    3    .    4    .    5    .    6    .    7    .    8  L01
+x 345678901234567890123456789012345678901234567890123456789012345678901234567890  L02
+x (A) Done  due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L03
+Active      due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L04
+x 345678901234567890123456789012345678901234567890123456789012345678901234567890  L05
+x   .    1    .    2    .    3    .    4    .    5    .    6    .    7    .    8  L06
+x   .    1    .    2    .    3    .    4    .    5    .    6    .    7    .    8  L01
+x 345678901234567890123456789012345678901234567890123456789012345678901234567890  L02
+(A) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L03
+(B) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L04
+(C) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L05
+(D) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L06
+(E) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L07
+(F) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L08
+(G) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L09
+(H) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L10
+(I) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L11
+(J) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L12
+(K) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L13
+(L) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L14
+(M) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L15
+(N) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L16
+(O) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L17
+(P) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L18
+(Q) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L19
+(R) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L20
+(S) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L21
+(T) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L22
+(U) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L23
+(V) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L24
+(W) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L25
+(X) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L26
+(Y) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L27
+(Z) Priorit due:2000-01-01 due:2050-01-01 2017-09-10 +Project @Context key:value  L28
+x 345678901234567890123456789012345678901234567890123456789012345678901234567890  L29
+x   .    1    .    2    .    3    .    4    .    5    .    6    .    7    .    8  L30
+x   .    1    .    2    .    3    .    4    .    5    .    6    .    7    .    8  L01
+x 345678901234567890123456789012345678901234567890123456789012345678901234567890  L02
+X Done tasks must start with a lowercase x then space                             L03
+xDone tasks must start with a lowercase x then space                              L04
+XDone tasks must start with a lowercase x then space                              L05
+(a) Priority must start with an uppercase letter in rounds followed by space      L06
+(A)Priority must start with an uppercase letter in rounds followed by space       L07
+A  Priority must start with an uppercase letter in rounds followed by space       L08
+a  Priority must start with an uppercase letter in rounds followed by space       L09
+Priority (A) must start with an uppercase letter in rounds followed by space      L10
+due:2050-01-01 keys are valid on the start of the line                            L11
+due:2010-01-01 overdue dates are valid on the start of the line                   L12
+2010-01-01 dates are valid on the start of the line                               L13
+x   .    1    .    2    .    3    .    4    .    5    .    6    .    7    .    8  L14
+x 345678901234567890123456789012345678901234567890123456789012345678901234567890  L15
+Invalid dates 17-10-05 20100101 01-01-2010 2010/01/01 10/01/01 2010-01-01-2010    L16
+@Contexts are valid on the start of the line                                      L17
++Projects are valid on the start of the line                                      L18
+The key: syntax must be followed by a value, same for due:                        L19
+due: syntax must be a whole word notdue:2010-01-01 pro@jects and con+texts also   L20
+x 345678901234567890123456789012345678901234567890123456789012345678901234567890  L21
+x   .    1    .    2    .    3    .    4    .    5    .    6    .    7    .    8  L22
+x 2017-09-18 Complete task
+x 2017-09-18 2017-09-01 Completed task with a created date
+x 2017-09-18 (A) Completed priority task
+x 2017-09-18 2017-09-01 (A) Completed priority task with a created date
+X 2017-09-18 Not to be confused for a complete task
+Active task
+2017-09-01 Active task with a created date
+(A) Active priority task
+(A) 2017-09-01 Active priority task with a created date
+X 2017-09-18 Not to be confused for a complete task
+XNot to be confused for a complete task
+ x 2017-09-18 Rules are not clear on leading whitespace, see comments in test
+Tricky incomplete task x 2017-09-18
+active  dUE:2051-01-01 cAsE                                     EXP:24 GIV:01
+overdue due:2001-01-01                                          EXP:02 GIV:02
+notdue  overdue:2011-11-11 invalid key                          EXP:33 GIV:03
+overdue duE:2009-01-01 cAsE                                     EXP:18 GIV:04
+xoverdue due:2001-02-01 This is not done (must be lower x)      EXP:03 GIV:05
+overdue due:2012-01-01 \|| no tasks the between bars ||/        EXP:21 GIV:06
+x done  due:2011-11-11 topmost done task                        EXP:44 GIV:07
+notdue  due: 2011-11-11 space invalidates due:                  EXP:34 GIV:08
+overdue due:2005-01-01 +Project @Context                        EXP:10 GIV:09
+overdue due:2002-01-01 @Context                                 EXP:04 GIV:10
+overdue due:2004-02-01                                          EXP:09 GIV:11
+notdue  due: due:2011-MM-DD                                     EXP:35 GIV:12
+overdue due:2000-01-01 cursor here for top, most overdue        EXP:01 GIV:13
+notdue  due:2011-11-1                                           EXP:36 GIV:14
+active  due:2059-01-01 bottommost active task                   EXP:32 GIV:15
+overdue due:2006-01-01                                          EXP:12 GIV:16
+overdue due:2007-02-01 +Project                                 EXP:15 GIV:17
+active  due:2056-01-01                                          EXP:29 GIV:18
+notdue  due:2011-1-11                                           EXP:37 GIV:19
+x done  due:2011-11-11                                          EXP:45 GIV:20
+overdue dUe:2008-02-01 cAsE                                     EXP:17 GIV:21
+X overdue due:2002-02-01 This is not done (must be lower x)     EXP:05 GIV:22
++Project overdue due:2003-02-01 project at start of line        EXP:07 GIV:23
+notdue  due:2011                                                EXP:38 GIV:24
+active  DUe:2052-01-01 cAsE                                     EXP:25 GIV:25
+overdue due:2007-01-01                                          EXP:14 GIV:26
+overdue Due:2008-01-01 cAsE                                     EXP:16 GIV:27
+notdue  @Project                                                EXP:39 GIV:28
+active  due:2055-01-01                                          EXP:28 GIV:29
+active  due:2057-01-01                                          EXP:30 GIV:30
+overdue DuE:2009-02-01 cAsE                                     EXP:19 GIV:31
+notdue  @Context                                                EXP:40 GIV:32
+x done  due:2011-11-11 bottommost done task cursor here bottom  EXP:46 GIV:33
+active  DUE:2053-01-01 cAsE                                     EXP:26 GIV:34
+active  key:value due:2054-01-01 leading key:value              EXP:27 GIV:35
+active  due:2058-01-01                                          EXP:31 GIV:36
+notdue  key:value                                               EXP:41 GIV:37
+overdue due:2017-01-01 Last overdue task when sorted            EXP:22 GIV:38
+overdue due:2010-12-31 /|| no tasks the between bars ||\        EXP:20 GIV:39
+active  due:2050-01-01 cursor here with "notoverdue" setting    EXP:23 GIV:40
+notdue  due:invalid    invalid due date                         EXP:42 GIV:41
+overdue 2011-11-11 due:2005-02-01 leading date                  EXP:11 GIV:42
+due:2004-01-01 overdue due: at start of line                    EXP:08 GIV:43
+notdue  notdue:2011-11-11 invalid key                           EXP:43 GIV:44
+overdue due:2006-02-01 due:2011-11-11 two dates, choose first   EXP:13 GIV:45
+@Context overdue due:2003-01-01 context at start of line        EXP:06 GIV:46

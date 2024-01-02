@@ -1,0 +1,89 @@
+snippet main "Batch defaut script"
+@setlocal
+@set prompt=C:$g
+@set prompt=
+
+@set root=%~dp0
+@pushd %root%
+
+@set me=%~nx0
+@set args=%*
+
+@set logs=CON
+@set logs=%~n0.log
+@set today=today
+@if not defined silent set silent=0
+
+:LoopArgs
+@if [%1]==[] goto EndArgs
+
+@if [%1]==[--logs] set logs=%2&& shift && shift && goto LoopArgs
+
+@if [%1]==[--today] set today=%2&& shift && shift && goto LoopArgs
+
+@if [%1]==[--silent] set silent=1&& shift && goto LoopArgs
+
+@if [%1]==[--help] echo %me% [--logs logfile] [--today date_time] [--silent] [--help]&& goto :eof
+
+:: Skip unknown argument
+@echo Unknown argument: %1
+@shift
+
+@goto LoopArgs
+:EndArgs
+
+:: Remove quotes:
+@set log_file=%logs:"=%
+@if "%log_file%"=="CON" goto :log_file_set
+:: If relative path adapt it:
+@if not "%log_file:~1,1%"==":" (
+    set log_file="%root%%log_file%"
+) else (
+    set log_file="%log_file%"
+)
+@type nul >> %log_file% 2>nul && (goto :log_file_set) || (@echo The log file: %log_file% is locked&& set log_file=CON)
+:log_file_set
+
+:: If parent clean the log file if any:
+@if not defined child if not [%logs%]==[CON] del %log_file% 2>nul
+@setlocal
+@set child=1
+
+@set command=%me%
+@if defined args set command=%command% %args%
+@echo %command%
+@echo %command%>> %log_file% 2>&1
+@echo ====================>> %log_file% 2>&1
+@echo.
+@echo.>> %log_file% 2>&1
+
+:: @call :RunCmd your_command your_argument
+
+:: @call "your_script.bat" --logs %log_file% --today %today%
+
+@endlocal
+@if defined child goto :no_logs
+@echo Output:
+@echo.
+:: Dump the log file if any:
+@if not [%log_file%]==[CON] type %log_file%
+
+:: @if not [%silent%]==[0] pause
+:no_logs
+
+@popd
+@endlocal
+@goto :eof
+
+:RunCmd
+@set command=%*
+@echo %command%
+@echo %command%>> %log_file% 2>&1
+@echo -------------------->> %log_file% 2>&1
+@%command%>> %log_file% 2>&1
+@if not %errorlevel%==0 echo ERROR: fail to run %command%>> %log_file% 2>&1
+@echo.
+@echo.>> %log_file% 2>&1
+@goto :eof
+endsnippet
+

@@ -1,0 +1,191 @@
+*remotions.txt*  Repeat motions with ; and , behind f & t
+
+Author:  Vivian De Smedt
+License: Same terms as Vim itself (see |license|)
+
+
+==============================================================================
+Remotions                                                          |remotions|
+Introduction ........................................ |remotions-introduction|
+Usage ...................................................... |remotions-usage|
+Configuration ...................................... |remotions-configuration|
+About ...................................................... |remotions-about|
+
+
+==============================================================================
+INTRODUCTION                                *remotions* *remotions-introduction*
+
+The goal of this plugin is allow to repeat motions with the |,| and |;| keys
+
+It is particularly useful for double key motions likes next method: |[m|, |]m|.
+
+It is also useful for motions with a count `10j` (10 lines down).
+It is possible to configure some motions to be repeatable only if they are
+executed with a count above 1.
+
+The repetition keys |;| can be configured to repeat the motion:
+- In the direction of the initial motion (the default) or
+- In the direction of the document
+
+e.g. for |[m| motion:
+
+If in the direction of the initial motion as been selected then:
+- |;| will do |[m| and |,| will do |]m|
+
+If in the direction of the document as been selected then:
+- |;| will do |]m| and |,| will do |[m|
+
+
+==============================================================================
+USAGE                                                        *remotions-usage*
+
+Make a motion (e.g. |]m| or |]]|).
+Repeat it using the |;| key.
+Undo it with the |,| key.
+
+
+==============================================================================
+CONFIGURATION                                        *remotions-configuration*
+
+------------------------------------------------------------------------------
+How to configure the motions that are repeated           *g:remotions_motions*
+
+Remotions use a table `g:remotions_motions` to list the motions to be repeatable.
+Each element of the table contains:
+- A `name` of the motion (need only to be unique)
+- The `backward` motion key sequence
+- The `forward` motion key sequence
+
+- A `repeat_if_count` option.
+  If set the motion is repeated only if it has a count.
+
+- A `repeat_count` option that overrides `g:remotions_repeat_count`
+  see |g:remotions_repeat_count| for more information.
+
+- A `direction` option that overrides the `g:remotions_direction`
+  see |g:remotions_direction| for more information.
+ 
+The default value of the table is:
+>
+    let g:remotions_motions = {
+        \ 'EeFf' : {},
+        \ 'para' : { 'backward' : '{', 'forward' : '}' },
+        \ 'change' : { 'backward' : 'g,', 'forward' : 'g;' },
+        \ 'class' : { 'backward' : '[[', 'forward' : ']]' },
+        \ 'classend' : { 'backward' : '[]', 'forward' : '][' },
+        \ 'method' : { 'backward' : '[m', 'forward' : ']m' },
+        \ 'methodend' : { 'backward' : '[M', 'forward' : ']M' },
+        \
+        \ 'buffer' : { 'backward' : '[b', 'forward' : ']b'},
+        \ 'location' : { 'backward' : '[l', 'forward' : ']l'},
+        \ 'quickfix' : { 'backward' : '[q', 'forward' : ']q'},
+        \ 'tag' : { 'backward' : '[t', 'forward' : ']t'},
+        \
+        \ 'diagnostic' : { 'backward' : '[g', 'forward' : ']g'},
+        \ }
+<
+
+A more extensive version of the table could be:
+>
+    let g:remotions_motions = {
+        \ 'EeFf' : {},
+        \ 'para' : { 'backward' : '{', 'forward' : '}' },
+        \ 'sentence' : { 'backward' : '(', 'forward' : ')' },
+        \ 'change' : { 'backward' : 'g,', 'forward' : 'g;' },
+        \ 'class' : { 'backward' : '[[', 'forward' : ']]' },
+        \ 'classend' : { 'backward' : '[]', 'forward' : '][' },
+        \ 'method' : { 'backward' : '[m', 'forward' : ']m' },
+        \ 'methodend' : { 'backward' : '[M', 'forward' : ']M' },
+        \
+        \ 'line' : {
+        \     'backward' : 'k',
+        \    'forward' : 'j',
+        \    'repeat_if_count' : 1,
+        \    'repeat_count': 1
+        \ },
+        \ 'char' : { 'backward' : 'h',
+        \    'forward' : 'l',
+        \    'repeat_if_count' : 1,
+        \    'repeat_count': 1
+        \ },
+        \ 'linescroll' : {
+        \    'backward' : '<C-e>',
+        \    'forward' : '<C-y>',
+        \    'repeat_if_count' : 1,
+        \    'repeat_count' : 1,
+        \    'direction' : 0 
+        \ },
+        \ 'charscroll' : { 
+        \    'backward' : 'zh',
+        \    'forward' : 'zl',
+        \    'repeat_if_count' : 1,
+        \    'repeat_count' : 1,
+        \    'direction' : 0
+        \ },
+        \ 'fullword' : { 'backward' : 'B', 'forward' : 'W' },
+        \ 'wordend' : { 'backward' : 'ge', 'forward' : 'e' },
+        \ 'cursor' : { 'backward' : 'h', 'forward' : 'l' },
+        \ 'pos' : { 'backward' : '<C-i>', 'forward' : '<C-o>' },
+        \ 'page' : { 'backward' : '<C-u>', 'forward' : '<C-d>' },
+        \ 'pagefull' : { 'backward' : '<C-b>', 'forward' : '<C-f>' },
+        \
+        \ 'arg' : { 'backward' : '[a', 'forward' : ']a'},
+        \ 'buffer' : { 'backward' : '[b', 'forward' : ']b'},
+        \ 'location' : { 'backward' : '[l', 'forward' : ']l'},
+        \ 'quickfix' : { 'backward' : '[q', 'forward' : ']q'},
+        \ 'tag' : { 'backward' : '[t', 'forward' : ']t'},
+        \
+        \ 'diagnostic' : { 'backward' : '[g', 'forward' : ']g'},
+        \ }
+<
+Remark: The `EeFf` motion corresponds to the |e|, |f| motions.
+The entry can be used to specify a `repeat_count` if necessary.
+
+
+------------------------------------------------------------------------------
+How to change the motion repetition direction           *g:remotions_direction*
+
+The Vim repeats the |F| and |T| motion in the direction of the motion
+(i.e. |;| search backward and |,| search forward for these moves).
+
+Remotions do the same by default for the other kind of movements.
+
+If you find more intuitive that |,| move backward and |;| move forward you can
+change the `g:remotions_direction` to 1.
+>
+    " Make the motion repetition in the direction of the document.
+    let g:remotions_direction=1
+<
+Remark: This value is overridden by the `direction` value of the motion if
+any.
+
+
+------------------------------------------------------------------------------
+How to repeat the original motion count             *g:remotions_repeat_count*
+
+Some motions support |count| (e.g. |i|, |j|, |}|, etc.).
+E.g.: `2j` make the cursor go 2 lines below.
+
+When a motion is repeated via |;| or |,| the original count is not take into
+consideration.  This is also the Vim default for the |f| and |t| motions.
+
+If you want that the original count is taken in consideration:
+>
+    " Make the ; and , key also repeat the count
+    " when supported by the original move
+    let g:remotions_repeat_count = 1
+<
+Remark: This value is overridden by the `repeat_count` value of the motion if
+any.
+
+Remark: If the original motion doesn't support count the repetition will also
+not support count.
+
+==============================================================================
+ABOUT                                                        *remotions-about*
+
+Grab the latest version or report a bug on GitHub:
+
+http://github.com/vds2212/vim-remotions
+
+ vim:tw=78:et:ft=help:norl:

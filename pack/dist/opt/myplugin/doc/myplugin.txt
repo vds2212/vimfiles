@@ -1,0 +1,21 @@
+
+*myplugin.txt* My Plugin to ...
+*myplugin*
+
+myplugin - Asynchronous Lint Engine
+
+===============================================================================
+CONTENTS                                                         *myplugin-contents*
+
+  1. Introduction.........................|myplugin-introduction|
+    1.1 Sub Introduction..................|myplugin-subintroduction|
+
+===============================================================================
+1. Introduction                                              *myplugin-introduction*
+
+myplugin provides ....
+
+-------------------------------------------------------------------------------
+1.1. Sub-Introduction                                     *myplugin-subintroduction*
+
+myplugin provides ....

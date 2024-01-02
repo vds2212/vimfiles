@@ -1,0 +1,23 @@
+Execute (Clean up test environment):
+  Save maplocalleader
+
+  let maplocalleader = '\'
+
+  function! ReplaceCurrentDates(expected)
+    if a:expected != ''
+      execute "silent! %substitute/" . a:expected . "/**EXPECTED**/"
+    endif
+    execute "silent! %substitute/" . strftime("%Y-%m-%d") . "/**TODAY**/"
+    for b:unit in ['D', 'W', 'M', 'Y']
+       let [s:year, s:month, s:day] = todo#ParseDate(strftime("%Y-%m-%d"))
+       let [s:year, s:month, s:day] = todo#DateAdd(s:year, s:month, s:day, 2, b:unit)
+       let s:duedate = printf('%04d', s:year) . '-' . printf('%02d', s:month) . '-' . printf('%02d', s:day)
+       execute "silent! %substitute/" . s:duedate . "/**TODAY+2" . b:unit . "**/"
+    endfor
+  endfunction
+  let g:Todo_fold_char='x'
+
+Before:
+After:
+Given:
+

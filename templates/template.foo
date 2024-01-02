@@ -1,0 +1,4 @@
+# this is a foo file
+
+def main():
+   return 0

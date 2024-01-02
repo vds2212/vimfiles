@@ -1,0 +1,32 @@
+snippet vimspector "VimSpector Config Local Debugging"
+{
+    "configurations" : {
+        "First Configuration": {
+            "default" : false,
+            "adapter": "debugpy",
+            "breakpoints": {
+                "exception": {
+                    "raised": "N",
+                    "uncaught": "Y"
+                }
+            },
+            "configuration": {
+                "type": "python",
+                "request": "launch",
+                "cwd": "${workspaceFolder}",
+                "python": "python.exe",
+                "stopOnEntry": true,
+                "console": "externalTerminal",
+                "justMyCode": true,
+                "debugOptions": [],
+
+                "program": "${file}",
+                "args": [
+                ],
+                "env": {
+                }
+            }
+        }
+    }
+}
+endsnippet

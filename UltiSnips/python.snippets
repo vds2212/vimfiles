@@ -1,0 +1,231 @@
+snippet main "Python default script"
+# import sys
+import argparse
+import datetime
+import logging
+import os
+
+
+def ${1:run}(args):
+    pass
+
+
+def main():
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    handler = StreamHandlerCount()
+    handler.setLevel(logging.DEBUG)
+
+    formatter = logging.Formatter(
+        # "%(asctime)s:"
+        # "%(name)s:"
+        # "%(levelname)s:"
+        "%(message)s",
+        datefmt="%Y/%m/%d %H:%M:%S",
+    )
+
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    filename = os.path.splitext(__file__)[0] + ".log"
+    handler = logging.FileHandler(filename, mode="a")
+
+    formatter = logging.Formatter(
+        "%(asctime)s:"
+        # "%(name)s:"
+        "%(levelname)s:" "%(message)s",
+        datefmt="%Y/%m/%d %H:%M:%S",
+    )
+
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--version", action="store_true", help="Show version number and exit")
+
+    parser.add_argument("--verbose", action="store_true", help="Set logging to the most verbose", default=False)
+
+    parser.add_argument("--quiet", action="store_true", help="Reduce logging to the bare minimum", default=False)
+
+    parser.add_argument("--debug", action="store_true", help="Make sure the exception are raised", default=False)
+
+    parser.add_argument(
+        "--today", action="store", help="today in %%Y/%%m/%%d %%H/%%M/%%S format", default="", type=convert_to_datetime
+    )
+
+    parser.add_argument("-t", action="store_true", help="Output timing information", default=False)
+
+    # parser.add_argument("--input", action="store", help="Input", default="")
+
+    # parser.add_argument("args", action="append", help="Arguments", default=[])
+    # parser.add_argument("arg", nargs="?", help="Argument", default="")
+
+    try:
+        args = parser.parse_args()
+
+    except Exception as e:
+        logging.error(str(e))
+        return
+
+    if args.version:
+        print_version()
+        return
+
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    if args.quiet:
+        logging.getLogger().setLevel(logging.CRITICAL)
+
+    # body:
+    log("$1: >>", "default", logging.INFO)
+    try:
+        start = datetime.datetime.now()
+
+        $1(args)
+
+        end = datetime.datetime.now()
+        if args.t:
+            print("Duration: %s" % str(end - start))
+
+    except Exception as e:
+        logging.error(str(e))
+
+        if args.debug:
+            raise
+    log("$1: <<", "default", logging.INFO)
+
+
+def convert_to_datetime(date):
+    if date == "today" or date == "":
+        return datetime.datetime.now()
+
+    try:
+        if len(date) == len("YYYY/MM/DD"):
+            ret = datetime.datetime.strptime(date, "%Y/%m/%d")
+            return ret
+
+        if len(date) == len("YYYY/MM/DD HH:MM:SS"):
+            ret = datetime.datetime.strptime(date, "%Y/%m/%d %H:%M:%S")
+            return ret
+
+    except ValueError as e:
+        log("Fail to parse date '%s' %s" % (date, str(e)))
+        return datetime.datetime.now()
+
+
+class StreamHandlerCount(logging.StreamHandler):
+    def __init__(self, log_limit=10):
+        logging.StreamHandler.__init__(self)
+
+        self.log_count = {}
+        self.log_limit = log_limit
+
+    def emit(self, record):
+        category = ""
+        if hasattr(record, "category"):
+            category = record.category
+
+        if category:
+            # Filter out only the logging with a category:
+            count = self.log_count.get(category, 0) + 1
+            self.log_count[category] = count
+
+            if count > self.log_limit:
+                return
+
+        logging.StreamHandler.emit(self, record)
+
+    def close(self):
+        for category in self.log_count:
+            count = self.log_count[category]
+            if count <= self.log_limit:
+                continue
+
+            message = ""
+            if category:
+                message = category + ": "
+
+            message += "%d messages hided" % (count - self.log_limit)
+            print(message)
+
+
+def log(message, category="", level=logging.WARNING):
+    logging.log(level, message, extra={"category": category})
+
+
+def print_version():
+    print("1.0")
+
+
+if __name__ == "__main__":
+    main()
+endsnippet
+
+snippet betamacro "Simple Beta Macro"
+import importlib
+import os
+import sys
+
+import beta
+
+sys.argv = [""]
+
+DEBUG = False
+# DEBUG = True
+if DEBUG:
+    # To debug macro in Visual Studio Code:
+    #  - Lauch Visual Stuiod Code
+    #  - Create Remote Attach debug configuration (see: How to Debug Macro with Visual Studio Code.docx)
+    #  - Uncomment the lines below
+    #  - Launch the macro
+    import ptvsd
+
+    ptvsd.enable_attach(address=("localhost", 5678), redirect_output=True)
+    ptvsd.wait_for_attach()
+
+    # To debug macro in WingIDE:
+    #  - Copy wingdbstub.py in the folder that contains the code of the macro
+    #  - Edit wingdbstup.py and set kEmbedded to 1 (kEmbedded = 1)
+    #  - Uncomment the "import wingdbstub" line below
+    #  - Launch WingIDE
+    #  - In WingIDE make sure the [Edit].[Preferences].[Debugger].[External/Remote].[Enable Passive Listen] is checked
+    #  - Set some break points in the code of the macro
+    #  - Launch the macro
+    # For more read: "Debugging Externally Launched Code" in the WingIDE help manual for more information.
+    # import wingdbstub
+
+    # To debug macro using WinPdb
+    #  - Uncomment the import rpdb2; rpdb2.start_embedded_debugger("none") line below
+    #  - Launch WinPdb
+    #  - Launch the macro (from the product: LScheduler, CScheduler, ...)
+    #  - Set your password to: "none"
+    #     - Select [File].[Password] and set the Set password: edit box to: "none" (the same that the one in the rpdb2.start_embedded_debugger instruction)
+    #  - Attach to the process
+    #     - Select [File].[Attach]
+    #     - Use the password: "none" (the same that the one in the rpdb2.start_embedded_debugger instruction)
+    #     - Choose the correct process
+    # import rpdb2; rpdb2.start_embedded_debugger("none")
+
+
+def reload():
+    ms = [
+        sys.modules[k]
+        for k in sys.modules
+        if hasattr(sys.modules[k], "__file__")
+        and hasattr(sys.modules[k], "__cached__")
+        and os.path.isfile(sys.modules[k].__file__)
+        and os.stat(sys.modules[k].__file__).st_mtime > os.stat(sys.modules[k].__cached__).st_mtime
+    ]
+
+    for m in ms:
+        importlib.reload(m)
+
+
+reload()
+
+
+def ${1:macro}(line_plan: "beta.LinePlan"):
+    pass
+endsnippet

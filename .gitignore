@@ -1,0 +1,13 @@
+backup/
+plugged/
+markdown-preview
+session/
+spell/
+swap/
+undo/
+view/
+tags
+tags.lock
+tags.temp
+_vimsize
+

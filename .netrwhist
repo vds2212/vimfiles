@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =4
+let g:netrw_dirhist_4='C:/Users/vds/vimfiles/plugged/lh-vim-lib/autoload/lh'
+let g:netrw_dirhist_3='C:/Users/vds/vimfiles/plugged/lh-vim-lib/autoload'
+let g:netrw_dirhist_2='C:/Users/vds/vimfiles/plugged/lh-vim-lib/autoload/lh'
+let g:netrw_dirhist_1='C:/Users/vds/vimfiles/plugged/lh-vim-lib/autoload'
+let g:netrw_dirhist_0='C:/Softs/vim90/syntax'
+let g:netrw_dirhist_9='C:/Softs/vim90'
+let g:netrw_dirhist_8='C:/Softs/vim90/win'
+let g:netrw_dirhist_7='C:/Softs/vim90'
+let g:netrw_dirhist_6='C:/Softs/vim90/colors'
+let g:netrw_dirhist_5='C:/Softs/vim90'
