@@ -514,7 +514,8 @@ if s:gui_running
   endif
 
   if has('unix')
-    set guifont=DejaVu\ Sans\ Mono\ 9
+    " set guifont=DejaVu\ Sans\ Mono\ 9
+    set guifont=DejaVuSansM\ Nerd\ Font\ Mono\ 9
   endif
 
   " Remove menu bar
