@@ -25,6 +25,11 @@
             "args": ["start"],
             "filetypes": ["sh"],
             "ignoredRootPaths": ["~"]
+        },
+        "rust" : {
+            "command" : "rust-analyzer",
+            "filetypes" : ["rust"],
+            "rootPatterns" : ["Cargo.toml"]
         }
     }
 }

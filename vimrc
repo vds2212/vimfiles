@@ -849,6 +849,8 @@ if 1
 
   call s:activate('kanagawa', 0)
 
+  call s:activate('afterglow', 0)
+
   " 2.1.2. Devicon
   " -------------
 
@@ -1264,7 +1266,9 @@ if 1
   " -----------------------
 
   " Visualize indentation vertical lines
-  call s:activate('indentline', 0)
+  call s:activate('indentline', 1)
+
+  call s:activate('vim_indent_guides', 0)
 
   " 2.9.2. EditorConfig
   " ------------------
@@ -1388,6 +1392,10 @@ if 1
   "   - CocInstall coc-pyright
   "   - CocInstall coc-snippets
   "   - CocInstall coc-tsserver
+
+  "   - CocInstall coc-rust-analyzer
+  "     Depends on:
+  "     - rustup component add rust-analyzer
 
   "   - CocInstall coc-pairs (overtaken by auto-pairs-gentle)
   "   - CocInstall coc-jedi (overtaken by coc-jedi)
@@ -1600,6 +1608,10 @@ endif
 
 if s:isactive('kanagawa')
   Plug 'rebelot/kanagawa.nvim'
+endif
+
+if s:isactive('afterglow')
+  Plug 'danilo-augusto/vim-afterglow'
 endif
 
 " 2.1.2. Devicon
@@ -2144,6 +2156,10 @@ endif
 " Visualize indentation vertical lines
 if s:isactive('indentline')
   Plug 'Yggdroot/indentLine'
+endif
+
+if s:isactive('vim_indent_guides')
+  Plug 'preservim/vim-indent-guides'
 endif
 
 " 2.9.2. EditorConfig
@@ -4014,14 +4030,23 @@ endif
 
 if s:isactive('indentline')
   " let g:indentLine_setColors = 0
-  let g:indentLine_bgcolor_gui = '#2e3440'
+  " let g:indentLine_bgcolor_gui = '#2e3440'
 
   " Indentline disabled by default
-  let g:indentLine_enabled = 0
+  let g:indentLine_enabled = 1
+  let g:indentLine_char = '│'
+  " set listchars+=lead:\ 
 
-  nnoremap <leader>ti :IndentLinesToggle <CR>
+  nnoremap <leader>ti :IndentLinesToggle<CR>
 
-  " More information with: :help indentLine.txt
+  " More information with: :help indent_guides.txt
+endif
+
+if s:isactive('vim_indent_guides')
+  let g:indent_guides_enable_on_vim_startup = 1
+  let g:indent_guides_guide_size = 1
+
+  nnoremap <leader>ti :IndentGuidesToggle<CR>
 endif
 
 
