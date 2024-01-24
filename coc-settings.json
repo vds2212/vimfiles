@@ -4,7 +4,6 @@
     "diagnostic.infoSign": "?",
     "diagnostic.hintSign": "!",
     "diagnostic.enable" : true,
-    "inlayHint.enable": true,
     "diagnostic.virtualText" : false,
     "diagnostic.enableMessage": "never",
 

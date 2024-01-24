@@ -1,6 +1,9 @@
+.temp
 _vimsize
 autoload/plug.vim.old
 backup/
+coc/
+coc-disabled/
 markdown-preview/
 plugged/
 session/

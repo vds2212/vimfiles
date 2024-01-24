@@ -217,6 +217,7 @@ let s:vim_data_folder = g:GetVimDataFolder()
 
 " Define the <leader> key to \ (the default)
 let mapleader=" "
+let maplocalleader=" "
 
 " Avoid vim timeout e.g. When the user wait too much before completing the leader combination
 " I advice that setting for beginners
@@ -1173,11 +1174,11 @@ if 1
   " 2.3.4. File browsing
   " -------------------
 
-  call s:activate('nerdtree', 1)
+  call s:activate('nerdtree', 0)
 
   call s:activate('nvim_tree', 0)
 
-  call s:activate('fern', 0)
+  call s:activate('fern', 1)
 
   " File browser netrw helper
   call s:activate('vim_vinegar', 0)
@@ -1229,9 +1230,16 @@ if 1
   " 2.7.2. Diff Command
   " ------------------
 
-  " Introduce the DiffOrig command that compare the current file with the
+  " Introduces the DiffOrig command that compare the current file with the
   " saved version
   call s:activate('difforig', 0)
+  
+  " 2.7.3 Spot Diff
+  " ---------------
+
+  " Introduces the Diffthis command that let you compare range of buffers
+  call s:activate('spotdiff', 1)
+
 
   " 2.8. Git
   " --------
@@ -1399,7 +1407,10 @@ if 1
   "     - rustup component add rust-analyzer
 
   "   - CocInstall coc-pairs (overtaken by auto-pairs-gentle)
-  "   - CocInstall coc-jedi (overtaken by coc-jedi)
+  "   - CocInstall coc-jedi (overtaken by coc-pyright)
+  "     Depends on (optionally if jedi-language-server is not available the
+  "     installation should be triggered):
+  "     - pip install jedi-language-server
   " - Depends on pip install jedi-language-server
   call s:activate('coc_nvim', 1)
 
@@ -1426,6 +1437,12 @@ if 1
 
   " Python code completion
   call s:activate('jedi_vim', 0)
+
+  " Semantic highlighting
+  call s:activate('semshi', 0)
+
+  " Semantic highlighting
+  call s:activate('hlargs', 0)
 
   " 2.17. Code Formatting
   " ---------------------
@@ -1454,6 +1471,8 @@ if 1
   call s:activate('ale', 0)
 
   call s:activate('lightbulb', 0)
+
+  call s:activate('treesitter', 0)
 
   " 2.18.2. Linting Mark
   " -------------------
@@ -1515,12 +1534,14 @@ if 1
   " Add vim wiki
   " Remark:
   " - On some files it prevent to insert a carriage return
-  call s:activate('vimwiki', 0)
+  call s:activate('vimwiki', 1)
+
+  call s:activate('neorg', 0)
 
   " Markdown extra support
   " Remark:
   " - Doesn't seems compatible with vimwiki
-  call s:activate('vim_markdown', 1)
+  call s:activate('vim_markdown', 0)
 
   " Markdown preview
   call s:activate('markdown_preview', 0)
@@ -2045,7 +2066,9 @@ if s:isactive('fern')
   Plug 'lambdalisue/fern-mapping-mark-children.vim'
 
   " Add Git status icon to Fern files and folders
-  " Plug 'lambdalisue/fern-git-status.vim'
+  if s:isactive('vim_fugitive')
+    Plug 'lambdalisue/fern-git-status.vim'
+  endif
 endif
 
 " File browser netrw helper
@@ -2114,6 +2137,13 @@ if s:isactive('difforig')
   Plug 'lifecrisis/vim-difforig'
 endif
 
+  " 2.7.3 Spot Diff
+  " ---------------
+
+if s:isactive('spotdiff')
+  Plug 'rickhowe/spotdiff.vim'
+endif
+
 " 2.8. Git
 " --------
 
@@ -2167,7 +2197,8 @@ endif
 " ------------------
 
 if s:isactive('editorconfig')
-  Plug 'editorconfig/editorconfig-vim'
+  " Plug 'editorconfig/editorconfig-vim'
+  packadd! editorconfig
 endif
 
 " 2.9.3. Sleuth
@@ -2333,6 +2364,16 @@ if s:isactive('jedi_vim')
   Plug 'davidhalter/jedi-vim'
 endif
 
+" Semantic highlighting for Python
+if s:isactive('semshi')
+  Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' }
+endif
+
+" Semantic highlighting
+if s:isactive('hlargs')
+  Plug 'm-demare/hlargs.nvim'
+endif
+
 " 2.17. Code Formatting
 " ---------------------
 
@@ -2376,6 +2417,10 @@ endif
 if s:isactive('lightbulb')
   Plug 'kosayoda/nvim-lightbulb'
   Plug 'antoinemadec/FixCursorHold.nvim'
+endif
+
+if s:isactive('treesitter')
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 endif
 
 " 2.18.2. Linting Mark
@@ -2470,6 +2515,10 @@ if s:isactive('vimwiki')
     Plug 'vimwiki/vimwiki'
 endif
 
+if s:isactive('neorg')
+  Plug 'nvim-neorg/neorg'
+endif
+
 " Markdown extra support
 if s:isactive('vim_markdown')
   Plug 'preservim/vim-markdown'
@@ -2545,6 +2594,13 @@ if s:isactive('deoplete') || s:isactive('wilder')
     " Requires pynvim
     "   C:\Python312_x64\Scripts\pip install pynvim
     Plug 'roxma/vim-hug-neovim-rpc'
+  endif
+endif
+
+if s:isactive('neorg') || s:isactive('hlargs') || s:isactive('semshi')
+  if !s:isactive('treesitter')
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+    s:activate('treesitter', 1)
   endif
 endif
 
@@ -3661,7 +3717,7 @@ if s:isactive('ctrlsf')
 
   " Provide for each solution a Ack command such that it is easier to switch
   " from one to the next
-  command! Ack CtrlSF <args>
+  command! -nargs=* Ack CtrlSF <args>
 endif
 
 
@@ -3791,6 +3847,7 @@ if s:isactive('fern')
       if isdirectory(a:1)
         execute printf("Fern %s -drawer -reveal=% -width=35", a:1)
       else
+        call LeaveSideBar()
         execute printf("e %s", a:1)
       endif
     endif
@@ -3964,6 +4021,25 @@ endif
 
 " 2.7.1. Diff Char
 " ---------------
+
+if s:isactive('spotdiff') || s:isactive('diffchar')
+  " let g:DiffUnit = ''
+  let g:DiffColors = 'hl-DiffText'
+  let g:DiffPairVisible = 1
+endif
+
+if s:isactive('spotdiff')
+  " Disable the default spotdiff mappings:
+  let g:VDiffDoMapping = 0
+  set diffopt+=vertical
+  " augroup spotfiff
+  "   autocmd! VimEnter * nunmap <leader>t
+  "   autocmd! VimEnter * nunmap <leader>T
+  "   autocmd! VimEnter * nunmap <leader>o
+  "   autocmd! VimEnter * nunmap <leader>O
+  "   autocmd! VimEnter * nunmap <leader>u
+  " augroup END
+endif
 
 " 2.7.2. Diff Command
 " ------------------
@@ -4464,6 +4540,10 @@ endif
 " --------------------
 
 if s:isactive('coc_nvim')
+  let $XDG_CONFIG_HOME=$HOME .. '\vimfiles'
+  let $XDG_DATA_HOME=$HOME .. '\vimfiles'
+  let $XDG_STATE_HOME=$HOME .. '\vimfiles'
+
   " Some servers have issues with backup files, see #649.
   set nobackup
   set nowritebackup
@@ -4511,6 +4591,20 @@ if s:isactive('coc_nvim')
 
   " GoTo code navigation.
   nmap <silent> gd <Plug>(coc-definition)
+  " nmap <silent><expr> gd GoToDef()
+
+  function! DelayedGotoDef(timer)
+    if g:start_curpos == getcurpos()
+      execute "normal! [\<C-i>"
+    endif
+  endfunction
+
+  function! GoToDef()
+    let g:start_curpos = getcurpos()
+    call timer_start(200, 'DelayedGotoDef', {'repeat' : 1})
+    return "\<Plug>(coc-definition)"
+  endfunction
+
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
@@ -4629,7 +4723,8 @@ if s:isactive('coc_nvim')
   endfunction
   command! CocToggle :call CocToggle()
 
-  nnoremap <leader>tj :CocToggle <CR>
+  " nnoremap <leader>tj <cmd>CocToggle<CR>
+  nnoremap <leader>tj <cmd>CocCommand document.toggleInlayHint<CR>
 
   " For performance reason disable coc on non code files
   " autocmd BufNew,BufEnter *.json,*.py,*.pyw,*.vim,*.lua execute "silent! CocEnable"
@@ -4701,7 +4796,7 @@ if s:isactive('jedi_vim')
 
   " Jedi automatically starts the completion, if you type a dot, e.g. str.,
   " if you don't want this:
-  let g:jedi#popup_on_dot = 1
+  " let g:jedi#popup_on_dot = 1
 
   " Jedi selects the first line of the completion menu: for a better typing-flow and usually saves one keypress.
   " let g:jedi#popup_select_first = 0
@@ -4712,7 +4807,13 @@ if s:isactive('jedi_vim')
     autocmd FileType python setlocal completeopt-=preview
   augroup END
 
-  " g:jedi#force_py_version = 3.6
+  " g:jedi#force_py_version = 3.9
+endif
+
+if s:isactive('hlargs')
+lua << EOF
+require('hlargs').setup()
+EOF
 endif
 
 
@@ -4990,31 +5091,78 @@ endif
 
 if s:isactive('vimwiki')
   " Switch to Markdown syntax:
-  let g:vimwiki_list = [{
-    \ 'path': '~\vimwiki',
-    \ 'template_path': '~\vimwiki\templates',
-    \ 'template_default': 'default',
-    \ 'syntax': 'markdown',
-    \ 'ext': '.md',
-    \ 'path_html': '~/vimwiki/site_html/',
-    \ 'custom_wiki2html': 'vimwiki_markdown',
-    \ 'template_ext': '.tpl'}]
+  " let g:vimwiki_list = [{
+  "   \ 'path': '~\vimwiki',
+  "   \ 'template_path': '~\vimwiki\templates',
+  "   \ 'template_default': 'default',
+  "   \ 'syntax': 'markdown',
+  "   \ 'ext': '.md',
+  "   \ 'path_html': '~/vimwiki/site_html/',
+  "   \ 'custom_wiki2html': 'vimwiki_markdown',
+  "   \ 'template_ext': '.tpl'}]
   " let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 
   " Disable links key mapping to avoid overriding Ctrl-i and Ctrl-o
-  let g:vimwiki_key_mappings =
-    \ {
-    \   'all_maps': 1,
-    \   'global': 1,
-    \   'headers': 1,
-    \   'text_objs': 1,
-    \   'table_format': 1,
-    \   'table_mappings': 1,
-    \   'lists': 1,
-    \   'links': 0,
-    \   'html': 1,
-    \   'mouse': 0,
-    \ }
+  " let g:vimwiki_key_mappings =
+  "   \ {
+  "   \   'all_maps': 1,
+  "   \   'global': 1,
+  "   \   'headers': 1,
+  "   \   'text_objs': 1,
+  "   \   'table_format': 1,
+  "   \   'table_mappings': 1,
+  "   \   'lists': 1,
+  "   \   'links': 0,
+  "   \   'html': 1,
+  "   \   'mouse': 0,
+  "   \ }
+
+  " let g:vimwiki_list = [{'path': '~/vimwiki'}]
+  " let g:vimwiki_ext2syntax = {
+  " \   '.md': 'markdown',
+  " \   '.mkd': 'markdown',
+  " \   '.wiki': 'media'
+  " \ }
+
+  " Make that only .wiki files are considered as vimwiki documents
+  let g:vimwiki_global_ext = 0
+endif
+
+
+" Neorg plugin settings
+" ---------------------
+
+if s:isactive('neorg')
+lua << EOF
+  require('neorg').setup {
+      load = {
+          -- Loads default behaviour
+          ["core.defaults"] = {}, 
+
+          -- Adds pretty icons to your documents
+          ["core.concealer"] = {}, 
+
+          -- Manages Neorg workspaces
+          ["core.dirman"] = { 
+              config = {
+                  workspaces = {
+                      notes = "~/notes",
+                      neorg = "~/neorg",
+                  },
+                  default_workspace = "notes"
+              },
+          },
+
+          -- ["core.pivot"] = {},
+
+          -- ["core.keybinds"] = {
+          --     config = {
+          --         default_keybinds = true,
+          --     }
+          -- }
+      }
+  }
+EOF
 endif
 
 
@@ -5350,6 +5498,52 @@ if s:isactive('which_key')
   autocmd! User vim-which-key call which_key#register('\', 'g:which_key_map')
 endif
 
+if s:isactive('treesitter')
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all" (the five listed parsers should always be installed)
+  ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+  auto_install = true,
+
+  -- List of parsers to ignore installing (or "all")
+  ignore_install = { "javascript" },
+
+  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+
+  highlight = {
+    enable = true,
+
+    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+    -- the name of the parser)
+    -- list of language that will be disabled
+    disable = { "c", "rust" },
+    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+    disable = function(lang, buf)
+        local max_filesize = 100 * 1024 -- 100 KB
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+endif
+
 if 1
 " inoremap jk <Esc>
 
@@ -5508,6 +5702,11 @@ function! IsSideBar(buf_nr)
   elseif buf_type ==# 'nerdtree'
     " Read Only
     " echom 'NerdTree'
+    return 1
+
+  elseif buf_type ==# "fern"
+    " Read Only
+    " echom 'Fern'
     return 1
 
   elseif buf_name =~# 'vimspector.Variables\(\[\d\+\]\)\?$'
