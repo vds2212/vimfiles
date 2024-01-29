@@ -821,16 +821,16 @@ endif
 
 let s:plugins = 1
 
-function! s:activate(flag, value)
+function! s:activate(flag)
   " let s:[a:flag] = a:value
   if a:flag ==# 'startuptime'
-    let s:[a:flag] = a:value
+    let s:[a:flag] = 1
     return
   endif
   if !s:plugins
     let s:[a:flag] = 0
   else
-    let s:[a:flag] = a:value
+    let s:[a:flag] = 1
   endif
 endfunction
 
@@ -851,25 +851,25 @@ if 1
   " 2.1.1. Color Scheme
   " ------------------
 
-  " call s:activate('vim_gruvbox', 1)
+  " call s:activate('vim_gruvbox')
 
-  " call s:activate('Vim_color_solarized', 1)
+  " call s:activate('Vim_color_solarized')
 
-  " call s:activate('tokyonight', 1)
+  " call s:activate('tokyonight')
 
-  " call s:activate('onedark', 1)
+  " call s:activate('onedark')
 
-  " call s:activate('molokai', 1)
+  " call s:activate('molokai')
 
-  " call s:activate('papercolor', 1)
+  " call s:activate('papercolor')
 
-  call s:activate('nord_vim', 1)
+  call s:activate('nord_vim')
 
-  " call s:activate('everforest', 1)
+  " call s:activate('everforest')
 
-  " call s:activate('kanagawa', 1)
+  " call s:activate('kanagawa')
 
-  " call s:activate('afterglow', 1)
+  " call s:activate('afterglow')
 
   " 2.1.2. Devicon
   " -------------
@@ -877,17 +877,17 @@ if 1
   " Add Language specific icons to NerdTree, AirLine, LightLine, ...
   " Depend on full font to be download at: https://github.com/ryanoasis/nerd-fonts/
   " Set the guifont to the installed Nerd-Font (e.g.: Cousine_Nerd_Font_Mono)
-  call s:activate('vim_devicons', 1)
+  call s:activate('vim_devicons')
 
   " 2.1.3. Status Line
   " -----------------
 
   " Status line enrichment
-  " call s:activate('vim_airline', 1)
+  " call s:activate('vim_airline')
 
-  " call s:activate('powerline', 1)
+  " call s:activate('powerline')
 
-  call s:activate('vim_lightline', 1)
+  call s:activate('vim_lightline')
 
   " 2.2. Ergonomic
   " -------------
@@ -896,7 +896,7 @@ if 1
   " ----------------
 
   " Add a number of [x ]x mapping
-  call s:activate('vim_unimpaired', 1)
+  call s:activate('vim_unimpaired')
 
   " 2.2.2. Wilder
   " ------------
@@ -904,8 +904,8 @@ if 1
   " Command line helper (completion, proposition)
   " Remark:
   "   A addition call to :UpdateRemotePlugins may needed
-  call s:activate('wilder', 1)
-  call s:activate('wilder_simple', 1)
+  call s:activate('wilder')
+  call s:activate('wilder_simple')
 
   " 2.2.3. Repeat
   " ------------
@@ -914,41 +914,41 @@ if 1
   " - vim-unimpaired
   " - vim-surround
   " - vim-easyclip
-  " call s:activate('vim_repeat', 1)
+  " call s:activate('vim_repeat')
 
-  " call s:activate('repmo', 1)
+  " call s:activate('repmo')
 
-  " call s:activate('repeatable_motion', 1)
+  " call s:activate('repeatable_motion')
 
   " Make the ';', ',' repeat motion working for more motions:
-  call s:activate('vim_remotions', 1)
+  call s:activate('vim_remotions')
 
   " 2.2.4. Text Objects
   " -------------------
 
   " Improved Text Objects
   " - Multiple line strings
-  call s:activate('target_vim', 1)
+  call s:activate('target_vim')
 
   " - Indentation block
-  call s:activate('vim_ident_object', 1)
+  call s:activate('vim_ident_object')
 
   " Text object and motions for Python code
-  call s:activate('vim_pythonsense', 1)
+  call s:activate('vim_pythonsense')
 
   " Indentation moves (seems to be buggy):
   " [- parent indentation
   " [= previous sibling indentation
   " ]= next sibling indentation
-  " call s:activate('vim_indentwise', 1)
+  " call s:activate('vim_indentwise')
 
   " 2.2.5. Dashboard
   " ---------------
 
-  " call s:activate('vim_startify', 1)
+  " call s:activate('vim_startify')
 
   if has('nvim')
-    " call s:activate('dashboard_vim', 1)
+    " call s:activate('dashboard_vim')
   endif
 
   " 2.2.6. Windows
@@ -956,81 +956,81 @@ if 1
 
   " Allows you to close buffer without closing the corresponding window
   " Introducing the :Bd command
-  " call s:activate('vim_bbye', 1)
+  " call s:activate('vim_bbye')
 
   " Re-size windows
-  " call s:activate('winresizer', 1)
+  " call s:activate('winresizer')
 
   " Split management
-  " call s:activate('vim_maximizer', 1)
+  " call s:activate('vim_maximizer')
 
   " Allow to run vim in full screen
-  " call s:activate('vim_fullscreen', 1)
+  " call s:activate('vim_fullscreen')
 
   " 2.2.7. Clipboard
   " ----------------
 
   " Highlight the yanked text:
   if !has('nvim')
-    call s:activate('vim_highlightedyank', 1)
+    call s:activate('vim_highlightedyank')
   else
     " Neovim has it own way to highlight yank:
-    call s:activate('neovim_highlightedyank', 1)
+    call s:activate('neovim_highlightedyank')
   endif
 
   " Highlight the yanked text:
-  " call s:activate('vim_illuminate', 1)
+  " call s:activate('vim_illuminate')
 
   " Introduce Move and change Delete:
-  " call s:activate('vim_cutlass', 1)
+  " call s:activate('vim_cutlass')
 
   " Introduce a Yank Ring:
-  " call s:activate('vim_yoink', 1)
+  " call s:activate('vim_yoink')
 
   " 2.2.8. Search
   " -------------
 
   " Visual Selection Search (using '*' and '#')
-  call s:activate('vim_visual_star_search', 1)
+  call s:activate('vim_visual_star_search')
 
   " Preview substitution of the s command before performing it
   " Remarks:
   "   Trace is not necessary for NeoVim
   "   Since Vim 8.1.0271 incseach highlight the match
   if !has('nvim')
-    call s:activate('traces', 1)
+    call s:activate('traces')
   endif
 
   " Highlight all pattern match
   " Remark:
   "   In the meantime the set incsearch bring a fair fraction of the features
-  " call s:activate('incsearch', 1)
+  " call s:activate('incsearch')
 
   " New version of incsearch
   " - Highlight all pattern match
   " - Stop highlighting on cursor move
-  " call s:activate('is_vim', 1)
+  " call s:activate('is_vim')
 
   " Case sensitive search and replace
-  call s:activate('vim_abolish', 1)
+  call s:activate('vim_abolish')
 
   " 2.2.9. Moves
   " -------------
 
   " Extend the matching '%' movement to matching keywords
-  call s:activate('matchit_legacy', 1)
+  call s:activate('matchit_legacy')
 
   " Extend the matching '%' movement to matching keywords
-  " call s:activate('vim_matchup', 1)
+  " call s:activate('vim_matchup')
 
   " Add alternatives to the f <char> motion and friends (f, F, t, T)
   " Remark:
   " - You get the \\f <char> motion and friends (f, F, t, T)
-  " call s:activate('vim_easymotion', 1)
+  " call s:activate('vim_easymotion')
 
-  " call s:activate('leap', 1)
+  " call s:activate('leap')
 
-  " call s:activate('vim_sneak', 1)
+  " call s:activate('vim_sneak')
 
   " 2.2.10. Unicode
   " --------------
@@ -1038,100 +1038,100 @@ if 1
   " Help to find Unicode characters
   " Remark:
   " - Seems to be broken on Windows (23/03/2023)
-  call s:activate('unicode_helper', 1)
+  call s:activate('unicode_helper')
 
   " Help to understand Unicode characters
-  " call s:activate('vim_characterize', 1)
+  " call s:activate('vim_characterize')
 
   " 2.2.11. Multiple Cursors
   " -----------------------
 
   " Multiple cursors
-  " call s:activate('vim_visual_multi', 1)
+  " call s:activate('vim_visual_multi')
 
   " Multiple cursors for parallel modifications
-  " call s:activate('vim_multiple_cursors', 1)
+  " call s:activate('vim_multiple_cursors')
 
   " 2.2.12. CSS Colors
   " -----------------
 
   " Highlight color codes
-  call s:activate("vim_css_color", 1)
+  call s:activate("vim_css_color")
 
   " Remarks:
   " - Requires: Go Language installation
-  " call s:activate('hexokinase', 1)
+  " call s:activate('hexokinase')
 
   " Remarks:
   " - Requires: awk
   " - Requires: Cygwin?
   " - Doesn't seems to work on windows
-  " call s:activate('clrzr', 1)
+  " call s:activate('clrzr')
 
   " Remarks:
   " - Doesn't seems to be supported anymore
-  " call s:activate('colorizer', 1)
+  " call s:activate('colorizer')
 
   " 2.2.13. Miscellaneous
   " ---------------------
 
   " Make C-x C-f completion relative to the file and not to the current working directory
-  call s:activate('vim_relatively_complete', 1)
+  call s:activate('vim_relatively_complete')
 
-  " call s:activate('vim_expand_region', 1)
+  " call s:activate('vim_expand_region')
 
   " Hint about keyboard shortcuts
-  " call s:activate('which_key', 1)
+  " call s:activate('which_key')
 
-  " call s:activate('vim_peekaboo', 1)
+  " call s:activate('vim_peekaboo')
 
   " Basic large files support
   " Make large files not slowing down vim as much as possible
-  " call s:activate('large_file', 1)
+  " call s:activate('large_file')
 
   " Add the CheckHealth command to Vim
   if !has('nvim')
-    call s:activate('checkhealth', 1)
+    call s:activate('checkhealth')
   endif
 
-  call s:activate('startuptime', 1)
+  call s:activate('startuptime')
 
   " Register visibility
   " Ensure the context lines keep being visible
-  call s:activate('context', 1)
+  call s:activate('context')
 
   " Spell checking
-  " call s:activate('vim_spellcheck', 1)
+  " call s:activate('vim_spellcheck')
 
   " Add database query support
-  call s:activate('vim_dadbod', 1)
+  call s:activate('vim_dadbod')
 
-  " call s:activate('vim_dadbod_ui', 1)
+  " call s:activate('vim_dadbod_ui')
 
   " Remarks:
   " - It seems that when a file is locked by Excel sudo prevent the saveas
   "   method to work
-  " call s:activate('sudoedit_vim', 1)
+  " call s:activate('sudoedit_vim')
 
-  " call s:activate('vim_cool', 1)
+  " call s:activate('vim_cool')
 
-  " call s:activate('vimcaps', 1)
+  " call s:activate('vimcaps')
 
   " Highlight briefly the cursor when it jump from split to split
-  " call s:activate('beacon', 1)
+  " call s:activate('beacon')
 
   " Introduce a LongLines mode where the j and k key works like gj and gk
-  " call s:activate('vim_long_lines', 1)
+  " call s:activate('vim_long_lines')
 
   " Interactive Scratchpad
   " Remarks:
   " - Currently only working for Linux or MacOS
-  " call s:activate('codi_vim', 1)
+  " call s:activate('codi_vim')
 
   " Tridactyl Firefox add-on support
-  call s:activate('vim_tridactyl', 1)
+  call s:activate('vim_tridactyl')
 
-  call s:activate('vim_orpheus', 1)
+  call s:activate('vim_orpheus')
 
   " 2.3. File Browsing
   " ------------------
@@ -1140,7 +1140,7 @@ if 1
   " -------------
 
   " Adapt automatically the working directory
-  call s:activate('vim_rooter', 1)
+  call s:activate('vim_rooter')
 
   " 2.3.2. Fuzzy Searching
   " ---------------------
@@ -1149,10 +1149,10 @@ if 1
   " Remark:
   " - In order to make preview working make sure C:\Program Files\Git\Bin is part of the path.
   " - On Windows it seems FzF proposes buffers with the wrong path
-  " call s:activate('fzf', 1)
+  " call s:activate('fzf')
 
   " Fuzzy finder
-  " call s:activate('ctrlp', 1)
+  " call s:activate('ctrlp')
 
   " In order to make tag generation working install maple:
   " Downloading from GitHub:
@@ -1162,55 +1162,55 @@ if 1
   " Remark:
   "   - Deleting the vimfiles/plugged/vim-clap/bin/maple.exe manually to make
   "     sure it is replaced by the fresh version.
-  call s:activate('vim_clap', 1)
+  call s:activate('vim_clap')
 
   " Remark:
   "   Only available for NeoVim
   if has('nvim')
-    call s:activate('nvim_telescope', 1)
-    call s:activate('telescope_live_grep_arg', 1)
+    call s:activate('nvim_telescope')
+    call s:activate('telescope_live_grep_arg')
   endif
 
-  " call s:activate('bufexplorer', 1)
+  " call s:activate('bufexplorer')
 
   " 2.3.3. File searching
   " --------------------
 
   " Remark:
   " - Seems not to support asynchronous mode on Windows
-  " call s:activate('ack_vim', 1)
+  " call s:activate('ack_vim')
 
   " Remark:
   " - Seems to work in asynchronous mode on Windows
-  call s:activate('ctrlsf', 1)
+  call s:activate('ctrlsf')
 
-  " call s:activate('ferret', 1)
+  " call s:activate('ferret')
 
   " 2.3.4. File browsing
   " -------------------
 
-  " call s:activate('nerdtree', 1)
+  " call s:activate('nerdtree')
 
   if has('nvim')
-    call s:activate('nvim_tree', 1)
+    call s:activate('nvim_tree')
   endif
 
-  call s:activate('fern', 1)
+  call s:activate('fern')
 
   " File browser netrw helper
-  " call s:activate('vim_vinegar', 1)
+  " call s:activate('vim_vinegar')
 
   " 2.4. Sessions
   " -------------
 
   " Session management made easy
-  " call s:activate('vim_obsession', 1)
+  " call s:activate('vim_obsession')
 
   " Addition to Obsession
-  " call s:activate('vim_prosession', 1)
+  " call s:activate('vim_prosession')
 
   " Auto-reload the my session at startup
-  " call s:activate('reload_session_at_start', 1)
+  " call s:activate('reload_session_at_start')
 
   " 2.5. Bookmark
   " -------------
@@ -1218,22 +1218,22 @@ if 1
   " Bookmarks made easy
   " - Add mark in the margin
   " - Provide shortcut to add and remove marks
-  call s:activate('vim_signature', 1)
+  call s:activate('vim_signature')
 
   " Bookmarks made easy
-  " call s:activate('vim_bookmarks', 1)
+  " call s:activate('vim_bookmarks')
 
   " 2.6. Undo Tree
   " --------------
 
   " Visualize and Navigate the undo tree:
-  call s:activate('undotree', 1)
+  call s:activate('undotree')
 
   " Visualize and Navigate the undo tree:
-  " call s:activate('gundo', 1)
+  " call s:activate('gundo')
 
   " Visualize and Navigate the undo tree:
-  " call s:activate('vim_mundo', 1)
+  " call s:activate('vim_mundo')
 
   " 2.7. Difference
   " ---------------
@@ -1242,20 +1242,20 @@ if 1
   " ---------------
 
   " Diff at char level
-  call s:activate('diffchar', 1)
+  call s:activate('diffchar')
 
   " 2.7.2. Diff Command
   " ------------------
 
   " Introduces the DiffOrig command that compare the current file with the
   " saved version
-  " call s:activate('difforig', 1)
+  " call s:activate('difforig')
   
   " 2.7.3 Spot Diff
   " ---------------
 
   " Introduces the Diffthis command that let you compare range of buffers
-  call s:activate('spotdiff', 1)
+  call s:activate('spotdiff')
 
 
   " 2.8. Git
@@ -1265,25 +1265,25 @@ if 1
   " -------------------
 
   " Git integration
-  " call s:activate('vim_fugitive', 1)
+  " call s:activate('vim_fugitive')
 
 
   " 2.8.2. Git Signs
   " ---------------
 
-  " call s:activate('vim_signify', 1)
+  " call s:activate('vim_signify')
 
   " Remarks:
   " - Only for Git
   " - Only for Neovim
-  " call s:activate('gitsigns', 1)
+  " call s:activate('gitsigns')
 
-  " call s:activate('vim_gitgutter', 1)
+  " call s:activate('vim_gitgutter')
 
   " 2.8.3. Git Helper
   " ----------------
 
-  " call s:activate('vim_gitbranch', 1)
+  " call s:activate('vim_gitbranch')
 
   " 2.9. Indentation
   " ----------------
@@ -1292,9 +1292,9 @@ if 1
   " -----------------------
 
   " Visualize indentation vertical lines
-  call s:activate('indentline', 1)
+  " call s:activate('indentline')
 
-  " call s:activate('vim_indent_guides', 1)
+  " call s:activate('vim_indent_guides')
 
   " 2.9.2. EditorConfig
   " ------------------
@@ -1303,21 +1303,21 @@ if 1
   " - Indentation
   " - Trailing Whitespaces
   " - ...
-  " call s:activate('editorconfig', 1)
+  " call s:activate('editorconfig')
 
   " 2.9.3. Sleuth
   " ------------
 
-  " call s:activate('vim_sleuth', 1)
+  " call s:activate('vim_sleuth')
 
   " 2.10. Align
   " -----------
 
   " Alignment made easy
-  " call s:activate('vim_easy_align', 1)
+  " call s:activate('vim_easy_align')
 
   " Alignment made easy
-  " call s:activate('tabular', 1)
+  " call s:activate('tabular')
 
   " 2.11. Folding
   " -------------
@@ -1326,28 +1326,28 @@ if 1
   " --------------------
 
   " Fold based on indentation
-  call s:activate('any_fold', 1)
+  call s:activate('any_fold')
 
   " Python code folding
   " Remarks:
   "   any_fold seems to give better results
-  " call s:activate('simpylfold', 1)
+  " call s:activate('simpylfold')
 
   " 2.11.2. Fold Handling
   " --------------------
 
   " Folding level control using [ret] and [bs]
-  " call s:activate('cycle_fold', 1)
+  " call s:activate('cycle_fold')
 
   " Limit fold computation and update to improve speed
-  " call s:activate('fast_fold', 1)
+  " call s:activate('fast_fold')
 
   " 2.12. Commenting
   " ----------------
 
-  call s:activate('vim_commentary', 1)
+  call s:activate('vim_commentary')
 
-  " call s:activate('nerdcommenter', 1)
+  " call s:activate('nerdcommenter')
 
   " 2.13. Parenthesis
   " -----------------
@@ -1356,7 +1356,7 @@ if 1
   " ---------------
 
   " Add additional commands to manage pairs
-  call s:activate('vim_surround', 1)
+  call s:activate('vim_surround')
 
   " 2.13.2. Auto-Pair
   " ----------------
@@ -1366,17 +1366,17 @@ if 1
 
   " Remark:
   " - Seems to support the dot command
-  " call s:activate('auto_pairs', 1)
+  " call s:activate('auto_pairs')
 
   " Remark:
   " - Claim to support the dot command
-  " call s:activate('lexima', 1)
+  " call s:activate('lexima')
 
-  " call s:activate('vim_closing_brackets', 1)
+  " call s:activate('vim_closing_brackets')
 
   " Remark:
   " - Seems not to support the dot command
-  " call s:activate('auto_pairs_gentle', 1)
+  " call s:activate('auto_pairs_gentle')
 
   " 2.14. Snippet
   " -------------
@@ -1384,9 +1384,9 @@ if 1
   " Remark: for coc user a coc-snippets is available suggesting snippets
   " - :CocInstall coc-snippets
 
-  call s:activate('ultisnips', 1)
+  call s:activate('ultisnips')
 
-  " call s:activate('emmet_vim', 1)
+  " call s:activate('emmet_vim')
 
   " 2.15. Tags
   " ----------
@@ -1395,16 +1395,16 @@ if 1
   " ---------------------
 
   " Automatic tag generation
-  call s:activate('vim_gutentags', 1)
+  call s:activate('vim_gutentags')
 
   " 2.15.2. Tag Browsing
   " -------------------
 
   " Remarks:
   " - Telescope requires traditional tags
-  call s:activate('tagbar', 1)
+  call s:activate('tagbar')
 
-  " call s:activate('vista_vim', 1)
+  " call s:activate('vista_vim')
 
   " 2.16. Code Completion
   " ---------------------
@@ -1429,12 +1429,12 @@ if 1
   "     installation should be triggered):
   "     - pip install jedi-language-server
   " - Depends on pip install jedi-language-server
-  call s:activate('coc_nvim', 1)
+  call s:activate('coc_nvim')
 
   " Remark: Install additional lsp modules with:
   " - MasonInstall pyright
   if has('nvim')
-    call s:activate('lsp', 1)
+    call s:activate('lsp')
   endif
 
   " Code completion
@@ -1445,23 +1445,23 @@ if 1
   "   - The Python that match Vim (e.g.: Python 3.10 for Vim 9.0)
   "   - Go
   " - Run: install.py
-  " call s:activate('you_complete_me', 1)
+  " call s:activate('you_complete_me')
 
   " Code Completion
   " Remark:
   " - Install the corresponding plugin for each language you want to support:
   "   - deoplete-jedi
   "   - deoplete-rust
-  " call s:activate('deoplete', 1)
+  " call s:activate('deoplete')
 
   " Python code completion
-  " call s:activate('jedi_vim', 1)
+  " call s:activate('jedi_vim')
 
   " Semantic highlighting
-  " call s:activate('semshi', 1)
+  " call s:activate('semshi')
 
   " Semantic highlighting
-  " call s:activate('hlargs', 1)
+  " call s:activate('hlargs')
 
   " 2.17. Code Formatting
   " ---------------------
@@ -1470,16 +1470,16 @@ if 1
   " ------------
 
   " Sort Python imports
-  call s:activate('vim_isort', 1)
+  call s:activate('vim_isort')
 
   " 2.17.2. Prettier
   " ---------------
 
   " Format Web files (.html, .css, .ts, ...)
-  " call s:activate('vim_prettier', 1)
+  " call s:activate('vim_prettier')
 
   " Support for javascript react files
-  " call s:activate('vim_jsx_pretty', 1)
+  " call s:activate('vim_jsx_pretty')
 
   " 2.18. Linting
   " -------------
@@ -1487,51 +1487,51 @@ if 1
   " 2.18.1. Linting Engine
   " ----------------------
 
-  " call s:activate('ale', 1)
+  " call s:activate('ale')
 
-  " call s:activate('lightbulb', 1)
+  " call s:activate('lightbulb')
 
   if has('nvim')
-    call s:activate('treesitter', 1)
+    call s:activate('treesitter')
   endif
 
   " 2.18.2. Linting Mark
   " -------------------
 
-  " call s:activate('vim_syntastic', 1)
+  " call s:activate('vim_syntastic')
 
   " 2.19. Asynchronous Run
   " ----------------------
 
-  " call s:activate('asyncrun', 1)
+  " call s:activate('asyncrun')
 
-  " call s:activate('vim_dispatch', 1)
+  " call s:activate('vim_dispatch')
 
   " 2.20 QuickFix filtering
   " -----------------------
 
-  " call s:activate('cfilter', 1)
+  " call s:activate('cfilter')
 
-  " call s:activate('vim_editqf', 1)
+  " call s:activate('vim_editqf')
 
   " 2.20. Terminal
   " --------------
 
-  " call s:activate('vim_floaterm', 1)
+  " call s:activate('vim_floaterm')
 
   " vim-clap support for floaterm
-  " call s:activate('clap_floaterm', 1)
+  " call s:activate('clap_floaterm')
 
   " Terminal support
-  " call s:activate('neoterm', 1)
+  " call s:activate('neoterm')
 
   " 2.21. Debugging
   " ---------------
 
-  call s:activate('vimspector', 1)
+  call s:activate('vimspector')
 
   if has('nvim')
-    call s:activate('nvim_dab', 1)
+    call s:activate('nvim_dab')
   endif
 
   " 2.22. File Types
@@ -1541,15 +1541,15 @@ if 1
   " -----------------
 
   " Helper to analyze vim scripts
-  call s:activate('vim_scriptease', 1)
+  call s:activate('vim_scriptease')
 
   " Helper to debug vim scripts
-  call s:activate('lh_vim_lib', 1)
+  call s:activate('lh_vim_lib')
 
   " Helper to analyze syntax
   " Remark:
   " - scriptease comes with the zS action
-  " call s:activate('vim_synstax', 1)
+  " call s:activate('vim_synstax')
 
   " 2.22.2. Markdown
   " ----------------
@@ -1557,49 +1557,49 @@ if 1
   " Add vim wiki
   " Remark:
   " - On some files it prevent to insert a carriage return
-  call s:activate('vimwiki', 1)
+  call s:activate('vimwiki')
 
   if has('nvim')
-    call s:activate('neorg', 1)
+    call s:activate('neorg')
   endif
 
   " Markdown extra support
   " Remark:
   " - Doesn't seems compatible with vimwiki
-  call s:activate('vim_markdown', 1)
+  call s:activate('vim_markdown')
 
   " Markdown preview
-  " call s:activate('markdown_preview', 1)
+  " call s:activate('markdown_preview')
 
   " 2.22.3. CSV
   " -----------
 
-  call s:activate('csv', 1)
+  call s:activate('csv')
 
-  " call s:activate('rainbow_csv', 1)
+  " call s:activate('rainbow_csv')
 
   " 2.22.4. Rust
   " ------------
 
   " Rust support
-  " call s:activate('rust_vim', 1)
+  " call s:activate('rust_vim')
 
 " 2.23.5. Jinja
 " -------------
 
-  call s:activate('vim_jinja2_syntax', 1)
+  call s:activate('vim_jinja2_syntax')
 
 " 2.23.6. Logs
 " ------------
 
-  call s:activate('vim_log_highligthing', 1)
+  call s:activate('vim_log_highligthing')
 
 " 2.23.7 TeX/LaTeX
 " ----------------
 
-  " call s:activate('vimtex', 1)
+  " call s:activate('vimtex')
 
-  " call s:activate('vimlatex', 1)
+  " call s:activate('vimlatex')
 
 endif
 
@@ -2625,7 +2625,7 @@ endif
 if s:isactive('neorg') || s:isactive('hlargs') || s:isactive('semshi')
   if !s:isactive('treesitter')
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-    s:activate('treesitter', 1)
+    s:activate('treesitter')
   endif
 endif
 
@@ -4565,9 +4565,11 @@ endif
 " --------------------
 
 if s:isactive('coc_nvim')
-  let $XDG_CONFIG_HOME=$HOME .. '\vimfiles'
-  let $XDG_DATA_HOME=$HOME .. '\vimfiles'
-  let $XDG_STATE_HOME=$HOME .. '\vimfiles'
+  if !has('nvim')
+    let $XDG_CONFIG_HOME=$HOME .. '\vimfiles'
+    let $XDG_DATA_HOME=$HOME .. '\vimfiles'
+    let $XDG_STATE_HOME=$HOME .. '\vimfiles'
+  endif
 
   " Some servers have issues with backup files, see #649.
   set nobackup
@@ -4821,7 +4823,7 @@ if s:isactive('jedi_vim')
 
   " Jedi automatically starts the completion, if you type a dot, e.g. str.,
   " if you don't want this:
-  " let g:jedi#popup_on_dot = 1
+  let g:jedi#popup_on_dot = 1
 
   " Jedi selects the first line of the completion menu: for a better typing-flow and usually saves one keypress.
   " let g:jedi#popup_select_first = 0
@@ -5571,6 +5573,11 @@ endif
 
 if 1
 " inoremap jk <Esc>
+if has('nvim')
+  " On Belgian keyboard make <C-[> be <Esc>
+  inoremap <C-¨> <Esc>
+  cnoremap <C-¨> <Esc>
+endif
 
 " Faster scrolling (by 3 lines)
 " nnoremap <C-e> 3<C-e>
@@ -5960,6 +5967,7 @@ if has('win32')
   " let g:python3_host_prog='C:\Python27_Win32\python.exe'
   " let g:python3_host_prog='C:\Python36_x64\python.exe'
   let g:python3_host_prog='C:\Python39_x64\python.exe'
+  " let g:python3_host_prog='C:\Python312_x64\python.exe'
 endif
 
 " autocmd BufRead *.py set makeprg=C:\\python27\\python.exe\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
