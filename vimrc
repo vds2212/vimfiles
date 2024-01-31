@@ -412,18 +412,10 @@ set undofile
 " Save undo files in the .undo sub-folder (if it exists)
 " Otherwise in the ~/vimfiles/undo folder (if it exists)
 " It avoid to pollute your local folder
-if has('win32')
-  if !isdirectory(s:vim_data_folder .. 'undo')
-    call mkdir(s:vim_data_folder .. 'undo')
-  endif
-  exe 'set undodir=' .. '.undo/,' .. s:vim_data_folder.. 'undo/'
+if !isdirectory(GetVimDataFolder() .. 'undo')
+    call mkdir(GetVimDataFolder() .. 'undo')
 endif
-if has('unix')
-  if !isdirectory($HOME .. '/.vim/undo')
-    call mkdir($HOME .. "/.vim/undo", "p", 0700)j
-  endif
-  set undodir=.undo/,~/.vim/undo/
-endif
+exe 'set undodir=' .. '.undo/,' .. GetVimDataFolder() .. 'undo/'
 
 " number of undo saved
 set undolevels=10000
@@ -435,52 +427,26 @@ set undolevels=10000
 " Otherwise in the ~/vimfiles/swap folder (if it exists)
 " (instead of next to the real file)
 " It avoid to pollute your local folder
-if has('win32')
-  if !isdirectory(s:vim_data_folder .. 'swap')
-    call mkdir(s:vim_data_folder .. 'swap')
-  endif
-  exe 'set directory=.swap/,' .. s:vim_data_folder ..'swap/'
+if !isdirectory(GetVimDataFolder() .. 'swap')
+    call mkdir(GetVimDataFolder() .. 'swap')
 endif
-if has('unix')
-  if !isdirectory($HOME .. '/.vim/swap')
-    call mkdir($HOME .. '/.vim/swap', "p", 0700)j
-  endif
-  set directory=.swap/,~/.vim/swap/
-endif
+exe 'set directory=.swap/,' .. GetVimDataFolder() ..'swap/'
 
 " Define/Create the view folder to store information from :mkview
-if has('win32')
-  if !isdirectory(s:vim_data_folder .. 'view')
-    call mkdir(s:vim_data_folder .. 'view')
-  endif
-  exe 'set viewdir=' .. s:vim_data_folder ..'view/'
+if !isdirectory(GetVimDataFolder() .. 'view')
+    call mkdir(GetVimDataFolder() .. 'view')
 endif
-if has('unix')
-  if !isdirectory($HOME .. '/.vim/view')
-    call mkdir($HOME .. '/.vim/view', "p", 0700)
-  endif
-  set viewdir=~/.vim/view/
-endif
+exe 'set viewdir=' .. GetVimDataFolder() ..'view/'
 
 " Disable backup files (the myfile.myext~ files)
 " It seems to be the default
 set nobackup
 set nowritebackup
-if has('win32')
-  if !isdirectory(s:vim_data_folder .. 'backup')
-    call mkdir(s:vim_data_folder .. 'backup')
-  endif
-  " exe 'set backupdir=.backup//,' .. s:vim_data_folder ..'backup//'
-  " exe 'set backupdir=.backup/,' .. s:vim_data_folder ..'backup/'
+if !isdirectory(GetVimDataFolder() .. 'backup')
+    call mkdir(GetVimDataFolder() .. 'backup')
 endif
-if has('unix')
-  if !isdirectory($HOME .. '/.vim/backup')
-    call mkdir($HOME .. '/.vim/backup', "p", 0700)j
-  endif
-  " Two slash to generate unique names
-  " set backupdir=.backup//,~/.vim/backup// | call mkdir('~/.vim/backup/', 'p', 0o700)
-  " set backupdir=.backup/,~/.vim/backup/ | call mkdir('~/.vim/backup/', 'p', 0o700)
-endif
+" exe 'set backupdir=.backup//,' .. GetVimDataFolder() ..'backup//'
+" exe 'set backupdir=.backup/,' .. GetVimDataFolder() ..'backup/'
 
 " Mapping between non printable characters (e.g.: eol or tab) and Unicode char.
 set listchars=eol:¶,tab:→\ ,space:.,trail:~,extends:>,precedes:<,nbsp:-
