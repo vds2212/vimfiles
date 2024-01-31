@@ -785,9 +785,9 @@ endif
 
 function! IsPlugInstalled()
   if has('nvim')
-    let plug_file = s:vim_data_folder. 'site/autoload/plug.vim'
+    let plug_file = GetVimDataFolder() .. 'site/autoload/plug.vim'
   else
-    let plug_file = s:vim_data_folder. 'autoload/plug.vim'
+    let plug_file = GetVimDataFolder() .. 'autoload/plug.vim'
   endif
   if empty(glob(plug_file))
     return 0
@@ -797,17 +797,18 @@ function! IsPlugInstalled()
 endfunction
 
 function! InstallPlug()
+  let l:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   if has('win32')
     if has('nvim')
-      let cmd = 'silent !powershell -Command "&{iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni ' .. GetVimDataFolder() .. 'nvim-data/site/autoload/plug.vim -Force}"'
+      let cmd = 'silent !powershell -Command "&{iwr -useb ' .. l:plug_url .. ' | ni ' .. GetVimDataFolder() .. 'site/autoload/plug.vim -Force}"'
     else
-      let cmd = 'silent !powershell -Command "&{iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni ' .. GetVimDataFolder() .. 'autoload/plug.vim -Force}"'
+      let cmd = 'silent !powershell -Command "&{iwr -useb ' .. l:plug_url .. ' | ni ' .. GetVimDataFolder() .. 'autoload/plug.vim -Force}"'
     endif
   else
     if has('nvim')
-      let cmd = 'silent !curl -fLo ' .. GetVimDataFolder() 'nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+      let cmd = 'silent !curl -fLo ' .. GetVimDataFolder() .. 'site/autoload/plug.vim --create-dirs ' .. l:plug_url
     else
-      let cmd = 'silent !curl -fLo ' ..GetVimDataFolder() .. 'autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+      let cmd = 'silent !curl -fLo ' ..GetVimDataFolder() .. 'autoload/plug.vim --create-dirs ' .. l:plug_url
     endif
   endif
   execute cmd
@@ -2671,6 +2672,9 @@ if s:isactive('gui_running') || has('unix')
   endif
 
   if s:isactive('nord_vim')
+    " colorscheme habamax
+    " colorscheme morning
+    " colorscheme sorbet
     colorscheme nord
   endif
 endif
@@ -3644,6 +3648,14 @@ endif
 " 2.3.3. File searching
 " --------------------
 
+function! ToggleQuickFix()
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        copen
+    else
+        cclose
+    endif
+endfunction
+
 " Ack plugin settings:
 " --------------------
 
@@ -3673,6 +3685,7 @@ if s:isactive('ack_vim')
   " cnoreabbrev Ack Ack!
 
   " More information with: :help ack.txt
+  nnoremap <silent> <leader>ts <cmd>call ToggleQuickFix()<cr>
 endif
 
 if s:isactive('ctrlsf')
@@ -3762,6 +3775,8 @@ if s:isactive('ferret')
 
   " Provide for each solution a Ack command such that it is easier to switch
   " from one to the next
+
+  nnoremap <silent> <leader>ts <cmd>call ToggleQuickFix()<cr>
 endif
 
 
