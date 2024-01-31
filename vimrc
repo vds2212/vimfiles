@@ -219,8 +219,6 @@ function! GetVimDataFolder()
   return l:vim_data_folder
 endfunction
 
-let s:vim_data_folder = g:GetVimDataFolder()
-
 " Define the <leader> key to \ (the default)
 let mapleader=" "
 let maplocalleader=" "
@@ -566,10 +564,8 @@ if s:gui_running
     let l:vim_data_folder = g:GetVimDataFolder()
     if has('amiga')
       return "s:.vimsize"
-    elseif has('win32')
-      return l:vim_data_folder .. '_vimsize'
     else
-      return $HOME .. '/.vimsize'
+      return l:vim_data_folder .. '_vimsize'
     endif
   endfunction
 
@@ -3897,18 +3893,13 @@ endif
 
 let s:session = s:isactive('vim_startify') || s:isactive('vim_obsession') || s:isactive('vim_prosession') || s:isactive('reload_session_at_start')
 if s:isactive('session')
-  if has('win32')
-    if !isdirectory($HOME .. '/vimfiles/session')
-      call mkdir($HOME .. '/vimfiles/session')
-    endif
-    let g:sessions_dir='~/vimfiles/session'
+  if !isdirectory(g:sessions_dir)
+    call mkdir(g:sessions_dir)
   endif
+  let g:sessions_dir = GetVimDataFolder() .. 'session'
 
   if has('unix')
-    if !isdirectory($HOME .. '/.vim/session')
-      call mkdir($HOME .. "/.vim/session", "p", 0700)j
-    endif
-    let g:sessions_dir='~/.vim/session'
+      call mkdir(g:sessions_dir, "p", 0700)j
   endif
 
   " Make sure the commands: SSave and SLoad are defined
@@ -3917,7 +3908,6 @@ if s:isactive('session')
     command! -nargs=1 SSave exec 'Obsession ' .. g:sessions_dir .. '/<args>'
     command! -nargs=1 SLoad exec 'so' .. g:sessions_dir .. '/<args>'
   else
-    let g:sessions_dir = s:vim_data_folder .. 'session'
     command! -nargs=1 SSave exec 'mks! ' .. g:sessions_dir .. '/<args>'
     command! -nargs=1 SLoad exec 'so ' .. g:sessions_dir .. '/<args>'
   endif
@@ -5255,7 +5245,7 @@ if s:isactive('markdown_preview')
 
   " use a custom markdown style must be absolute path
   " like '/Users/username/markdown.css' or expand('~/markdown.css')
-  let g:mkdp_markdown_css = s:vim_data_folder .. 'markdownpreview/markdown.css'
+  let g:mkdp_markdown_css = GetVimDataFolder() .. 'markdownpreview/markdown.css'
 
   " use a custom highlight style must absolute path
   " like '/Users/username/highlight.css' or expand('~/highlight.css')
