@@ -2782,11 +2782,10 @@ if s:isactive('vim_lightline')
           \   'gitbranch': 'MyFugitiveHead',
           \ },
           \}
-  endif
 
-  if s:isactive('vimcaps')
+  elseif s:isactive('vimcaps')
     function! MyVimCaps()
-        return vimcaps#statusline(7)
+      return vimcaps#statusline(7)
     endfunction
 
     let g:lightline = {
@@ -2802,16 +2801,17 @@ if s:isactive('vim_lightline')
           \   'vimcaps': 'MyVimCaps'
           \ },
           \}
+  else
+    let g:lightline = {
+          \ 'active': {
+          \   'left': [ [ 'mode', 'paste' ],
+          \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
+          \  'right': [ [ 'lineinfo' ],
+          \             [ 'percent' ],
+          \             [ 'fileformat', 'fileencoding', 'filetype' ], ]
+          \ },
+          \}
   endif
-  let g:lightline = {
-        \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
-        \  'right': [ [ 'lineinfo' ],
-        \             [ 'percent' ],
-        \             [ 'fileformat', 'fileencoding', 'filetype' ], ]
-        \ },
-        \}
 endif
 
 
@@ -4085,6 +4085,10 @@ endif
 " 2.8.1. Git Operation
 " -------------------
 
+if s:isactive('vim_fugitive')
+    " let g:fugitive_git_executable = fnamemodify('C:/Program Files/Git/bin/git.exe', ':8')
+endif
+
 " 2.8.2. Git Signs
 " ---------------
 
@@ -4115,6 +4119,7 @@ endif
 " Remark: currently not used
 if s:isactive('vim_gitgutter')
   if has('win32')
+    " let g:gitgutter_git_executable = 'C:/Program Files/Git/bin/git.exe'
     " let g:gitgutter_git_executable = 'C:/Progra~1/Git/bin/git.exe'
     let g:gitgutter_git_executable = fnamemodify('C:/Program Files/Git/bin/git.exe', ':8')
   endif
