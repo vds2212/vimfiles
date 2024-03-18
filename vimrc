@@ -1,6 +1,8 @@
 " 0. Vim Default
 " ==============
 
+" From: "$VIMRUNTIME/defaults.vim"
+
 " When started as "evim", evim.vim will already have done these settings.
 if v:progname =~? "evim"
   finish
@@ -817,13 +819,15 @@ if 1
   " 2.1.1. Color Scheme
   " ------------------
 
-  " call s:activate('vim_gruvbox')
+  call s:activate('vim_gruvbox')
 
-  " call s:activate('Vim_color_solarized')
+  call s:activate('Vim_color_solarized')
 
-  " call s:activate('tokyonight')
+  call s:activate('tokyonight')
 
-  " call s:activate('onedark')
+  call s:activate('onedark')
+
+  call s:activate('catppuccin')
 
   " call s:activate('molokai')
 
@@ -1155,13 +1159,17 @@ if 1
   " 2.3.4. File browsing
   " -------------------
 
-  " call s:activate('nerdtree')
+  call s:activate('nerdtree')
 
   if has('nvim')
     call s:activate('nvim_tree')
   endif
 
-  call s:activate('fern')
+  if has('nvim')
+    " call s:activate('oil')
+  endif
+
+  " call s:activate('fern')
 
   " File browser netrw helper
   " call s:activate('vim_vinegar')
@@ -1231,7 +1239,7 @@ if 1
   " -------------------
 
   " Git integration
-  " call s:activate('vim_fugitive')
+  call s:activate('vim_fugitive')
 
 
   " 2.8.2. Git Signs
@@ -1242,9 +1250,11 @@ if 1
   " Remarks:
   " - Only for Git
   " - Only for Neovim
-  " call s:activate('gitsigns')
+  if !has('nvim')
+    " call s:activate('gitsigns')
+  endif
 
-  " call s:activate('vim_gitgutter')
+  call s:activate('vim_gitgutter')
 
   " 2.8.3. Git Helper
   " ----------------
@@ -1401,6 +1411,7 @@ if 1
   " - MasonInstall pyright
   if has('nvim')
     call s:activate('lsp')
+    " call s:activate('r_nvim')
   endif
 
   " Code completion
@@ -1488,6 +1499,10 @@ if 1
   " vim-clap support for floaterm
   " call s:activate('clap_floaterm')
 
+  if has('nvim')
+    call s:activate('toggleterm')
+  endif
+
   " Terminal support
   " call s:activate('neoterm')
 
@@ -1497,7 +1512,7 @@ if 1
   call s:activate('vimspector')
 
   if has('nvim')
-    call s:activate('nvim_dab')
+    call s:activate('nvim_dap')
   endif
 
   " 2.22. File Types
@@ -1535,7 +1550,7 @@ if 1
   call s:activate('vim_markdown')
 
   " Markdown preview
-  " call s:activate('markdown_preview')
+  call s:activate('markdown_preview')
 
   " 2.22.3. CSV
   " -----------
@@ -1560,12 +1575,19 @@ if 1
 
   call s:activate('vim_log_highligthing')
 
+  call s:activate('ansiesc')
+
 " 2.23.7 TeX/LaTeX
 " ----------------
 
   " call s:activate('vimtex')
 
   " call s:activate('vimlatex')
+
+" 2.23.8 Vim Help
+" ---------------
+
+  " call s:activate('helpful')
 
 endif
 
@@ -1600,6 +1622,10 @@ endif
 
 if s:isactive('onedark')
   Plug 'joshdick/onedark.vim'
+endif
+
+if s:isactive('catppuccin')
+  Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 endif
 
 if s:isactive('molokai')
@@ -1742,7 +1768,8 @@ if s:isactive('vim_startify')
 endif
 
 if s:isactive('dashboard_vim')
-  Plug 'glepnir/dashboard-nvim'
+  " Plug 'glepnir/dashboard-nvim'
+  Plug 'nvimdev/dashboard-nvim'
 endif
 
 
@@ -2049,6 +2076,10 @@ if s:isactive('nvim_tree')
   Plug 'nvim-tree/nvim-web-devicons'
 endif
 
+if s:isactive('oil')
+  Plug 'stevearc/oil.nvim'
+endif
+
 if s:isactive('fern')
   Plug 'lambdalisue/fern.vim'
   Plug 'lambdalisue/fern-hijack.vim'
@@ -2336,6 +2367,11 @@ if s:isactive('lsp')
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'jose-elias-alvarez/null-ls.nvim'
 endif
+
+if s:isactive('r_nvim')
+  Plug 'R-nvim/R.nvim'
+  Plug 'R-nvim/cmp-r'
+endif
 "
 if s:isactive('you_complete_me')
   Plug 'ycm-core/YouCompleteMe'
@@ -2458,6 +2494,10 @@ if s:isactive('vim_clap') && s:isactive('vim_floaterm') && s:isactive('clap_floa
   Plug 'voldikss/clap-floaterm'
 endif
 
+if s:isactive('toggleterm')
+  Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
+endif
+
 " Terminal support (reuse)
 if s:isactive('neoterm')
   Plug 'kassio/neoterm'
@@ -2473,7 +2513,7 @@ if s:isactive('vimspector')
   endif
 endif
 
-if s:isactive('nvim_dab')
+if s:isactive('nvim_dap')
   Plug 'mfussenegger/nvim-dap'
   Plug 'rcarriga/nvim-dap-ui'
   Plug 'mfussenegger/nvim-dap-python'
@@ -2563,6 +2603,10 @@ if s:isactive('vim_log_highligthing')
   Plug 'mtdl9/vim-log-highlighting'
 endif
 
+if s:isactive('ansiesc')
+  Plug 'powerman/vim-plugin-AnsiEsc'
+endif
+
 
 " 2.23.7 TeX/LaTeX
 " ----------------
@@ -2573,6 +2617,10 @@ endif
 
 if s:isactive('vimlatex')
   Plug 'vim-latex/vim-latex'
+endif
+
+if s:isactive('helpful')
+  Plug 'tweekmonster/helpful.vim'
 endif
 
 " Dependencies
@@ -2617,52 +2665,34 @@ endfunction
 if s:isactive('gui_running') || has('unix')
   let s:schemes = GetColorSchemes()
 
-  if s:isactive('vim_gruvbox')
-    colorscheme gruvbox
-  elseif s:isactive('Vim_color_solarized')
-    colorscheme solarized
-  " elseif s:isactive('vim_solarized8')
-  "   " colorscheme solarized8
-  "   colorscheme solarized8_low
-  elseif s:isactive('onedark')
-    colorscheme onedark
-  elseif s:isactive('molokai')
-    colorscheme molokai
-  elseif s:isactive('papercolor')
-    colorscheme papercolor
-  elseif s:isactive('nord_vim') && index(s:schemes, 'nord') >= 0
+  if s:isactive('nord_vim') && index(s:schemes, 'nord') >= 0
     colorscheme nord
-  elseif s:isactive('everforest')
-    colorscheme everforest
   endif
 
   if s:isactive('nord_vim')
-    " colorscheme habamax
-    " colorscheme morning
-    " colorscheme sorbet
-    colorscheme nord
+    " Make the search background a bit less bright:
+    hi Search guibg=#67909e guifg=#2e3440
+
+    " Make the foreground color of the folded line more bright:
+    hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
+
+    " Don't change the color of bad spelled words (only the underline)
+    " Using Nord colors
+    " hi clear SpellBad
+    " hi SpellBad term=reverse cterm=underline gui=undercurl guisp=#BF616A
+    " hi clear SpellCap
+    " hi SpellCap term=reverse cterm=underline gui=undercurl guisp=#EBCB8B
+    " hi clear SpellLocal
+    " hi SpellLocal term=reverse cterm=underline gui=undercurl guisp=#E5E9F0
+    " hi clear SpellRare
+    " hi SpellRare term=reverse cterm=underline gui=undercurl guisp=#ECEFF4
+    " hi clear DiagnosticUnderlineError
+    " hi DiagnosticUnderlineError cterm=underline gui=undercurl guisp=#bf616a
   endif
-endif
-
-if s:isactive('nord_vim')
-  " Make the search background a bit less bright:
-  hi Search guibg=#67909e guifg=#2e3440
-
-  " Make the foreground color of the folded line more bright:
-  hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
-
-  " Don't change the color of bad spelled words (only the underline)
-  " Using Nord colors
-  " hi clear SpellBad
-  " hi SpellBad term=reverse cterm=underline gui=undercurl guisp=#BF616A
-  " hi clear SpellCap
-  " hi SpellCap term=reverse cterm=underline gui=undercurl guisp=#EBCB8B
-  " hi clear SpellLocal
-  " hi SpellLocal term=reverse cterm=underline gui=undercurl guisp=#E5E9F0
-  " hi clear SpellRare
-  " hi SpellRare term=reverse cterm=underline gui=undercurl guisp=#ECEFF4
-  " hi clear DiagnosticUnderlineError
-  " hi DiagnosticUnderlineError cterm=underline gui=undercurl guisp=#bf616a
+else
+  " Seems that termguicolors and nord colorscheme work well on Windows console
+  set termguicolors
+  colorscheme nord
 endif
 
 
@@ -2963,9 +2993,15 @@ if s:isactive('vim_remotions')
         \ 'methodend' : { 'backward' : '[M', 'forward' : ']M' },
         \
         \ 'line' : {
-        \     'backward' : 'k',
+        \    'backward' : 'k',
         \    'forward' : 'j',
         \    'repeat_if_count' : 1,
+        \    'repeat_count': 1
+        \ },
+        \
+        \ 'displayline' : {
+        \    'backward' : 'gk',
+        \    'forward' : 'gj',
         \    'repeat_count': 1
         \ },
         \
@@ -4059,7 +4095,7 @@ if s:isactive('vim_signify')
   " Disable signify by default
   let g:signify_disable_by_default = 1
 
-  nnoremap <leader>ts :SignifyToggle <CR>
+  nnoremap <leader>tf :SignifyToggle <CR>
 
   " More information with: :help signify.txt
 endif
@@ -4079,7 +4115,8 @@ endif
 " Remark: currently not used
 if s:isactive('vim_gitgutter')
   if has('win32')
-    let g:gitgutter_git_executable = 'C:/Program Files/Git/bin/git.exe'
+    " let g:gitgutter_git_executable = 'C:/Progra~1/Git/bin/git.exe'
+    let g:gitgutter_git_executable = fnamemodify('C:/Program Files/Git/bin/git.exe', ':8')
   endif
   let g:gitgutter_grep=''
 endif
@@ -4773,6 +4810,11 @@ if s:isactive('lsp')
   lua require("config.null-ls")
 endif
 
+if s:isactive("r_nvim")
+  lua require("cmp").setup({ sources = {{ name = "cmp_r" }}})
+  lua require("cmp_r").setup()
+endif
+
 
 " YouCompleteMe plugin settings:
 " ------------------------------
@@ -4978,6 +5020,12 @@ if s:isactive('vim_floaterm')
   let g:floaterm_keymap_toggle = '<M-ù>'
 endif
 
+" Toggleterm plugin settings:
+" ---------------------------
+
+if s:isactive('toggleterm')
+  lua require("toggleterm").setup()
+endif
 
 " Neoterm plugin settings:
 " ------------------------
@@ -5043,7 +5091,7 @@ endif
 " Nvim-Dab plugin settings:
 " -------------------------
 
-if s:isactive('nvim_dab')
+if s:isactive('nvim_dap')
   lua require("dapui").setup()
   lua require('dap-python').setup('C:\\Python39_x64\\python.exe')
 
@@ -5557,10 +5605,13 @@ endif
 " nnoremap <C-e> 3<C-e>
 " nnoremap <C-y> 3<C-y>
 
-" Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column.
+" Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column
 " It make the selection in block mode more intuitive.
 " It is a Neovim default
 set nostartofline
+
+" Align the $ motion in Normal and Visual mode
+vnoremap $ $h
 
 " Define config_files to fasten the use of the :vim command
 abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
@@ -5590,6 +5641,11 @@ command! -nargs=1 H :vert help <args>
 " Add two command to increase and decrease the font size:
 command! IncreaseFont :let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)+1', '')
 command! DecreaseFont :let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)-1', '')
+
+" Maximize the current window without deleting the other windows:
+if !s:isactive('vim_maximizer')
+  nnoremap <C-w>m <cmd>500wincmd ><bar>500wincmd +<cr>
+endif
 
 " Leave terminal with Ctrl-q
 tnoremap <C-q>  <C-\><C-n>
@@ -6020,3 +6076,7 @@ endfunction
 
 command! VimClippy call s:vimclippy()
 endif
+
+" Ignore Caffeine input
+cnoremap <F15> <Nop>
+inoremap <F15> <Nop>
