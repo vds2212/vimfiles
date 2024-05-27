@@ -6,7 +6,7 @@ let g:remotions_debug = 0
 
 if !exists("g:remotions_motions")
   let g:remotions_motions = {
-        \ 'EeFf' : {},
+        \ 'TtFf' : {},
         \ 'para' : { 'backward' : '{', 'forward' : '}' },
         \ 'sentence' : { 'backward' : '(', 'forward' : ')' },
         \ 'change' : { 'backward' : 'g,', 'forward' : 'g;' },
@@ -25,7 +25,7 @@ if !exists("g:remotions_motions")
         \ }
 
 " let g:remotions_motions = {
-"       \ 'EeFf' : {},
+"       \ 'TtFf' : {},
 "       \ 'para' : { 'backward' : '{', 'forward' : '}' },
 "       \ 'sentence' : { 'backward' : '(', 'forward' : ')' },
 "       \ 'change' : { 'backward' : 'g,', 'forward' : 'g;', 'direction' : 0 },
@@ -44,6 +44,9 @@ if !exists("g:remotions_motions")
 "       \ 'pos' : { 'backward' : '<C-i>', 'forward' : '<C-o>', 'repeat_count' : 1, 'direction' : 0 },
 "       \ 'page' : { 'backward' : '<C-u>', 'forward' : '<C-d>', 'repeat_count' : 1 },
 "       \ 'pagefull' : { 'backward' : '<C-b>', 'forward' : '<C-f>', 'repeat_count' : 1},
+"       \
+"       \ 'vsplit' : { 'backward' : '<C-w><', 'forward' : '<C-w>>', 'direction' : 0 },
+"       \ 'hsplit' : { 'backward' : '<C-w>-', 'forward' : '<C-w>+', 'direction' : 0 },
 "       \
 "       \ 'arg' : { 'backward' : '[a', 'forward' : ']a', 'doc': 'unimpaired' },
 "       \ 'buffer' : { 'backward' : '[b', 'forward' : ']b', 'doc': 'unimpaired' },
@@ -102,7 +105,7 @@ function! s:RepeatMotion(forward)
 
   let motion = {}
   if has_key(g:remotions_motions, g:remotions_family)
-    " For the 'EeFf' key there is no guarantee that the motion exist in the
+    " For the 'TtFf' key there is no guarantee that the motion exist in the
     " g:remotions_motions map
     let motion = g:remotions_motions[g:remotions_family]
   endif
@@ -152,14 +155,18 @@ vmap <silent> <expr> , <SID>RepeatMotion(0)
 " nnoremap <silent> <expr> ; <SID>RepeatMotion(1) " vim9
 " nnoremap <silent> <expr> , <SID>RepeatMotion(0) " vim9
 
-function! s:EeFfMotion(key)
+function! s:TtFfMotion(key)
   " Method called when the single char motion are used:
-  " - 'f' calls EeFfMotion('f')
+  " - 'f' calls TtFfMotion('f')
   " The method set the variables to be able to replay the motion
 
   let motion = {}
-  if has_key(g:remotions_motions, 'EfFf')
-    let motion = g:remotions_motions[a:key]
+  if has_key(g:remotions_motions, 'EeFf')
+    " For backward compatibility reason the old document key was 'EeFf'
+    let motion = g:remotions_motions['EeFf']
+  endif
+  if has_key(g:remotions_motions, 'TtFf')
+    let motion = g:remotions_motions['TtFf']
   endif
   if v:count <= 1 && has_key(motion, 'repeat_if_count') && motion.repeat_if_count == 1
     " Skip the motion with the option 'repeat_if_count' if the count is <= 1
@@ -171,7 +178,7 @@ function! s:EeFfMotion(key)
     let direction = motion.direction
   endif
 
-  let g:remotions_family = 'EeFf'
+  let g:remotions_family = 'TtFf'
   let g:remotions_backward_plug = '' 
   let g:remotions_forward_plug = ''
 
@@ -186,32 +193,50 @@ function! s:EeFfMotion(key)
   return a:key
 endfunction
 
-nmap <expr> f <SID>EeFfMotion('f')
-vmap <expr> f <SID>EeFfMotion('f')
+if maparg('f', 'n', 0, 1)->empty()
+  nmap <expr> f <SID>TtFfMotion('f')
+endif
+if maparg('f', 'v', 0, 1)->empty()
+  vmap <expr> f <SID>TtFfMotion('f')
+endif
 
-nmap <expr> F <SID>EeFfMotion('F')
-vmap <expr> F <SID>EeFfMotion('F')
+if maparg('F', 'n', 0, 1)->empty()
+  nmap <expr> F <SID>TtFfMotion('F')
+endif
+if maparg('F', 'v', 0, 1)->empty()
+  vmap <expr> F <SID>TtFfMotion('F')
+endif
 
-nmap <expr> t <SID>EeFfMotion('t')
-vmap <expr> t <SID>EeFfMotion('t')
+if maparg('t', 'n', 0, 1)->empty()
+  nmap <expr> t <SID>TtFfMotion('t')
+endif
+if maparg('t', 'v', 0, 1)->empty()
+  vmap <expr> t <SID>TtFfMotion('t')
+endif
 
-nmap <expr> T <SID>EeFfMotion('T')
-vmap <expr> T <SID>EeFfMotion('T')
+if maparg('T', 'n', 0, 1)->empty()
+  nmap <expr> T <SID>TtFfMotion('T')
+endif
+if maparg('T', 'v', 0, 1)->empty()
+  vmap <expr> T <SID>TtFfMotion('T')
+endif
 
-" nnoremap <expr> f <SID>EeFfMotion('f')
-" nnoremap <expr> F <SID>EeFfMotion('F')
-" nnoremap <expr> t <SID>EeFfMotion('t')
-" nnoremap <expr> T <SID>EeFfMotion('T')
+" nnoremap <expr> f <SID>TtFfMotion('f')
+" nnoremap <expr> F <SID>TtFfMotion('F')
+" nnoremap <expr> t <SID>TtFfMotion('t')
+" nnoremap <expr> T <SID>TtFfMotion('T')
 
-function! s:CustomMotion(forward, backward_plug, forward_plug, motion_family)
+function! s:CustomMotion(forward, backward_plug, forward_plug, motion_plug, motion_family)
   " Method called when the original motion are used.
   " - ']m' calls CustomMotion(1, "\<Plug>forwardmethod", "\<Plug>backwardmethod")
   " The method set the variables to be able to replay the motion
   "
-  if a:forward
+  if a:forward == 1
     let ret = a:forward_plug
-  else
+  elseif a:forward == 0
     let ret = a:backward_plug
+  elseif a:forward == 2
+    let ret = a:motion_plug
   endif
 
   let motion = g:remotions_motions[a:motion_family]
@@ -222,7 +247,7 @@ function! s:CustomMotion(forward, backward_plug, forward_plug, motion_family)
 
   let direction = g:remotions_direction
   if has_key(motion, 'direction')
-    direction = motion.direction
+    let direction = motion.direction
   endif
 
   " Used to gather more information about the motion
@@ -247,8 +272,12 @@ function! s:CustomMotion(forward, backward_plug, forward_plug, motion_family)
 endfunction
 
 function! s:HijackMotion(modes, motion, motion_family)
-  " Replace the motion mapping from motion to a plugged version
-  " Return the plug used to replace it
+  " Replace the original motion mapping by a plugged version
+  " - A plug motion is created with the original content
+  " - The original mapping is deleted
+  " - The plug motion is returned
+  " Rational: The original motion mapping need to be redirected to an action
+  " that store the context
 
   let mode_count = 0
   for mode in split(a:modes, '\zs')
@@ -272,27 +301,32 @@ function! s:HijackMotion(modes, motion, motion_family)
     else
       " There is a mapping for the motion
 
-      " The original mapping is deleted
-      call add(b:deleted_mappings, motion_mapping)
-      if motion_mapping.mode == ' ' || motion_mapping.mode == ''
-        let cmd = 'unmap '
-        if motion_mapping.buffer
-          let cmd = cmd . '<buffer> '
-        endif
-        execute cmd . a:motion
-      else
-        for mode in split(motion_mapping.mode, '\zs')
-          let cmd = mode . 'unmap '
+      " The original mapping is deleted if it is buffer mapping
+      " in order to avoid the conflict with the new mapping
+      " otherwise it is kept since the other buffer should find the original
+      " mapping
+      if motion_mapping.buffer
+        call add(b:deleted_mappings, motion_mapping)
+        if motion_mapping.mode == ' ' || motion_mapping.mode == ''
+          let cmd = 'unmap '
           if motion_mapping.buffer
             let cmd = cmd . '<buffer> '
           endif
           execute cmd . a:motion
-        endfor
+        else
+          for mode in split(motion_mapping.mode, '\zs')
+            let cmd = mode . 'unmap '
+            if motion_mapping.buffer
+              let cmd = cmd . '<buffer> '
+            endif
+            execute cmd . a:motion
+          endfor
+        endif
       endif
 
       " The plug is mapped to the original mapping rhs
 
-      " Remark: Copy the mapping to avoid modifying the backup used for the
+      " Remark: Copy the original mapping to avoid modifying the backup used for the
       " reset of the mapping
       let motion_mapping = copy(motion_mapping)
       let motion_mapping.lhs = motion_key
@@ -315,29 +349,50 @@ function! s:HijackMotion(modes, motion, motion_family)
   return motion_plug
 endfunction
 
-function! s:HijackMotions(modes, backward, forward, motion_family)
-  " Introduce a plugged version of the backward and forward mapping
-  " Replace the backward and forward mapping by
-  " a backward and forward mapping that use the CustomMotion method
-  " that use the plugged version of the mapping to make the original motion
+function! s:HijackMotions(modes, backward, forward, motion, motion_plug, motion_family)
+  " Introduce a plugged version of the backward and forward motions
+  " Replace the backward and forward motion by
+  " a backward and forward motion that use the CustomMotion method
+  " that use the plugged version of the motion to execute the original motion
 
-  let backward_plug = s:HijackMotion(a:modes, a:backward, "backward" . a:motion_family)
-  let forward_plug = s:HijackMotion(a:modes, a:forward, "forward" . a:motion_family)
+  if a:motion == ''
+    let backward_plug = s:HijackMotion(a:modes, a:backward, "backward" . a:motion_family)
+    let forward_plug = s:HijackMotion(a:modes, a:forward, "forward" . a:motion_family)
+
+    let motion_plug = ''
+  else
+    let backward_plug = a:backward
+    let forward_plug = a:forward
+
+    let motion_plug = a:motion_plug
+    if motion_plug == ''
+      let motion_plug = s:HijackMotion(a:modes, a:motion, "motion" . a:motion_family)
+    endif
+  endif
 
   for mode in split(a:modes, '\zs')
-    let mapping = {}
-    let mapping.lhs = a:backward
-    let mapping.mode = mode
-    let mapping.buffer = 1
-    call add(b:added_mappings, mapping)
-    execute mode . 'map <buffer> <silent> <expr> ' . a:backward . " <SID>CustomMotion(0, '" . backward_plug . "', '" . forward_plug . "', '" . a:motion_family . "')"
+    if a:motion == ''
+      let mapping = {}
+      let mapping.lhs = a:backward
+      let mapping.mode = mode
+      let mapping.buffer = 1
+      call add(b:added_mappings, mapping)
+      execute mode . 'map <buffer> <silent> <expr> ' . a:backward . " <SID>CustomMotion(0, '" . backward_plug . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
 
-    let mapping = {}
-    let mapping.lhs = a:forward
-    let mapping.mode = mode
-    let mapping.buffer = 1
-    call add(b:added_mappings, mapping)
-    execute mode . 'map <buffer> <silent> <expr> ' . a:forward . " <SID>CustomMotion(1, '" . backward_plug  . "', '" . forward_plug . "', '" . a:motion_family . "')"
+      let mapping = {}
+      let mapping.lhs = a:forward
+      let mapping.mode = mode
+      let mapping.buffer = 1
+      call add(b:added_mappings, mapping)
+      execute mode . 'map <buffer> <silent> <expr> ' . a:forward . " <SID>CustomMotion(1, '" . backward_plug  . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
+    else
+      let mapping = {}
+      let mapping.lhs = a:motion
+      let mapping.mode = mode
+      let mapping.buffer = 1
+      call add(b:added_mappings, mapping)
+      execute mode . 'map <buffer> <silent> <expr> ' . a:motion . " <SID>CustomMotion(2, '" . backward_plug  . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
+    endif
   endfor
 endfunction
 
@@ -375,23 +430,48 @@ function! RemotionsResetMappings()
   call s:Log('RemotionsResetMappings() ->')
 endfunction
 
-function! s:BufNew()
-  echom 'BufNew: ' . bufnr('%') . ', ' . expand('<abuf>')
-  call s:SetMappings()
-endfunction
-
 function! s:SetMappings()
+  call s:Log("SetMappings()")
+
   call RemotionsResetMappings()
 
   for motion_family in keys(g:remotions_motions)
-    if motion_family ==# 'EeFf'
+    if motion_family ==# 'TtFf'
       continue
     endif
-    call s:HijackMotions('nv', g:remotions_motions[motion_family].backward, g:remotions_motions[motion_family].forward, motion_family)
+    let motion = ''
+    if has_key(g:remotions_motions[motion_family], 'motion')
+      let motion = g:remotions_motions[motion_family].motion
+    endif
+    let motion_plug = ''
+    if has_key(g:remotions_motions[motion_family], 'motion_plug')
+      let motion_plug = g:remotions_motions[motion_family].motion_plug
+    endif
+    call s:HijackMotions('nv', g:remotions_motions[motion_family].backward, g:remotions_motions[motion_family].forward, motion, motion_plug, motion_family)
   endfor
+
+  call s:Log("SetMappings() ->")
+endfunction
+
+function s:BufNew()
+  " Not working since:
+  " - bufnr('%') != expand('<abuf>')
+  " - can't switch buffer in this call back
+endfunction
+
+function s:BufEnter()
+  if &filetype != ''
+    return
+  endif
+  if exists('b:added_mappings')
+    return
+  endif
+  call s:SetMappings()
 endfunction
 
 function! s:SetFileType()
+  call s:Log("SetFileType()")
+
   call s:SetMappings()
   if !exists('b:undo_ftplugin')
     let b:undo_ftplugin = ''
@@ -400,12 +480,15 @@ function! s:SetFileType()
   " Otherwise the RemotionsResetMapping that comes with SetMapping could
   " unset some of the filetype mappings
   let b:undo_ftplugin = 'call RemotionsResetMappings()|' . b:undo_ftplugin
+
+  call s:Log("SetFileType() ->")
 endfunction
 
 augroup remotions
   " Make sure the mapping are reset one time per buffer
   " By creating only one callback
   autocmd!
-  autocmd BufNew * call <SID>BufNew()
+  " autocmd BufNew * call <SID>BufNew()
+  autocmd BufEnter * call <SID>BufEnter()
   autocmd FileType * call <SID>SetFileType()
 augroup END

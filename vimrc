@@ -32,6 +32,9 @@ silent! endwhile
 " Allow backspacing over everything in insert mode.
 set backspace=indent,eol,start
 
+" Let the cursor move the previous/next line when crossing the start/end of the line
+set whichwrap+=<,>,h,l,[,]
+
 " Set command history to 1000
 set history=1000		" keep 1000 lines of command line history
 
@@ -108,7 +111,8 @@ if 1
   " 'cindent' is on in C files, etc.
   " Also load indent files, to automatically do language-dependent indenting.
   " Revert with ":filetype off".
-  " Make the "vimviles/ftdetect" folder used to set filetype
+  " Make the "$VIMRUNTIME/filetype.vim" script to set filetype
+  " Make the "~/vimviles/ftdetect" folder used to set filetype
   filetype on
 
   " Make the "vimviles/ftplugin" folder used when a filetype is detected
@@ -819,21 +823,25 @@ if 1
   " 2.1.1. Color Scheme
   " ------------------
 
-  call s:activate('vim_gruvbox')
+  " call s:activate('vim_gruvbox')
 
-  call s:activate('Vim_color_solarized')
+  " call s:activate('Vim_color_solarized')
 
-  call s:activate('tokyonight')
+  " call s:activate('tokyonight')
 
-  call s:activate('onedark')
+  " call s:activate('onedark')
 
-  call s:activate('catppuccin')
+  " call s:activate('catppuccin')
 
   " call s:activate('molokai')
 
   " call s:activate('papercolor')
 
   call s:activate('nord_vim')
+
+  if has('nvim')
+    call s:activate('rose_pine')
+  endif
 
   " call s:activate('everforest')
 
@@ -898,13 +906,15 @@ if 1
 
   " Improved Text Objects
   " - Multiple line strings
-  call s:activate('target_vim')
+  " Remark: seems buggy with nested brace on multilines
+  " see [issue#228](https://github.com/wellle/targets.vim/issues/288)
+  " call s:activate('target_vim')
 
   " - Indentation block
-  call s:activate('vim_ident_object')
+  " call s:activate('vim_ident_object')
 
   " Text object and motions for Python code
-  call s:activate('vim_pythonsense')
+  " call s:activate('vim_pythonsense')
 
   " Indentation moves (seems to be buggy):
   " [- parent indentation
@@ -926,13 +936,13 @@ if 1
 
   " Allows you to close buffer without closing the corresponding window
   " Introducing the :Bd command
-  " call s:activate('vim_bbye')
+  call s:activate('vim_bbye')
 
   " Re-size windows
   " call s:activate('winresizer')
 
   " Split management
-  " call s:activate('vim_maximizer')
+  call s:activate('vim_maximizer')
 
   " Allow to run vim in full screen
   " call s:activate('vim_fullscreen')
@@ -950,6 +960,10 @@ if 1
 
   " Highlight the yanked text:
   " call s:activate('vim_illuminate')
+  " Vim is slow on buffer with long lines
+  " Changing the synmaxcol from 3000 (the default) to 300 improve the
+  " performance
+  set synmaxcol=300
 
   " Introduce Move and change Delete:
   " call s:activate('vim_cutlass')
@@ -1008,7 +1022,7 @@ if 1
   " Help to find Unicode characters
   " Remark:
   " - Seems to be broken on Windows (23/03/2023)
-  call s:activate('unicode_helper')
+  " call s:activate('unicode_helper')
 
   " Help to understand Unicode characters
   " call s:activate('vim_characterize')
@@ -1055,16 +1069,24 @@ if 1
 
   " call s:activate('vim_peekaboo')
 
+  " Distraction free mode:
+  " call s:activate('goyo')
+
+  " Distraction free colorization of the other paragraphs
+  " call s:activate('limelight')
+
   " Basic large files support
   " Make large files not slowing down vim as much as possible
   " call s:activate('large_file')
 
+  call s:activate('argumentative')
+
   " Add the CheckHealth command to Vim
   if !has('nvim')
-    call s:activate('checkhealth')
+    " call s:activate('checkhealth')
   endif
 
-  call s:activate('startuptime')
+  " call s:activate('startuptime')
 
   " Register visibility
   " Ensure the context lines keep being visible
@@ -1075,6 +1097,8 @@ if 1
 
   " Add database query support
   call s:activate('vim_dadbod')
+
+  " call s:activate('vim_dadbod_completion')
 
   " call s:activate('vim_dadbod_ui')
 
@@ -1099,9 +1123,11 @@ if 1
   " call s:activate('codi_vim')
 
   " Tridactyl Firefox add-on support
-  call s:activate('vim_tridactyl')
+  " call s:activate('vim_tridactyl')
 
-  call s:activate('vim_orpheus')
+  " call s:activate('vim_orpheus')
+
+  " call s:activate('vim_be_good')
 
   " 2.3. File Browsing
   " ------------------
@@ -1229,7 +1255,7 @@ if 1
   " ---------------
 
   " Introduces the Diffthis command that let you compare range of buffers
-  call s:activate('spotdiff')
+  " call s:activate('spotdiff')
 
 
   " 2.8. Git
@@ -1250,8 +1276,8 @@ if 1
   " Remarks:
   " - Only for Git
   " - Only for Neovim
-  if !has('nvim')
-    " call s:activate('gitsigns')
+  if has('nvim')
+    call s:activate('gitsigns')
   endif
 
   call s:activate('vim_gitgutter')
@@ -1525,7 +1551,7 @@ if 1
   call s:activate('vim_scriptease')
 
   " Helper to debug vim scripts
-  call s:activate('lh_vim_lib')
+  " call s:activate('lh_vim_lib')
 
   " Helper to analyze syntax
   " Remark:
@@ -1575,7 +1601,7 @@ if 1
 
   call s:activate('vim_log_highligthing')
 
-  call s:activate('ansiesc')
+  " call s:activate('ansiesc')
 
 " 2.23.7 TeX/LaTeX
 " ----------------
@@ -1639,6 +1665,10 @@ endif
 if s:isactive('nord_vim')
   " Plug 'nordtheme/vim'
   Plug 'nordtheme/vim', {'as': 'nordtheme'}
+endif
+
+if s:isactive('rose_pine')
+  Plug 'rose-pine/neovim', {'as': 'rose-pine'}
 endif
 
 if s:isactive('everforest')
@@ -1735,7 +1765,8 @@ if s:isactive('repeatable_motion')
 endif
 
 if s:isactive('vim_remotions')
-  Plug 'vds2212/vim-remotions'
+  " Plug 'vds2212/vim-remotions'
+  packadd vim-remotions
 endif
 
 " 2.2.4. Text Objects
@@ -1932,9 +1963,21 @@ if s:isactive('vim_peekaboo')
   Plug 'junegunn/vim-peekaboo'
 endif
 
+if s:isactive('goyo')
+  Plug 'junegunn/goyo.vim'
+endif
+
+if s:isactive('limelight')
+  Plug 'junegunn/limelight.vim'
+endif
+
 " Basic large files support
 if s:isactive('large_file')
   Plug '~/_vimfiles/plugged/LargeFile'
+endif
+
+if s:isactive('argumentative')
+  Plug 'PeterRincker/vim-argumentative'
 endif
 
 if s:isactive('checkhealth')
@@ -1958,6 +2001,10 @@ endif
 
 if s:isactive('vim_dadbod')
   Plug 'tpope/vim-dadbod'
+endif
+
+if s:isactive('vim_dadbod_completion')
+  Plug 'kristijanhusak/vim-dadbod-completion'
 endif
 
 if s:isactive('vim_dadbod_ui')
@@ -1995,6 +2042,10 @@ endif
 
 if s:isactive('vim_orpheus')
   Plug 'vds2212/vim-orpheus'
+endif
+
+if s:isactive('vim_be_good')
+  Plug 'ThePrimeagen/vim-be-good'
 endif
 
 " 2.3. File Browsing
@@ -2366,6 +2417,8 @@ if s:isactive('lsp')
   Plug 'hrsh7th/nvim-cmp'
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'jose-elias-alvarez/null-ls.nvim'
+
+  nnoremap <leader>tj <cmd>:lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<cr>
 endif
 
 if s:isactive('r_nvim')
@@ -2662,8 +2715,8 @@ function! GetColorSchemes()
    \)))
 endfunction
 
+let s:schemes = GetColorSchemes()
 if s:isactive('gui_running') || has('unix')
-  let s:schemes = GetColorSchemes()
 
   if s:isactive('nord_vim') && index(s:schemes, 'nord') >= 0
     colorscheme nord
@@ -2671,23 +2724,10 @@ if s:isactive('gui_running') || has('unix')
 
   if s:isactive('nord_vim')
     " Make the search background a bit less bright:
-    hi Search guibg=#67909e guifg=#2e3440
+    autocmd ColorScheme nord hi Search guibg=#67909e guifg=#2e3440
 
     " Make the foreground color of the folded line more bright:
-    hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
-
-    " Don't change the color of bad spelled words (only the underline)
-    " Using Nord colors
-    " hi clear SpellBad
-    " hi SpellBad term=reverse cterm=underline gui=undercurl guisp=#BF616A
-    " hi clear SpellCap
-    " hi SpellCap term=reverse cterm=underline gui=undercurl guisp=#EBCB8B
-    " hi clear SpellLocal
-    " hi SpellLocal term=reverse cterm=underline gui=undercurl guisp=#E5E9F0
-    " hi clear SpellRare
-    " hi SpellRare term=reverse cterm=underline gui=undercurl guisp=#ECEFF4
-    " hi clear DiagnosticUnderlineError
-    " hi DiagnosticUnderlineError cterm=underline gui=undercurl guisp=#bf616a
+    autocmd ColorScheme nord hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
   endif
 else
   " Seems that termguicolors and nord colorscheme work well on Windows console
@@ -2811,6 +2851,10 @@ if s:isactive('vim_lightline')
           \             [ 'fileformat', 'fileencoding', 'filetype' ], ]
           \ },
           \}
+  endif
+
+  if s:isactive('nord_vim') && index(s:schemes, 'nord') >= 0
+    let g:lightline.colorscheme = 'nord'
   endif
 endif
 
@@ -2983,7 +3027,7 @@ if s:isactive('vim_remotions')
   let g:remotions_repeat_count = 1
 
   let g:remotions_motions = {
-        \ 'EeFf' : {},
+        \ 'TtFf' : {},
         \ 'para' : { 'backward' : '{', 'forward' : '}' },
         \ 'sentence' : { 'backward' : '(', 'forward' : ')' },
         \ 'change' : { 'backward' : 'g,', 'forward' : 'g;' },
@@ -2996,16 +3040,18 @@ if s:isactive('vim_remotions')
         \    'backward' : 'k',
         \    'forward' : 'j',
         \    'repeat_if_count' : 1,
-        \    'repeat_count': 1
         \ },
         \
         \ 'displayline' : {
         \    'backward' : 'gk',
         \    'forward' : 'gj',
-        \    'repeat_count': 1
         \ },
         \
         \ 'undo' : { 'backward' : 'u', 'forward' : '<C-r>', 'direction' : 1 },
+        \
+        \ 'linescroll' : { 'backward' : '<C-e>', 'forward' : '<C-y>' },
+        \ 'columnscroll' : { 'backward' : 'zh', 'forward' : 'zl' },
+        \ 'columnsscroll' : { 'backward' : 'zH', 'forward' : 'zL' },
         \
         \ 'vsplit' : { 'backward' : '<C-w><', 'forward' : '<C-w>>', 'direction' : 1 },
         \ 'hsplit' : { 'backward' : '<C-w>-', 'forward' : '<C-w>+', 'direction' : 1 },
@@ -3801,24 +3847,25 @@ if s:isactive('nerdtree')
   " It seems that <S-F10> can't be assigned to NerdTree
   " let NERDTreeMapMenu = '<S-F10>'
   let NERDTreeMapMenu = '<F2>'
+  let NERDTreeMapChangeRoot = 'D'
 
   " Allow to explore:
   " - Current working directory with :E .
   " - Local file directory with :E
-function! NERDTreeExplore(...)
-  if a:0 == 0
-    NERDTree %:p:h
-  else
-    if isdirectory(a:1)
-      execute printf("NERDTree %s", a:1)
+  function! NERDTreeExplore(...)
+    if a:0 == 0
+      NERDTree %:p:h
     else
-      call LeaveSideBar()
-      execute printf("e %s", a:1)
+      if isdirectory(a:1)
+        execute printf("NERDTree %s", a:1)
+      else
+        call LeaveSideBar()
+        execute printf("e %s", a:1)
+      endif
     endif
-  endif
-endfunction
+  endfunction
 
-command! -nargs=* -complete=file E call NERDTreeExplore(<f-args>)
+  command! -nargs=* -complete=file E call NERDTreeExplore(<f-args>)
 
   " More information with: :help NERDTree.txt
 endif
@@ -3900,6 +3947,8 @@ endif
 " 2.4. Sessions
 " -------------
 
+let g:sessions_dir = GetVimDataFolder() .. 'session'
+
 " Obsession plugin settings:
 " --------------------------
 
@@ -3932,7 +3981,6 @@ if s:isactive('session')
   if !isdirectory(g:sessions_dir)
     call mkdir(g:sessions_dir)
   endif
-  let g:sessions_dir = GetVimDataFolder() .. 'session'
 
   if has('unix')
       call mkdir(g:sessions_dir, "p", 0700)j
@@ -4119,7 +4167,6 @@ endif
 " Remark: currently not used
 if s:isactive('vim_gitgutter')
   if has('win32')
-    " let g:gitgutter_git_executable = 'C:/Program Files/Git/bin/git.exe'
     " let g:gitgutter_git_executable = 'C:/Progra~1/Git/bin/git.exe'
     let g:gitgutter_git_executable = fnamemodify('C:/Program Files/Git/bin/git.exe', ':8')
   endif
@@ -4380,9 +4427,9 @@ if s:isactive('tagbar')
   let g:tagbar_iconchars = ['●', '▼']
   " let g:tagbar_ctags_bin = "C:\\Softs\\ctags.exe"
 
-  hi TagbarVisibilityPublic guifg=#7b8b93 ctermfg=Grey
-  hi TagbarVisibilityProtected guifg=#7b8b93 ctermfg=Grey
-  hi TagbarVisibilityPrivate guifg=#7b8b93 ctermfg=Grey
+  autocmd ColorScheme nord hi TagbarVisibilityPublic guifg=#7b8b93 ctermfg=Grey
+  autocmd ColorScheme nord hi TagbarVisibilityProtected guifg=#7b8b93 ctermfg=Grey
+  autocmd ColorScheme nord hi TagbarVisibilityPrivate guifg=#7b8b93 ctermfg=Grey
 
   " hi TagbarScope guifg=#7b8b93 ctermfg=Grey
 
@@ -4788,13 +4835,13 @@ if s:isactive('coc_nvim')
   "   \ }
   if s:isactive('nord_vim')
     " Adaptation to the nord theme
-    hi CocErrorSign guifg = #bf616a
-    hi CocErrorVirtualText guifg=#bf616a
-    " hi CocErrorLine guifg=#bf616a
+    " autocmd ColorScheme nord hi CocErrorSign guifg = #bf616a
+    " autocmd ColorScheme nord hi CocErrorVirtualText guifg=#bf616a
+    " " autocmd ColorScheme nord hi CocErrorLine guifg=#bf616a
 
-    hi CocWarningSign guifg=#d08770
-    hi CocWarningVirtualText guifg=#d08770
-    " hi CocWarningLine guifg=#d08770
+    " autocmd ColorScheme nord hi CocWarningSign guifg=#d08770
+    " autocmd ColorScheme nord hi CocWarningVirtualText guifg=#d08770
+    " " autocmd ColorScheme nord hi CocWarningLine guifg=#d08770
   endif
 
   " More information with: :help coc-nvim
@@ -4876,6 +4923,11 @@ endif
 
 if s:isactive('vim_isort')
   " let g:vim_isort_map = '<C-i>'
+  " Depends on:
+  " - pip install isort
+  " Where pip is the version associated to Vim
+  " To know which version of Python is associated with Vim execute:
+  " :py3 print(sys.version)
   let g:vim_isort_map = ''
   let g:vim_isort_python_version = 'python3'
 endif
@@ -5333,11 +5385,11 @@ if s:isactive('csv')
   let g:csv_no_column_highlight = 0
   if s:isactive('nord_vim')
     " Adaptation to the nord theme
-    hi CSVDelimiter guifg=#616E88 guibg=#2E3440
-    hi CSVColumnEven guifg=#D8DEE9 guibg=#434c5e
-    hi CSVColumnOdd guifg=#D8DEE9 guibg=#2E3440
-    hi CSVColumnHeaderEven guifg=#D8DEE9 guibg=#434c5e
-    hi CSVColumnHeaderOdd guifg=#D8DEE9 guibg=#2E3440
+    " autocmd ColorScheme nord hi CSVDelimiter guifg=#616E88 guibg=#2E3440
+    " autocmd ColorScheme nord hi CSVColumnEven guifg=#D8DEE9 guibg=#434c5e
+    " autocmd ColorScheme nord hi CSVColumnOdd guifg=#D8DEE9 guibg=#2E3440
+    " autocmd ColorScheme nord hi CSVColumnHeaderEven guifg=#D8DEE9 guibg=#434c5e
+    " autocmd ColorScheme nord hi CSVColumnHeaderOdd guifg=#D8DEE9 guibg=#2E3440
   endif
 
   " command! SetDelim execute 'NewDelimiter ' . getline('.')[col('.') - 1]
@@ -5606,6 +5658,9 @@ if has('nvim')
   cnoremap <C-¨> <Esc>
 endif
 
+" On Belgian keyboard <C-^> is nearly impossible to get
+nnoremap <C-§> <C-^>
+
 " Faster scrolling (by 3 lines)
 " nnoremap <C-e> 3<C-e>
 " nnoremap <C-y> 3<C-y>
@@ -5616,11 +5671,20 @@ endif
 set nostartofline
 
 " Align the $ motion in Normal and Visual mode
-vnoremap $ $h
+" Don't make the mapping for Visual blockwise since $ has a very special
+" meaning in that context
+vnoremap <expr> $ (mode() ==# 'v') ? '$h' : '$'
 
 " Define config_files to fasten the use of the :vim command
 abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
 
+" Ignore compiled files
+set wildignore=*.o,*.obj,*~,*.pyc,*.pyd
+if has("win16") || has("win32")
+    set wildignore+=.git\*,.hg\*,.svn\*
+else
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
 set wildignore+=Tests/**
 
 " Add a Diff command to compare with the disk buffer
@@ -5649,7 +5713,7 @@ command! DecreaseFont :let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\
 
 " Maximize the current window without deleting the other windows:
 if !s:isactive('vim_maximizer')
-  nnoremap <C-w>m <cmd>500wincmd ><bar>500wincmd +<cr>
+  " nnoremap <C-w>m <cmd>500wincmd ><bar>500wincmd +<cr>
 endif
 
 " Leave terminal with Ctrl-q
@@ -5693,7 +5757,7 @@ hi DimNormal guibg=#1b212c
 if !has('nvim')
   augroup ActiveWin | au!
     au WinEnter,BufEnter,BufWinEnter * setlocal wincolor=
-    au WinLeave,BufLeave * setlocal wincolor=DimNormal
+    au WinLeave,BufLeave * if getwinvar(winnr(), '&diff')==0 | setlocal wincolor=DimNormal | endif
   augroup END
 endif
 
@@ -5728,81 +5792,97 @@ function! IsSideBar(buf_nr)
 " - The help
 " - The NERDTree side bar
 " - ...
-  let buf_name = bufname(a:buf_nr)
-  let buf_type = getbufvar(a:buf_nr, '&filetype')
-  let readonly = getbufvar(a:buf_nr, '&readonly')
+  let listed = getbufvar(a:buf_nr, '&buflisted')
+  let buf_type = getbufvar(a:buf_nr, '&buftype')
+  " let readonly = getbufvar(a:buf_nr, '&readonly')
+  " let buf_name = bufname(a:buf_nr)
+  " let file_type = getbufvar(a:buf_nr, '&filetype')
 
-  if !has('nvim')
-    " Neovim doesn't support the term_list function
-    let term_buffers = term_list()
-  else
-    let term_buffers = []
-  endif
+  " if !has('nvim')
+  "   " Neovim doesn't support the term_list function
+  "   let term_buffers = term_list()
+  " else
+  "   let term_buffers = []
+  " endif
 
   " if readonly
   "   return 1
 
-  if buf_type ==# 'qf'
-    " QuickFix, LocationList:
-    " Not Read Only
-    echom 'QuickFix'
+  if !listed
     return 1
+  endif
+
+  if buf_type ==# 'terminal'
+    return 1
+  endif
+
+  if buf_type ==# 'quickfix'
+    return 1
+  endif
+
+  return 0
+
+  " if file_type ==# 'qf'
+  "   " QuickFix, LocationList:
+  "   " Not Read Only
+  "   echom 'QuickFix'
+  "   return 1
 
   " There are situation where the only buffer you have is help and you are
   " fine with it :-)
-  " elseif buf_type ==# 'help'
+  " elseif file_type ==# 'help'
   "   " Read Only
   "   " Help Window:
   "   " echom 'Help'
   "   return 1
 
-  elseif buf_type ==# 'undotree'
-    " Not Read Only
-    " echom 'UndoTree'
-    return 1
+  " elseif file_type ==# 'undotree'
+  "   " Not Read Only
+  "   " echom 'UndoTree'
+  "   return 1
 
-  elseif buf_type ==# 'tagbar'
-    " Not Read Only
-    " echom 'TagBar'
-    return 1
+  " elseif file_type ==# 'tagbar'
+  "   " Not Read Only
+  "   " echom 'TagBar'
+  "   return 1
 
-  elseif buf_type ==# 'nerdtree'
-    " Read Only
-    " echom 'NerdTree'
-    return 1
+  " elseif file_type ==# 'nerdtree'
+  "   " Read Only
+  "   " echom 'NerdTree'
+  "   return 1
 
-  elseif buf_type ==# "fern"
-    " Read Only
-    " echom 'Fern'
-    return 1
+  " elseif file_type ==# "fern"
+  "   " Read Only
+  "   " echom 'Fern'
+  "   return 1
 
-  elseif buf_name =~# 'vimspector.Variables\(\[\d\+\]\)\?$'
-    " Read Only
-    " echom 'vimspector.Variables'
-    return 1
+  " elseif buf_name =~# 'vimspector.Variables\(\[\d\+\]\)\?$'
+  "   " Read Only
+  "   " echom 'vimspector.Variables'
+  "   return 1
 
-  elseif buf_type ==# 'vimspectorPrompt'
-    return 1
+  " elseif file_type ==# 'vimspectorPrompt'
+  "   return 1
 
-  elseif buf_name =~# 'vimspector.Watches\(\[\d\+\]\)\?$'
-    " Not Read Only
-    " echom 'vimspector.Watches'
-    return 1
+  " elseif buf_name =~# 'vimspector.Watches\(\[\d\+\]\)\?$'
+  "   " Not Read Only
+  "   " echom 'vimspector.Watches'
+  "   return 1
 
-  elseif buf_name =~# 'vimspector.StackTrace\(\[\d\+\]\)\?$'
-    " Read Only
-    " echom 'vimspector.StackTrace'
-    return 1
+  " elseif buf_name =~# 'vimspector.StackTrace\(\[\d\+\]\)\?$'
+  "   " Read Only
+  "   " echom 'vimspector.StackTrace'
+  "   return 1
 
-  elseif buf_name =~# 'vimspector.Console\(\[\d\+\]\)\?$'
-    " Not Read Only
-    " echom 'vimspector.Console'
-    return 1
+  " elseif buf_name =~# 'vimspector.Console\(\[\d\+\]\)\?$'
+  "   " Not Read Only
+  "   " echom 'vimspector.Console'
+  "   return 1
 
-  elseif buf_type ==# 'ctrlsf'
-    " Not Read Only
-    " echom 'vimspector.Console'
-    return 1
+  " elseif file_type ==# 'ctrlsf'
+  "   " Not Read Only
+  "   " echom 'vimspector.Console'
+  "   return 1
 
   " elseif buf_name ==# '!python'
   "   " Not Read Only
@@ -5816,14 +5896,14 @@ function! IsSideBar(buf_nr)
   "   " Not Read Only
   "   return 1
 
-  elseif index(term_buffers, a:buf_nr) >= 0
-    " echom 'Console'
-    return 1
+  " elseif index(term_buffers, a:buf_nr) >= 0
+  "   " echom 'Console'
+  "   return 1
 
-  else
-    return 0
+  " else
+  "   return 0
 
-  endif
+  " endif
 endfunction
 
 function! LeaveSideBar()
@@ -6083,5 +6163,7 @@ command! VimClippy call s:vimclippy()
 endif
 
 " Ignore Caffeine input
+cnoremap <C-F15> <Nop>
+inoremap <C-F15> <Nop>
 cnoremap <F15> <Nop>
 inoremap <F15> <Nop>

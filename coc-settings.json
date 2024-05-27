@@ -1,4 +1,5 @@
 {
+    "http.proxyStrictSSL": false,
     "diagnostic.errorSign": "⚡",
     "diagnostic.warningSign": "▲",
     "diagnostic.infoSign": "?",
