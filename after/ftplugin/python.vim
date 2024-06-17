@@ -30,6 +30,3 @@ setlocal formatoptions+=j
 
 " Configure the command that will be executed by the gq command
 setlocal formatprg=python\ -m\ macchiato
-
-let b:name = 'python-grr'
-

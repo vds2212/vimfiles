@@ -74,10 +74,19 @@ endif
 " confusing.
 set nrformats-=octal
 
-" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries.
+" For Win32 GUI:
+" remove 't' flag from 'guioptions': no tearoff menu entries.
+" add '!' flag to guioptions so external commands are run in a terminal
 if has('win32')
   set guioptions-=t
+  if has("terminal")
+    set guioptions+=!
+  endif
 endif
+
+" do not include 'i' in complete option, it may slow down Vim because it
+" has to scan all included files
+set complete-=i
 
 " Don't use Q for Ex mode, use it for formatting.  Except for Select mode.
 " Revert with ":unmap Q".
@@ -308,7 +317,7 @@ set shortmess-=S
 set foldlevel=999
 
 " Search a string that can't be fond to stop highlighting search
-command! Noh :s/91385034739874398234/
+command! Noh s/91385034739874398234/
 
 " Automatically translate é into @ in normal mode
 " But not in
@@ -555,14 +564,24 @@ set linebreak
 " - Modified flag (+ | -)
 set guitablabel=[%N]\ %t\ %M
 
-" Move between splits
+" Move between splits with Ctrl motion keys:
 " Remark:
 " - Terminal do not support these moves
-" - CtrlSF override them
-" nnoremap <C-h> <C-w>h
-" nnoremap <C-j> <C-w>j
-" nnoremap <C-k> <C-w>k
-" nnoremap <C-l> <C-w>l
+" - CtrlSF overrides them
+if 0
+  nnoremap <C-h> <C-w>h
+  nnoremap <C-j> <C-w>j
+  nnoremap <C-k> <C-w>k
+  nnoremap <C-l> <C-w>l
+  tnoremap <C-h> <C-w>h
+  tnoremap <C-j> <C-w>j
+  tnoremap <C-k> <C-w>k
+  tnoremap <C-l> <C-w>l
+  autocmd! FileType netrw nnoremap <buffer> <C-h> <C-w>h
+  autocmd! FileType netrw nnoremap <buffer> <C-j> <C-w>j
+  autocmd! FileType netrw nnoremap <buffer> <C-k> <C-w>k
+  autocmd! FileType netrw nnoremap <buffer> <C-l> <C-w>l
+endif
 
 " Restore Vim to its previous size and position
 if s:gui_running
@@ -1067,6 +1086,7 @@ if 1
   " Hint about keyboard shortcuts
   " call s:activate('which_key')
 
+  " Register visibility
   " call s:activate('vim_peekaboo')
 
   " Distraction free mode:
@@ -1088,7 +1108,6 @@ if 1
 
   " call s:activate('startuptime')
 
-  " Register visibility
   " Ensure the context lines keep being visible
   call s:activate('context')
 
@@ -1250,7 +1269,7 @@ if 1
   " Introduces the DiffOrig command that compare the current file with the
   " saved version
   " call s:activate('difforig')
-  
+
   " 2.7.3 Spot Diff
   " ---------------
 
@@ -1495,7 +1514,10 @@ if 1
   " call s:activate('lightbulb')
 
   if has('nvim')
-    call s:activate('treesitter')
+    " call s:activate('treesitter')
+    " Remark:
+    " A TSUpdateSync call maybe necessary to update your language parser
+    " A TSUpdate call maybe necessary to update your language parser
   endif
 
   " 2.18.2. Linting Mark
@@ -1625,6 +1647,7 @@ let s:nord_vim = 1
 if s:isactive('matchit_legacy')
   runtime macros/matchit.vim
 endif
+
 
 call plug#begin()
 
@@ -2567,6 +2590,7 @@ if s:isactive('vimspector')
 endif
 
 if s:isactive('nvim_dap')
+  Plug 'nvim-neotest/nvim-nio'
   Plug 'mfussenegger/nvim-dap'
   Plug 'rcarriga/nvim-dap-ui'
   Plug 'mfussenegger/nvim-dap-python'
@@ -3047,8 +3071,6 @@ if s:isactive('vim_remotions')
         \    'forward' : 'gj',
         \ },
         \
-        \ 'undo' : { 'backward' : 'u', 'forward' : '<C-r>', 'direction' : 1 },
-        \
         \ 'linescroll' : { 'backward' : '<C-e>', 'forward' : '<C-y>' },
         \ 'columnscroll' : { 'backward' : 'zh', 'forward' : 'zl' },
         \ 'columnsscroll' : { 'backward' : 'zH', 'forward' : 'zL' },
@@ -3127,7 +3149,7 @@ if s:isactive('vim_startify')
         \]
 
   " Add SName command to display the current session name
-  command! SName :echo v:this_session
+  command! SName echo v:this_session
 
   " More information with: :help startify
 endif
@@ -3691,16 +3713,34 @@ if s:isactive('bufexplorer')
   let g:bufExplorerSplitRight=0
 endif
 
-
 " 2.3.3. File searching
 " --------------------
 
 function! ToggleQuickFix()
-    if empty(filter(getwininfo(), 'v:val.quickfix'))
-        copen
-    else
-        cclose
+  if empty(filter(getwininfo(), 'v:val.quickfix')) && ctrlsf#win#FindMainWindow() == -1
+    if !exists('g:bottom_bar') || g:bottom_bar ==# 'quickfix'
+      copen
+    elseif g:bottom_bar ==# 'location'
+      lopen
+    elseif g:bottom_bar ==# 'ctrlsf'
+      CtrlSFOpen
     endif
+  else
+    if !empty(filter(getwininfo(), 'v:val.quickfix && !v:val.loclist'))
+      let g:bottom_bar = 'quickfix'
+      cclose
+    endif
+    if !empty(filter(getwininfo(), 'v:val.quickfix && v:val.loclist'))
+      let g:bottom_bar = 'location'
+      lclose
+    endif 
+    if s:isactive('ctrlsf') && ctrlsf#win#FindMainWindow() != -1
+      let g:bottom_bar = 'ctrlsf'
+      CtrlSFClose
+      " Trick to force the redraw of the cmdheight:
+      let &cmdheight=&cmdheight
+    endif
+  endif
 endfunction
 
 " Ack plugin settings:
@@ -3798,7 +3838,8 @@ if s:isactive('ctrlsf')
   nnoremap ]Q <Cmd>call CtrlSFNextFMatch()<CR>
   nnoremap [Q <Cmd>call CtrlSFPreviousFMatch()<CR>
 
-  nnoremap <leader>ts <Cmd>CtrlSFToggle<CR>
+  nnoremap <leader>ts <Cmd>call ToggleQuickFix()<CR>
+  " nnoremap <leader>ts <Cmd>CtrlSFToggle<CR>
 
   " Provide for each solution a Ack command such that it is easier to switch
   " from one to the next
@@ -3865,7 +3906,7 @@ if s:isactive('nerdtree')
     endif
   endfunction
 
-  command! -nargs=* -complete=file E call NERDTreeExplore(<f-args>)
+  command! -nargs=? -complete=file E call NERDTreeExplore(<f-args>)
 
   " More information with: :help NERDTree.txt
 endif
@@ -4200,7 +4241,7 @@ if s:isactive('indentline')
   " Indentline disabled by default
   let g:indentLine_enabled = 1
   let g:indentLine_char = '│'
-  " set listchars+=lead:\ 
+  " set listchars+=lead:\
 
   nnoremap <leader>ti :IndentLinesToggle<CR>
 
@@ -4249,9 +4290,9 @@ if s:isactive('vim_easy_align')
   endfunction
 
   " Add the AlignFormat command
-  command! AlignFormat :call AlignFormat()
+  command! AlignFormat call AlignFormat()
 
-  command! AlignSetup :%EasyAlign /"[^"]*"/dll10
+  command! AlignSetup %EasyAlign /"[^"]*"/dll10
 
   " More information with: :help easy-align.txt
 endif
@@ -4269,10 +4310,19 @@ endif
 if s:isactive('any_fold')
   augroup anyfold
     autocmd!
-    " autocmd Filetype * AnyFoldActivate               " activate for all filetypes
-    " or
-    autocmd Filetype python AnyFoldActivate " activate for python
-    autocmd Filetype tsn AnyFoldActivate " activate for tsn
+    " Activate for all filetypes
+    " autocmd Filetype * AnyFoldActivate
+
+    " Activate for python
+    autocmd Filetype python AnyFoldActivate
+    " Open the fold that correspond to Python classes:
+    " autocmd FileType python g/^class\s\+/norm zo
+
+    " Activate for tsn
+    autocmd Filetype tsn AnyFoldActivate
+
+    " Activate for json
+    autocmd Filetype json AnyFoldActivate
   augroup END
 
   " Disable anyfold movement (e.g. ]])
@@ -4771,14 +4821,14 @@ if s:isactive('coc_nvim')
   xmap <silent> <C-s> <Plug>(coc-range-select)
 
   " Add `:Format` command to format current buffer.
-  command! -nargs=0 Format :call CocActionAsync('format')
-  " command! -nargs=0 Format :call CocActionAsync('format') | CocCommand python.sortImports
+  command! -nargs=0 Format call CocActionAsync('format')
+  " command! -nargs=0 Format call CocActionAsync('format') | CocCommand python.sortImports
 
   " Add `:Fold` command to fold current buffer.
-  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+  command! -nargs=? Fold call     CocAction('fold', <f-args>)
 
   " Add `:OR` command for organize imports of the current buffer.
-  command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+  command! -nargs=0 OR call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
   " Add (Neo)Vim's native statusline support.
   " NOTE: Please see `:h coc-status` for integrations with external plugins that
@@ -4811,7 +4861,7 @@ if s:isactive('coc_nvim')
       CocEnable
     endif
   endfunction
-  command! CocToggle :call CocToggle()
+  command! CocToggle call CocToggle()
 
   " nnoremap <leader>tj <cmd>CocToggle<CR>
   nnoremap <leader>tj <cmd>CocCommand document.toggleInlayHint<CR>
@@ -4846,7 +4896,6 @@ if s:isactive('coc_nvim')
 
   " More information with: :help coc-nvim
 endif
-
 
 " LSP plugin settings:
 " --------------------
@@ -5140,12 +5189,12 @@ if s:isactive('vimspector')
   endfunction
 
   " Add the VimspectorConfig command
-  command! VimspectorConfig :call VimspectorConfig()
+  command! VimspectorConfig call VimspectorConfig()
 
 endif
 
 
-" Nvim-Dab plugin settings:
+" Nvim-Dap plugin settings:
 " -------------------------
 
 if s:isactive('nvim_dap')
@@ -5243,13 +5292,13 @@ lua << EOF
   require('neorg').setup {
       load = {
           -- Loads default behaviour
-          ["core.defaults"] = {}, 
+          ["core.defaults"] = {},
 
           -- Adds pretty icons to your documents
-          ["core.concealer"] = {}, 
+          ["core.concealer"] = {},
 
           -- Manages Neorg workspaces
-          ["core.dirman"] = { 
+          ["core.dirman"] = {
               config = {
                   workspaces = {
                       notes = "~/notes",
@@ -5705,11 +5754,60 @@ endfunction
 command! -nargs=? DiffOrig call DiffOrig(<q-args>)
 
 " Define the H command to display help in a vertical split:
-command! -nargs=1 H :vert help <args>
+command! -nargs=1 H vert help <args>
 
 " Add two command to increase and decrease the font size:
-command! IncreaseFont :let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)+1', '')
-command! DecreaseFont :let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)-1', '')
+function! ChangeFontSize()
+  " let g:columns=&columns
+  " let g:lines=&lines
+  if !exists("g:columns")
+    let g:columns = &columns
+  endif
+  if !exists("g:lines")
+    let g:lines = &lines
+  endif
+
+  let old_size = substitute(v:option_old, '^.*:h\(\d\+\).*$', '\=submatch(1)', '')
+  let new_size = substitute(v:option_new, '^.*:h\(\d\+\).*$', '\=submatch(1)', '')
+
+  let width_factor = str2float(new_size) / str2float(old_size)
+  " echom "width_factor: " . width_factor
+
+  let height_factor = str2float(new_size) / str2float(old_size)
+  let size2pixel = 36.0/20.0
+  " Theoretical approximation:
+  " (line height = 1.5 font height, 1pt = 1/72 inch, 1 px = 1/96 inch)
+  let size2pixel = 1.5 * 16.0/12.0
+  " let height_factor = str2float(new_size * size2pixel + &linespace) / str2float(old_size * size2pixel + &linespace)
+  " echom "height_factor: " . height_factor
+
+  " echom "columns: " . g:columns
+  let &columns = float2nr(round(g:columns / width_factor))
+  let g:columns=&columns
+  " echom "columns: " . &columns
+
+  " echom "lines: " . g:lines
+  " echom "old_size: " . &lines * (old_size * size2pixel + &linespace)
+  let &lines = float2nr(round(g:lines / height_factor))
+  " echom "new_size: " . &lines * (new_size * size2pixel + &linespace)
+  let g:lines=&lines
+  " echom "lines: " . &lines
+endfunction
+
+function! GetScreenSize(timer)
+  let g:columns=&columns
+  let g:lines=&lines
+endfunction
+
+" autocmd VimEnter * let g:columns=&columns|let g:lines=&lines|echom "Lines(S): " . &lines
+" autocmd VimResized * let g:columns=&columns|let g:lines=&lines|echom "Lines(R): " . &lines
+autocmd VimEnter * call timer_start(200, 'GetScreenSize', {'repeat' : 1})
+autocmd VimResized * call timer_start(200, 'GetScreenSize', {'repeat' : 1})
+autocmd OptionSet guifont call ChangeFontSize()
+
+command! -count=1 FontIncrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)+<count>', '')
+command! -count=1 FontDecrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)-<count>', '')
+command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '<args>', '')
 
 " Maximize the current window without deleting the other windows:
 if !s:isactive('vim_maximizer')
@@ -5718,6 +5816,29 @@ endif
 
 " Leave terminal with Ctrl-q
 tnoremap <C-q>  <C-\><C-n>
+
+" Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
+tnoremap <expr> <C-v> getreg('*')
+
+function! StartTerminal(...)
+  if a:0 != 0
+    let newcwd = expand(a:1)
+    echom newcwd
+  endif
+  let term_windows = filter(getwininfo(), 'v:val.terminal')
+  if !len(term_windows)
+    vertical terminal ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
+  else
+    let winnr = term_windows[0].winnr
+    execute winnr . 'wincmd w'
+  endif
+  " This is not changing the shell working directory
+  " if a:0 != 0
+  "   execute 'cd' '"' . newcwd . '"'
+  " endif
+endfunction
+
+command! -nargs=? Term call StartTerminal(<f-args>)
 
 " Make the \z trigger the spell check context menu (floating window)
 nnoremap <Leader>z ea<C-x>s
@@ -5752,12 +5873,24 @@ nnoremap gp `[v`]
 
 " Adapt the color of the inactive window:
 hi DimNormal guibg=#1b212c
+hi DimConsole guifg=#d8dee9 guibg=#1b212c
 " hi DimNormal guibg=#3b4252
 
 if !has('nvim')
+  function! DimWindow()
+    if getwinvar(winnr(), '&diff')==1
+      return
+    endif
+    if getwininfo(win_getid())[0].terminal==1
+      setlocal wincolor=DimConsole
+    else
+      setlocal wincolor=DimNormal
+    endif
+  endfunction
+
   augroup ActiveWin | au!
     au WinEnter,BufEnter,BufWinEnter * setlocal wincolor=
-    au WinLeave,BufLeave * if getwinvar(winnr(), '&diff')==0 | setlocal wincolor=DimNormal | endif
+    au WinLeave,BufLeave * call DimWindow()
   augroup END
 endif
 
@@ -5767,6 +5900,7 @@ augroup CursorLine
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
+
 
 " Add the search clipboard shortcut
 function! SearchClipboard()
@@ -5952,7 +6086,7 @@ function! IsAutoClose(buf_nr)
   " Return 1 if the side bar should already auto close
   let buf_type = getbufvar(a:buf_nr, '&filetype')
 
-  let term_buffers = term_list()
+  " let term_buffers = term_list()
 
   if buf_type ==# 'tagbar'
     " Not Read Only
@@ -5975,7 +6109,11 @@ function! KillSideBars()
   " return
 
   " Delete the terminal buffers that don't correspond to a window
-  let term_buffers = term_list()
+  if has('nvim')
+    let term_buffers = map(filter(getwininfo(), 'v:val.terminal'), 'v:val.winnr')
+  else
+    let term_buffers = term_list()
+  endif
   for buf_nr in term_buffers
     " echom "what about terminal: " . buf_nr
     if len(win_findbuf(buf_nr)) == 0
@@ -5984,7 +6122,11 @@ function! KillSideBars()
     endif
   endfor
 
-  let term_buffers = term_list()
+  if has('nvim')
+    let term_buffers = map(filter(getwininfo(), 'v:val.terminal'), 'v:val.winnr')
+  else
+    let term_buffers = term_list()
+  endif
   let buf_nr = bufnr('%')
   " echom "buffer: " . buf_nr
   if index(term_buffers, buf_nr) >= 0
@@ -6045,7 +6187,7 @@ function! TrimWhitespaces()
 endfunction
 
 " Add the TrimWhitespaces command
-command! TrimWhitespaces :call TrimWhitespaces()
+command! TrimWhitespaces call TrimWhitespaces()
 
 ":call Exec('command')
 "This will include the output of :command into the current buffer.
@@ -6062,14 +6204,27 @@ command! TrimWhitespaces :call TrimWhitespaces()
 " endfunct!
 
 " Add the WipeReg command that wipe out the content of all registers
-" command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
+command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
 
 " Force the detection of the file types to get the correct colorization:
-" command! Detect :filetype detect
+" command! Detect filetype detect
 
 " Add a UnloadNonProjectFiles to close all the buffers
 " that are not child's of the current working directory
 command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
+
+function! CreateDefinition()
+  let state=winsaveview()
+  y
+  normal [{?class\s\+\zs\h\+"cyiw
+  call winrestview(state)
+  e %:p:r.cpp
+  $
+  normal ]p
+  $
+  substitute /\~\?\h\+(/\=@c . '::' . submatch(0)/
+  substitute /;/\r{\r}\r/
+endfunction
 
 " Enable all Python syntax highlighting features
 " let python_highlight_all = 1
@@ -6160,10 +6315,24 @@ function! s:vimclippy() abort
 endfunction
 
 command! VimClippy call s:vimclippy()
+
+command! Explorer silent !open_folder.vbs "%:h"
 endif
 
 " Ignore Caffeine input
-cnoremap <C-F15> <Nop>
-inoremap <C-F15> <Nop>
 cnoremap <F15> <Nop>
 inoremap <F15> <Nop>
+cnoremap <M-F15> <Nop>
+inoremap <M-F15> <Nop>
+cnoremap <C-F15> <Nop>
+inoremap <C-F15> <Nop>
+cnoremap <S-F15> <Nop>
+inoremap <S-F15> <Nop>
+cnoremap <M-C-F15> <Nop>
+inoremap <M-C-F15> <Nop>
+cnoremap <M-S-F15> <Nop>
+inoremap <M-S-F15> <Nop>
+cnoremap <C-S-F15> <Nop>
+inoremap <C-S-F15> <Nop>
+cnoremap <M-C-S-F15> <Nop>
+inoremap <M-C-S-F15> <Nop>

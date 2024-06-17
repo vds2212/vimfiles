@@ -5,23 +5,23 @@ let g:remotions_version = "0.1"
 let g:remotions_debug = 0
 
 if !exists("g:remotions_motions")
-  let g:remotions_motions = {
-        \ 'TtFf' : {},
-        \ 'para' : { 'backward' : '{', 'forward' : '}' },
-        \ 'sentence' : { 'backward' : '(', 'forward' : ')' },
-        \ 'change' : { 'backward' : 'g,', 'forward' : 'g;' },
-        \ 'class' : { 'backward' : '[[', 'forward' : ']]' },
-        \ 'classend' : { 'backward' : '[]', 'forward' : '][' },
-        \ 'method' : { 'backward' : '[m', 'forward' : ']m' },
-        \ 'methodend' : { 'backward' : '[M', 'forward' : ']M' },
+  let g:remotions_motions = #{
+        \ TtFf : {},
+        \ para : #{ backward : '#{', forward : '}' },
+        \ sentence : #{ backward : '(', forward : ')' },
+        \ change : #{ backward : 'g,', forward : 'g;' },
+        \ class : #{ backward : '[[', forward : ']]' },
+        \ classend : #{ backward : '[]', forward : '][' },
+        \ method : #{ backward : '[m', forward : ']m' },
+        \ methodend : #{ backward : '[M', forward : ']M' },
         \
-        \ 'arg' : { 'backward' : '[a', 'forward' : ']a', 'doc': 'unimpaired' },
-        \ 'buffer' : { 'backward' : '[b', 'forward' : ']b', 'doc': 'unimpaired' },
-        \ 'location' : { 'backward' : '[l', 'forward' : ']l', 'doc': 'unimpaired' },
-        \ 'quickfix' : { 'backward' : '[q', 'forward' : ']q', 'doc': 'unimpaired' },
-        \ 'tag' : { 'backward' : '[t', 'forward' : ']t', 'doc': 'unimpaired' },
+        \ arg : #{ backward : '[a', forward : ']a', doc : 'unimpaired' },
+        \ buffer : #{ backward : '[b', forward : ']b', doc : 'unimpaired' },
+        \ location : #{ backward : '[l', forward : ']l', doc : 'unimpaired' },
+        \ quickfix : #{ backward : '[q', forward : ']q', doc : 'unimpaired' },
+        \ tag : #{ backward : '[t', forward : ']t', doc : 'unimpaired' },
         \
-        \ 'diagnostic' : { 'backward' : '[g', 'forward' : ']g', 'doc': 'coc-diagnostic' },
+        \ diagnostic : #{ backward : '[g', forward : ']g', doc : 'coc-diagnostic' },
         \ }
 
 " let g:remotions_motions = {
