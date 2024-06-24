@@ -5866,7 +5866,7 @@ function! SwitchToTerminal(name) abort
   if len(win_infos)
     let winnr = win_infos[-1].winnr
 
-    let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'current_dir')=='" . a:name . "'")
+    let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . a:name . "'")
     if len(win_info) > 0
       " If a terminal window exist with the right name switch to it:
       let winnr = win_info[0].winnr
@@ -5884,16 +5884,20 @@ function! SwitchToTerminal(name) abort
 
   let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
   if len(buf_infos)
-    let buf_info = filter(buf_infos, "getbufvar(v:val.bufnr, 'current_dir')=='" . a:name . "'")
+    let buf_info = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . a:name . "'")
     if len(buf_info)
-      execute 'buffer ' .. buf_info[0].bufnr
+      " If a hidden terminal with the right name exist use it:
+      execute 'buffer ' . buf_info[0].bufnr
       return
     endif
   endif
 
+  " Load a new terminal into the window:
   terminal ++curwin ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
   let b:current_dir = a:name
 endfunction
+
+command! Term call SwitchToTerminal(expand('%:p'))
 
 function! ToggleTerm(name)
   let win_infos = filter(getwininfo(), "v:val.terminal")
@@ -5906,8 +5910,6 @@ function! ToggleTerm(name)
     call SwitchToTerminal(a:name)
   endif
 endfunction
-
-command! Term call SwitchToTerminal(expand('%:p'))
 
 nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p'))<CR>
 
