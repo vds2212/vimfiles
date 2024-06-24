@@ -982,7 +982,7 @@ if 1
   " Vim is slow on buffer with long lines
   " Changing the synmaxcol from 3000 (the default) to 300 improve the
   " performance
-  set synmaxcol=300
+  set synmaxcol=3000
 
   " Introduce Move and change Delete:
   " call s:activate('vim_cutlass')
@@ -1550,6 +1550,8 @@ if 1
   if has('nvim')
     call s:activate('toggleterm')
   endif
+
+  call s:activate('jupyter_vim')
 
   " Terminal support
   " call s:activate('neoterm')
@@ -2577,6 +2579,10 @@ endif
 " Terminal support (reuse)
 if s:isactive('neoterm')
   Plug 'kassio/neoterm'
+endif
+
+if s:isactive('jupyter_vim')
+  Plug 'jupyter-vim/jupyter-vim'
 endif
 
 " 2.22. Debugging
@@ -5142,6 +5148,25 @@ if s:isactive('neoterm')
   tnoremap <C-q>  <C-\><C-n>:Ttoggle<CR>
 endif
 
+" Jupyter-vim settings:
+" ---------------------
+
+if s:isactive('jupyter_vim')
+  let g:jupyter_mapkeys = 0
+
+  function! SetJupyterMapping()
+    nnoremap <buffer> <silent> <localleader>jc <cmd>JupyterConnect<CR>
+    nnoremap <buffer> <silent> <localleader>jd <cmd>JupyterDisconnect<CR>
+    nnoremap <buffer> <silent> <localleader>jr <cmd>JupyterRunFile<CR>
+    nnoremap <buffer> <silent> <localleader>je <cmd>JupyterSendCell<CR>
+    vnoremap <buffer> <silent> <localleader>je :JupyterSendRange<CR>
+  endfunction
+
+  autocmd FileType python call SetJupyterMapping()
+
+  command! JupyterConsole !start pyw C:\Softs\run_qtconsole.py
+endif
+
 
 " 2.22. Debugging
 " ---------------
@@ -5318,8 +5343,17 @@ lua << EOF
       }
   }
 EOF
+
 endif
 
+" Vim-Markdowns plugin settings:
+" ------------------------------
+
+if s:isactive('vim_markdown')
+  " It seems that lua is not correctly supported:
+  " let g:markdown_fenced_languages = ['html', 'python', 'vim', 'lua']
+  let g:markdown_fenced_languages = ['html', 'python', 'vim']
+endif
 
 " Markdown-Preview plugin settings:
 " ---------------------------------
@@ -5415,8 +5449,6 @@ if s:isactive('markdown_preview')
   " recognized filetypes
   " these filetypes will have MarkdownPreview... commands
   let g:mkdp_filetypes = ['markdown']
-
-  " let g:markdown_fenced_languages = ['html', 'python', 'vim']
 endif
 
 
@@ -5820,25 +5852,65 @@ tnoremap <C-q>  <C-\><C-n>
 " Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
 tnoremap <expr> <C-v> getreg('*')
 
-function! StartTerminal(...)
-  if a:0 != 0
-    let newcwd = expand(a:1)
-    echom newcwd
-  endif
-  let term_windows = filter(getwininfo(), 'v:val.terminal')
-  if !len(term_windows)
-    vertical terminal ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
-  else
-    let winnr = term_windows[0].winnr
+" make <kbd>Ctrl-Enter</kbd> passed correctly into the terminal
+tnoremap <expr> <C-Cr> SendToTerm("\<Esc>\<Cr>")
+
+func SendToTerm(what)
+  call term_sendkeys('', a:what)
+  return ''
+endfunc
+
+function! SwitchToTerminal(name) abort
+  let win_infos = filter(getwininfo(), "v:val.terminal")
+
+  if len(win_infos)
+    let winnr = win_infos[-1].winnr
+
+    let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'current_dir')=='" . a:name . "'")
+    if len(win_info) > 0
+      " If a terminal window exist with the right name switch to it:
+      let winnr = win_info[0].winnr
+      execute winnr . 'wincmd w'
+      return
+    endif
+    " If a terminal window exist reuse it:
     execute winnr . 'wincmd w'
+  else
+    " If no terminal window create a vertical window at the right side:
+    wincmd s
+    wincmd L
+    let winnr = winnr()
   endif
-  " This is not changing the shell working directory
-  " if a:0 != 0
-  "   execute 'cd' '"' . newcwd . '"'
-  " endif
+
+  let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+  if len(buf_infos)
+    let buf_info = filter(buf_infos, "getbufvar(v:val.bufnr, 'current_dir')=='" . a:name . "'")
+    if len(buf_info)
+      execute 'buffer ' .. buf_info[0].bufnr
+      return
+    endif
+  endif
+
+  terminal ++curwin ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
+  let b:current_dir = a:name
 endfunction
 
-command! -nargs=? Term call StartTerminal(<f-args>)
+function! ToggleTerm(name)
+  let win_infos = filter(getwininfo(), "v:val.terminal")
+  if len(win_infos)
+    for i in range(len(win_infos)-1, 0, -1)
+      execute win_infos[i].winnr . 'wincmd c' 
+    endfor
+    return
+  else
+    call SwitchToTerminal(a:name)
+  endif
+endfunction
+
+command! Term call SwitchToTerminal(expand('%:p'))
+
+nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p'))<CR>
+
 
 " Make the \z trigger the spell check context menu (floating window)
 nnoremap <Leader>z ea<C-x>s
@@ -6234,10 +6306,17 @@ let g:pyindent_open_paren = shiftwidth()
 
 " Seems to be a Neovim parameters used by some plugins
 if has('win32')
-  " let g:python3_host_prog='C:\Python27_Win32\python.exe'
-  " let g:python3_host_prog='C:\Python36_x64\python.exe'
-  let g:python3_host_prog='C:\Python39_x64\python.exe'
-  " let g:python3_host_prog='C:\Python312_x64\python.exe'
+  if has('nvim')
+    " let g:python3_host_prog='C:\Python27_Win32\python.exe'
+    " let g:python3_host_prog='C:\Python36_x64\python.exe'
+    let g:python3_host_prog='C:\Python39_x64\python.exe'
+    " let g:python3_host_prog='C:\Python312_x64\python.exe'
+  else
+    let g:python3_host_prog='C:\Python39_x64\python.exe'
+    " set pyxversion=0
+    " set pythonthreedll=python39.dll
+    " set pythonthreehome=C:\Python39_x64
+  endif
 endif
 
 " autocmd BufRead *.py set makeprg=C:\\python27\\python.exe\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
