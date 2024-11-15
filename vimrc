@@ -901,6 +901,8 @@ if 1
   " Command line helper (completion, proposition)
   " Remark:
   "   A addition call to :UpdateRemotePlugins may needed
+  "   It seems wilder prevent digraph in the command line
+  "   (because of the <C-k> mapping for previous completion menu)
   call s:activate('wilder')
   call s:activate('wilder_simple')
 
@@ -981,8 +983,8 @@ if 1
   " call s:activate('vim_illuminate')
   " Vim is slow on buffer with long lines
   " Changing the synmaxcol from 3000 (the default) to 300 improve the
-  " performance
-  set synmaxcol=3000
+  " performance on large files (or files that contains very long lines)
+  set synmaxcol=300
 
   " Introduce Move and change Delete:
   " call s:activate('vim_cutlass')
@@ -1016,6 +1018,9 @@ if 1
 
   " Case sensitive search and replace
   call s:activate('vim_abolish')
+  
+  " Allow buffer specific search register
+  " call s:activate("local_search")
 
   " 2.2.9. Moves
   " -------------
@@ -1035,6 +1040,8 @@ if 1
 
   " call s:activate('vim_sneak')
 
+  " call s:activate('hop')
+
   " 2.2.10. Unicode
   " --------------
 
@@ -1050,7 +1057,7 @@ if 1
   " -----------------------
 
   " Multiple cursors
-  " call s:activate('vim_visual_multi')
+  call s:activate('vim_visual_multi')
 
   " Multiple cursors for parallel modifications
   " call s:activate('vim_multiple_cursors')
@@ -1084,7 +1091,7 @@ if 1
   " call s:activate('vim_expand_region')
 
   " Hint about keyboard shortcuts
-  " call s:activate('which_key')
+  call s:activate('which_key')
 
   " Register visibility
   " call s:activate('vim_peekaboo')
@@ -1097,7 +1104,7 @@ if 1
 
   " Basic large files support
   " Make large files not slowing down vim as much as possible
-  " call s:activate('large_file')
+  call s:activate('large_file')
 
   call s:activate('argumentative')
 
@@ -1188,6 +1195,8 @@ if 1
 
   " call s:activate('bufexplorer')
 
+  " call s:activate('easybuffer')
+
   " 2.3.3. File searching
   " --------------------
 
@@ -1261,7 +1270,7 @@ if 1
   " ---------------
 
   " Diff at char level
-  call s:activate('diffchar')
+  " call s:activate('diffchar')
 
   " 2.7.2. Diff Command
   " ------------------
@@ -1296,7 +1305,7 @@ if 1
   " - Only for Git
   " - Only for Neovim
   if has('nvim')
-    call s:activate('gitsigns')
+    " call s:activate('gitsigns')
   endif
 
   call s:activate('vim_gitgutter')
@@ -1324,7 +1333,7 @@ if 1
   " - Indentation
   " - Trailing Whitespaces
   " - ...
-  " call s:activate('editorconfig')
+  call s:activate('editorconfig')
 
   " 2.9.3. Sleuth
   " ------------
@@ -1335,7 +1344,7 @@ if 1
   " -----------
 
   " Alignment made easy
-  " call s:activate('vim_easy_align')
+  call s:activate('vim_easy_align')
 
   " Alignment made easy
   " call s:activate('tabular')
@@ -1469,6 +1478,28 @@ if 1
   " - Run: install.py
   " call s:activate('you_complete_me')
 
+  " Multiple Languages Support:
+  " call s:activate('vim_polyglot')
+
+  " Polyglot plugin settings:
+  " -------------------------
+
+  if s:isactive('vim_polyglot')
+    " let g:polyglot_disabled = ['ftdetect']
+    " let g:polyglot_disabled = ['html5']
+    function! RestoreIndent()
+      setlocal indentexpr=HtmlIndent() nocindent nosmartindent autoindent
+      let b:did_indent = 0
+      let g:force_reload_html = 1
+      execute 'source $VIMRUNTIME' . '/indent/html.vim'
+    endfunction
+
+    augroup HtmlIndent
+      autocmd!
+      autocmd FileType html call RestoreIndent()
+    augroup END
+  endif
+
   " Code Completion
   " Remark:
   " - Install the corresponding plugin for each language you want to support:
@@ -1503,6 +1534,8 @@ if 1
   " Support for javascript react files
   " call s:activate('vim_jsx_pretty')
 
+  " call s:activate('neoformat')
+
   " 2.18. Linting
   " -------------
 
@@ -1514,7 +1547,7 @@ if 1
   " call s:activate('lightbulb')
 
   if has('nvim')
-    " call s:activate('treesitter')
+    call s:activate('treesitter')
     " Remark:
     " A TSUpdateSync call maybe necessary to update your language parser
     " A TSUpdate call maybe necessary to update your language parser
@@ -1551,7 +1584,13 @@ if 1
     call s:activate('toggleterm')
   endif
 
+  " Provide control on the terminal cursor shape:
+  " Remark: Doesn't seems to have any effect on Windows
+  " call s:activate('terminus')
+
   call s:activate('jupyter_vim')
+
+  " call s:activate("magma")
 
   " Terminal support
   " call s:activate('neoterm')
@@ -1580,7 +1619,7 @@ if 1
   " Helper to analyze syntax
   " Remark:
   " - scriptease comes with the zS action
-  " call s:activate('vim_synstax')
+  call s:activate('vim_synstax')
 
   " 2.22.2. Markdown
   " ----------------
@@ -1591,7 +1630,7 @@ if 1
   call s:activate('vimwiki')
 
   if has('nvim')
-    call s:activate('neorg')
+    " call s:activate('neorg')
   endif
 
   " Markdown extra support
@@ -1632,7 +1671,7 @@ if 1
 
   " call s:activate('vimtex')
 
-  " call s:activate('vimlatex')
+  call s:activate('vim_latex')
 
 " 2.23.8 Vim Help
 " ---------------
@@ -1903,6 +1942,10 @@ if s:isactive('vim_abolish')
   Plug 'tpope/vim-abolish'
 endif
 
+if s:isactive('local_search')
+  Plug 'mox-mox/vim-localsearch'
+endif
+
 " 2.2.9. Moves
 " ------------
 
@@ -1920,6 +1963,10 @@ endif
 
 if s:isactive('vim_sneak')
   Plug 'justinmk/vim-sneak'
+endif
+
+if s:isactive('hop')
+  Plug 'smoka7/hop.nvim'
 endif
 
 " 2.2.10. Unicode
@@ -1998,7 +2045,8 @@ endif
 
 " Basic large files support
 if s:isactive('large_file')
-  Plug '~/_vimfiles/plugged/LargeFile'
+  " Plug 'vim-scripts/LargeFile'
+  Plug 'vds2212/LargeFile'
 endif
 
 if s:isactive('argumentative')
@@ -2016,6 +2064,7 @@ if s:isactive('startuptime')
 endif
 
 if s:isactive('context')
+  " Plug 'wellle/context.vim', {'commit': '5d14952'}
   Plug 'wellle/context.vim'
 endif
 
@@ -2119,6 +2168,10 @@ endif
 
 if s:isactive('bufexplorer')
   Plug 'jlanzarotta/bufexplorer'
+endif
+
+if s:isactive('easybuffer')
+  Plug 'troydm/easybuffer.vim'
 endif
 
 " 2.3.3. File searching
@@ -2442,8 +2495,6 @@ if s:isactive('lsp')
   Plug 'hrsh7th/nvim-cmp'
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'jose-elias-alvarez/null-ls.nvim'
-
-  nnoremap <leader>tj <cmd>:lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<cr>
 endif
 
 if s:isactive('r_nvim')
@@ -2453,6 +2504,10 @@ endif
 "
 if s:isactive('you_complete_me')
   Plug 'ycm-core/YouCompleteMe'
+endif
+
+if s:isactive('vim_polyglot')
+  Plug 'sheerun/vim-polyglot'
 endif
 
 if s:isactive('deoplete')
@@ -2506,6 +2561,10 @@ endif
 
 if s:isactive('vim_jsx_pretty')
   Plug 'MaxMEllon/vim-jsx-pretty'
+endif
+
+if s:isactive('neoformat')
+  Plug 'sbdchd/neoformat'
 endif
 
 " 2.18. Linting
@@ -2576,6 +2635,10 @@ if s:isactive('toggleterm')
   Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
 endif
 
+if s:isactive('terminus')
+  Plug 'wincent/terminus'
+endif
+
 " Terminal support (reuse)
 if s:isactive('neoterm')
   Plug 'kassio/neoterm'
@@ -2583,6 +2646,10 @@ endif
 
 if s:isactive('jupyter_vim')
   Plug 'jupyter-vim/jupyter-vim'
+endif
+
+if s:isactive('magma')
+  Plug 'dccsillag/magma-nvim', { 'do': ':UpdateRemotePlugins' }
 endif
 
 " 2.22. Debugging
@@ -2698,7 +2765,7 @@ if s:isactive('vimtex')
   Plug 'lervag/vimtex'
 endif
 
-if s:isactive('vimlatex')
+if s:isactive('vim_latex')
   Plug 'vim-latex/vim-latex'
 endif
 
@@ -2728,6 +2795,109 @@ endif
 
 call plug#end()
 
+if s:isactive('which_key')
+  let g:which_key_map =  {}
+  let g:which_key_map.f = { 'name' : '+Format' }
+  let g:which_key_map.t = { 'name' : '+Toggle' }
+
+  let g:which_key_map_g = {}
+  " :help g
+  let g:which_key_map_g.8 = [':normal! g8', 'Show Utf8 code']
+  let g:which_key_map_g.a = [':normal! ga', 'Show Unicode code']
+
+  let g:which_key_map_g.v = [':normal! gv', 'Reselect']
+
+  let g:which_key_map_g.g = [':normal! gg', 'Go to Start']
+  let g:which_key_map_g.j = [':normal! gj', 'Go Down']
+  let g:which_key_map_g.k = [':normal! gk', 'Go Up']
+  let g:which_key_map_g.0 = [':normal! g0', 'Go Home']
+  let g:which_key_map_g['$'] = [':normal! g$', 'Go End']
+  let g:which_key_map_g.E = [':normal! gE', 'Go to End of Word']
+  let g:which_key_map_g.e = [':normal! ge', 'Go to End of word']
+  let g:which_key_map_g.m = [':normal! gm', 'Go to Middle Screen']
+  let g:which_key_map_g.M = [':normal! gM', 'Go to Middle Line']
+
+  let g:which_key_map_g.d = [':normal! gd', 'Go to Definition']
+  let g:which_key_map_g.D = [':normal! gD', 'Go to Definition']
+  let g:which_key_map_g[']'] = [':normal! g]', 'Go to Tag']
+  let g:which_key_map_g.f = [':normal! gf', 'Go to File']
+  let g:which_key_map_g.F = [':normal! gF', 'Go to File:Line']
+
+  let g:which_key_map_g.t = [':normal! gt', 'Go to Next Tab']
+  let g:which_key_map_g.T = [':normal! gT', 'Go to Previous Tab']
+
+  let g:which_key_map_g.q = [':normal! gq', 'Format']
+  let g:which_key_map_g.J = [':normal! gJ', 'Join Raw Line']
+
+  let g:which_key_map_g['<'] = [':normal! g<', 'Show Last Command Output']
+
+  let g:which_key_map_g['*'] = [':normal! g*', 'Search']
+  let g:which_key_map_g['#'] = [':normal! g#', 'Search']
+
+  let g:which_key_map_g[','] = [':normal! g,', 'Previous Edition']
+  let g:which_key_map_g[';'] = [':normal! g;', 'Next Edition']
+
+  " :help z
+  let g:which_key_map_z = {}
+  let g:which_key_map_z['+'] = [':normal! z+', 'Scroll to Top']
+  let g:which_key_map_z['<CR>'] = [":normal! z\<CR>", 'Scroll to Top']
+  let g:which_key_map_z['.'] = [':normal! z.', 'Scroll to Center']
+  let g:which_key_map_z['-'] = [':normal! z-', 'Scroll to Bottom']
+  let g:which_key_map_z.t = [':normal! zt', 'Scroll to Top']
+  let g:which_key_map_z.z = [':normal! zz', 'Scroll to Center']
+  let g:which_key_map_z.b = [':normal! zb', 'Scroll to Bottom']
+
+  let g:which_key_map_z['='] = [':normal! z=', 'Spelling Suggestions']
+  let g:which_key_map_z.g = [':normal! zg', 'Mark Word Good']
+  let g:which_key_map_z.G = [':normal! zG', 'Mark Word Good Temporarily']
+  let g:which_key_map_z.w = [':normal! zw', 'Mark Word Wrong']
+  let g:which_key_map_z.W = [':normal! zW', 'Mark Word Wrong Temporarily']
+  let g:which_key_map_z.u = { 'name': '+Undo' }
+  let g:which_key_map_z.u.g = [':normal! zug', 'Undo Mark Word Good']
+  let g:which_key_map_z.u.G = [':normal! zuG', 'Undo Mark Word Good Temporarily']
+  let g:which_key_map_z.u.w = [':normal! zuw', 'Undo Mark Word Wrong']
+  let g:which_key_map_z.u.W = [':normal! zuW', 'Undo Mark Word Wrong Temporarily']
+
+  let g:which_key_map_z.r = [':normal! zr', 'Reveal Fold']
+  let g:which_key_map_z.R = [':normal! zR', 'Reveal Fold Recursively']
+  let g:which_key_map_z.m = [':normal! zm', 'Mask Fold']
+  let g:which_key_map_z.M = [':normal! zM', 'Mask Fold Recursively']
+  let g:which_key_map_z.o = [':normal! zo', 'Open Fold']
+  let g:which_key_map_z.O = [':normal! zO', 'Open Fold Recursively']
+  let g:which_key_map_z.c = [':normal! zc', 'Close Fold']
+  let g:which_key_map_z.C = [':normal! zC', 'Close Fold Recursively']
+  let g:which_key_map_z.f = [':normal! zf', 'Create Fold by Move']
+  let g:which_key_map_z.F = [':normal! zF', 'Create Fold by Number']
+  let g:which_key_map_z.d = [':normal! zd', 'Delete Fold by Move']
+  let g:which_key_map_z.D = [':normal! zD', 'Delete Fold by Number']
+  let g:which_key_map_z.E = [':normal! zE', 'Eleminate All Folds']
+
+  let g:which_key_map_z.j = [':normal! zj', 'Move to Next Fold']
+  let g:which_key_map_z.k = [':normal! zk', 'Move to Previous Fold']
+
+  let g:which_key_map_z.H = [':normal! zH', 'H-Scroll Half Screen Left']
+  let g:which_key_map_z.h = [':normal! zh', 'H-Scroll Left']
+  let g:which_key_map_z['<Left>'] = [":normal! z\<Left>", 'H-Scroll Left']
+  let g:which_key_map_z.L = [':normal! zL', 'H-Scroll Half Sreeen Right']
+  let g:which_key_map_z.l = [':normal! zl', 'H-Scroll Right']
+  let g:which_key_map_z['<right>'] = [":normal! z\<right>", 'H-Scroll Right']
+  let g:which_key_map_z.s = [':normal! zs', 'H-Scroll at Start']
+  let g:which_key_map_z.e = [':normal! ze', 'H-Scroll at End']
+
+  let g:which_key_map_z.y = [':normal! zy', 'Yank No Trailer']
+  let g:which_key_map_z.p = [':normal! zp', 'Paste After No Trailer']
+  let g:which_key_map_z.P = [':normal! zP', 'Paste Before No Trailer']
+endif
+
+if s:isactive('which_key')
+  let g:which_key_map_g.x = ["<Plug>NetrwBrowseX", 'Open File']
+endif
+
+if s:isactive('matchit_legacy')
+  if s:isactive('which_key')
+    let g:which_key_map_g['%'] = ["<Plug>(MatchitNormalBackward)", 'Matchit']
+  endif
+endif
 " 2.1. Look & Feel
 " ----------------
 
@@ -2747,6 +2917,10 @@ endfunction
 
 let s:schemes = GetColorSchemes()
 if s:isactive('gui_running') || has('unix')
+
+  if s:isactive('tokyonight')
+    colorscheme tokyonight
+  endif
 
   if s:isactive('nord_vim') && index(s:schemes, 'nord') >= 0
     colorscheme nord
@@ -2936,6 +3110,9 @@ if s:isactive('wilder')
   " cnoremap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<up>"
 
   nnoremap <leader>tx :call wilder#toggle()<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.x = [':call wilder#toggle()', 'Toggle Wilder']
+  endif
 
   if s:isactive('wilder_simple')
     call wilder#set_option('pipeline', [
@@ -3093,6 +3270,15 @@ if s:isactive('vim_remotions')
         \ 'diagnostic' : { 'backward' : '[g', 'forward' : ']g', 'doc': 'coc-diagnostic' },
         \ }
 
+  " let g:remotions_motions = {
+  "       \ 'TtFf' : {},
+  "       \ 'char' : {
+  "       \    'backward' : 'h',
+  "       \    'forward' : 'l',
+  "       \    'repeat_if_count' : 0,
+  "       \ },
+  "       \ }
+
   if s:isactive('vim_easymotion')
     let g:remotions_motions.easymotion = { 'backward' : '<Plug>(easymotion-prev)', 'forward' : '<Plug>(easymotion-next)', 'motion': '<leader><leader>', 'motion_plug' : '<Plug>(easymotion-prefix)', 'doc': 'easymotion' }
   endif
@@ -3105,6 +3291,9 @@ if s:isactive('vim_remotions')
   if s:isactive('vim_sneak')
     let g:remotions_motions.sneak_fwd = { 'backward' : '<Plug>Sneak_,', 'forward' : '<Plug>Sneak_;', 'motion': 's', 'motion_plug' : '<Plug>Sneak_s', 'doc': 'vim_sneak' }
     let g:remotions_motions.sneak_bck = { 'backward' : '<Plug>Sneak_,', 'forward' : '<Plug>Sneak_;', 'motion': 'S', 'motion_plug' : '<Plug>Sneak_S', 'doc': 'vim_sneak' }
+  endif
+
+  if s:isactive('hop')
   endif
 endif
 
@@ -3195,7 +3384,9 @@ endif
 if s:isactive('winresizer')
   " let g:winresizer_start_key=<C-e>
   let g:winresizer_start_key = "<leader>tw"
-
+  if s:isactive('which_key')
+    let g:which_key_map.t.w = [':WinResizerStartResize', 'Toggle Window Resizer']
+  endif
   " More information with: :help winresizer
 endif
 
@@ -3314,6 +3505,16 @@ if s:isactive('is_vim')
   " More information with: :help is.txt?
 endif
 
+" Local Search settings:
+" ----------------------
+
+if s:isactive('local_search')
+  nmap <leader>/ <Plug>localsearch_toggle
+  if s:isactive('which_key')
+    let g:which_key_map['/'] = ['<Plug>localsearch_toggle', 'Toggle Local Search']
+  endif
+endif
+
 
 " 2.2.9. Moves
 " ------------
@@ -3346,6 +3547,14 @@ if s:isactive('vim_sneak')
   let g:sneak#label = 1
 endif
 
+" Hop plugin settings:
+" --------------------
+
+if s:isactive('hop')
+  lua require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+  " lua vim.keymap.set('n', '<leader>gw', function() require('hop').hint_words() end, { remap = true, desc = 'move to word in buffer' })
+endif
+
 
 " 2.2.10. Unicode
 " ---------------
@@ -3371,6 +3580,9 @@ endif
 
 if s:isactive('vim_css_color')
   nnoremap <leader>th :call css_color#toggle()<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.h = [':call css_color#toggle()', 'Toggle Colorizer']
+  endif
 endif
 
 
@@ -3419,6 +3631,9 @@ if s:isactive('hexokinase')
   " \ }
 
   nnoremap <leader>th :HexokinaseToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.h = [':HexokinaseToggle', 'Toggle Colorizer']
+  endif
 endif
 
 
@@ -3434,6 +3649,9 @@ endif
 
 if s:isactive('colorizer')
   let g:colorizer_maxlines = 1000
+  if s:isactive('which_key')
+    let g:which_key_map.t.h = ['<Plug>Colorizer', 'Toggle Colorizer']
+  endif
 endif
 
 
@@ -3457,6 +3675,16 @@ if s:isactive('vim_expand_region')
   map - <Plug>(expand_region_shrink)
 endif
 
+" Large File plugin settings:
+" ---------------------------
+
+if s:isactive("large_file")
+  " Size of what is considered a large file in Mb
+  let g:LargeFile = 1.0
+  let g:LargeFile_dont = ["undo"]
+  " let g:LargeFile_dont = ["syntax", "filetype"]
+endif
+
 
 " Context plugins settings:
 " -------------------------
@@ -3468,7 +3696,18 @@ if s:isactive('context')
   " Don't insert the default plugin mapping
   let g:context_add_mappings = 0
 
-  nnoremap <leader>tc :ContextToggle <CR>
+  let g:Context_border_indent = { -> [0, 0] }
+
+  " let g:context_skip_regex = '^\([<=>]\{7\}\|\s*\($\|\h\+\S\s*:\|#\|//\|/\*\|\*\($\|\s\|/\)\)\)'
+  " Allow \h\+\S\s*: for pccts grammar names
+  let g:context_skip_regex = '^\([<=>]\{7\}\|\s*\($\|#\|//\|/\*\|\*\($\|\s\|/\)\)\)'
+
+  " let g:context_extend_regex = '^\s*\([]{})]\|end\|else\|\(case\|default\|done\|elif\|fi\)\>\)'
+
+  nnoremap <leader>tc :ContextToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.c = [':ContextToggle', 'Toggle Context']
+  endif
 endif
 
 
@@ -3602,8 +3841,12 @@ if s:isactive('vim_rooter')
   " augroup end
 
   let g:rooter_patterns = ['.git', '.gitignore', '_darcs', '.hg', '.bzr', '.svn', 'Makefile']
+  let g:rooter_change_directory_for_non_project_files = 'current'
 
-  nnoremap <leader>tr :RooterToggle <CR>
+  nnoremap <leader>tr :RooterToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.r = [':RooterToggle', 'Toggle Rooter']
+  endif
 
   " More information with: :help rooter.txt
 endif
@@ -3620,6 +3863,11 @@ if s:isactive('fzf')
   nnoremap <leader>m :History<CR>
   nnoremap <leader>b :Buffers<CR>
   nnoremap <leader>p :Tags<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.m = [':History', 'Browse MRU']
+    let g:which_key_map.b = [':Buffers', 'Browse Buffers']
+    let g:which_key_map.p = [':Tags', 'Browse Tags']
+  endif
 
   " This is the default option:
   "   - Preview window on the right with 50% width
@@ -3646,6 +3894,11 @@ if s:isactive('ctrlp')
   " <C-p> is the default of CtrlP ;-)
   nnoremap <leader>m :CtrlPMRUFiles<CR>
   nnoremap <leader>b :CtrlPBuffer<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.m = [':CtrlPMRUFiles', 'Browse MRU']
+    let g:which_key_map.b = [':CtrlPBuffer', 'Browse Buffers']
+    " let g:which_key_map.p = [':Tags', 'Browse Tags']
+  endif
 
   let g:ctrlp_working_path_mode = 'ra'
 
@@ -3660,9 +3913,16 @@ if s:isactive('vim_clap')
   nnoremap <C-p> :call LeaveSideBar() <bar> Clap files<CR>
   nnoremap <leader>m :call LeaveSideBar() <bar> Clap history<CR>
   nnoremap <leader>b :call LeaveSideBar() <bar> Clap buffers<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.m = [':Clap history', 'Browse MRU']
+    let g:which_key_map.b = [':Clap buffers', 'Browse Buffers']
+  endif
 
   " Requires Vista and maple
   nnoremap <leader>p :call LeaveSideBar() <bar> Clap proj_tags<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.p = [':Clap proj_tags', 'Browse Tags']
+  endif
 
   let g:clap_layout = { 'relative': 'editor' }
 
@@ -3692,9 +3952,16 @@ if s:isactive('nvim_telescope')
   nnoremap <C-p> <cmd>Telescope find_files<cr>
   nnoremap <leader>m <cmd>Telescope oldfiles<cr>
   nnoremap <leader>b <cmd>Telescope buffers<cr>
+  if s:isactive('which_key')
+    let g:which_key_map.m = [':Telescope oldfiles', 'Browse MRU']
+    let g:which_key_map.b = [':Telescope buffers', 'Browse Buffers']
+  endif
 
   " Requires tags to be generate (manually or via vim-gutentags)
   nnoremap <leader>p <cmd>Telescope tags<cr>
+  if s:isactive('which_key')
+    let g:which_key_map.p = [':Telescope tags', 'Browse Tags']
+  endif
 
   " nnoremap <leader>g <cmd>Telescope live_grep<cr>
   " nnoremap <leader>h <cmd>Telescope help_tags<cr>
@@ -3718,6 +3985,14 @@ if s:isactive('bufexplorer')
   " Split Left
   let g:bufExplorerSplitRight=0
 endif
+
+
+" Easy Buffer settings:
+" ---------------------
+
+if s:isactive('easybuffer')
+endif
+
 
 " 2.3.3. File searching
 " --------------------
@@ -3779,6 +4054,9 @@ if s:isactive('ack_vim')
 
   " More information with: :help ack.txt
   nnoremap <silent> <leader>ts <cmd>call ToggleQuickFix()<cr>
+  if s:isactive('which_key')
+    let g:which_key_map.t.s = [':call ToggleQuickFix()', 'Toggle Quick Fix']
+  endif
 endif
 
 if s:isactive('ctrlsf')
@@ -3811,32 +4089,59 @@ if s:isactive('ctrlsf')
       \ "tabb" : "",
       \ }
 
+  " QuickFix List bufnr
+  " getqflist(0, {"qfbufnr":1}).qfbufnr
+  " Location List bufnr
+  " getloclist(0, {"qfbufnr":1}).qfbufnr
+  " last utilization time
+  " getbufinfo(bufnr)[0].lastused
+  function! QuickFixVisible()
+    for winnr in range(1, winnr('$'))
+      if getwinvar(winnr, '&syntax') == 'qf'
+        return 1
+      endif
+    endfor
+    return 0
+  endfunction
+
   function! CtrlSFNextMatch()
+    if QuickFixVisible() && s:isactive('vim_unimpaired')
+      execute "normal \<Plug>(unimpaired-cnext)"
+      return
+    endif
     CtrlSFOpen
     call ctrlsf#NextMatch(1)
     call ctrlsf#JumpTo('open_background')
-    " wincmd p
   endfunction
 
   function! CtrlSFPreviousMatch()
+    if QuickFixVisible() && s:isactive('vim_unimpaired')
+      execute "normal \<Plug>(unimpaired-cprevious)"
+      return
+    endif
     CtrlSFOpen
     call ctrlsf#NextMatch(0)
     call ctrlsf#JumpTo('open_background')
-    " wincmd p
   endfunction
 
   function! CtrlSFNextFMatch()
+    if QuickFixVisible()
+      cnfile
+      return
+    endif
     CtrlSFOpen
     call ctrlsf#NextMatch(1, 1)
     call ctrlsf#JumpTo('open_background')
-    " wincmd p
   endfunction
 
   function! CtrlSFPreviousFMatch()
+    if QuickFixVisible()
+      cpfile
+      return
+    endif
     CtrlSFOpen
     call ctrlsf#NextMatch(0, 1)
     call ctrlsf#JumpTo('open_background')
-    " wincmd p
   endfunction
 
   nnoremap ]q <Cmd>call CtrlSFNextMatch()<CR>
@@ -3846,6 +4151,9 @@ if s:isactive('ctrlsf')
 
   nnoremap <leader>ts <Cmd>call ToggleQuickFix()<CR>
   " nnoremap <leader>ts <Cmd>CtrlSFToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.s = [':call ToggleQuickFix()', 'Toggle Quick Fix']
+  endif
 
   " Provide for each solution a Ack command such that it is easier to switch
   " from one to the next
@@ -3871,6 +4179,9 @@ if s:isactive('ferret')
   " from one to the next
 
   nnoremap <silent> <leader>ts <cmd>call ToggleQuickFix()<cr>
+  if s:isactive('which_key')
+    let g:which_key_map.t.s = [':call ToggleQuickFix()', 'Toggle Quick Fix']
+  endif
 endif
 
 
@@ -3888,6 +4199,9 @@ if s:isactive('nerdtree')
 
   " noremap <F4> :NERDTreeToggle<CR>
   nnoremap <leader>tn :NERDTreeToggle <CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.n = [':NERDTreeToggle', 'Toggle Nerd Tree']
+  endif
 
   " Set the NERDTree constext menu Shift-F10
   " in order to replace the default m that is used by signature
@@ -3925,7 +4239,10 @@ if s:isactive('nvim_tree')
   lua require("config/nvimtree")
 
   " noremap <F4> :NvimTreeToggle<CR>
-  nnoremap <leader>tn :NvimTreeToggle <CR>
+  nnoremap <leader>tn :NvimTreeToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.n = [':NvimTreeToggle', 'Toggle Nvim Tree']
+  endif
 endif
 
 
@@ -3973,6 +4290,9 @@ if s:isactive('fern')
   let g:fern#renderer = "nerdfont"
 
   noremap <silent> <Leader>tn :Fern .. -drawer -reveal=% -toggle -width=35<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.n = [':Fern .. -drawer -reveal=% -toggle -width=35', 'Toggle Fern']
+  endif
 
   " Add the E command
   function! FernExplore(...)
@@ -4009,11 +4329,21 @@ if s:isactive('vim_obsession') || s:isactive('vim_prosession')
   " Read session with \sr
   " exec 'nnoremap <Leader>sr :so ' .. g:sessions_dir. '\*.vim<C-D><BS><BS><BS><BS><BS>'
 
+  if s:isactive('which_key')
+    let g:which_key_map.s = { 'name' : '+Session' }
+  endif
+
   " Display the active session
   nnoremap <Leader>sn :echo v:this_session<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.s.n = [':echo v:this_session', 'Session Name']
+  endif
 
   " Pause session update with \sp
   nnoremap <Leader>sp :Obsession<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.s.p = [':Obsession', 'Session Update']
+  endif
 
   " To avoid to switch to insert mode when I'm too slow with \sr
   " nnoremap s <Nop>
@@ -4102,7 +4432,9 @@ endif
 
 if s:isactive('vim_signature')
   nnoremap <leader>tm :SignatureToggleSigns <CR>
-
+  if s:isactive('which_key')
+    let g:which_key_map.t.m = [':SignatureToggleSigns', 'Toggle Marks']
+  endif
   " More information with: :help signature.txt
 endif
 
@@ -4140,7 +4472,10 @@ if s:isactive('undotree')
 
   let g:undotree_ShortIndicators = 1
 
-  nnoremap <leader>tu :UndotreeToggle <CR>
+  nnoremap <leader>tu :UndotreeToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.u = [':UndotreeToggle', 'Toggle Undo Tree']
+  endif
 
   " More information with: :help undotree.txt
 endif
@@ -4194,7 +4529,10 @@ if s:isactive('vim_signify')
   " Disable signify by default
   let g:signify_disable_by_default = 1
 
-  nnoremap <leader>tf :SignifyToggle <CR>
+  nnoremap <leader>tf :SignifyToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.f = [':SignifyToggle', 'Toggle Git Signs']
+  endif
 
   " More information with: :help signify.txt
 endif
@@ -4218,6 +4556,16 @@ if s:isactive('vim_gitgutter')
     let g:gitgutter_git_executable = fnamemodify('C:/Program Files/Git/bin/git.exe', ':8')
   endif
   let g:gitgutter_grep=''
+
+  let g:gitgutter_map_keys = 0
+  if s:isactive('which_key')
+    if g:gitgutter_map_keys
+      let g:which_key_map.h = {'name' : '+Hunk'}
+      let g:which_key_map.h.p = ['<Plug>(GitGutterPreviewHunk)', 'Hunk Preview']
+      let g:which_key_map.h.s = ['<Plug>(GitGutterStageHunk)', 'Hunk Stage']
+      let g:which_key_map.h.u = ['<Plug>(GitGutterUndoHunk)', 'Hunk Undo']
+    endif
+  endif
 endif
 
 
@@ -4250,6 +4598,9 @@ if s:isactive('indentline')
   " set listchars+=lead:\
 
   nnoremap <leader>ti :IndentLinesToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.i = [':IndentLinesToggle', 'Toggle Indent Guide']
+  endif
 
   " More information with: :help indent_guides.txt
 endif
@@ -4259,6 +4610,9 @@ if s:isactive('vim_indent_guides')
   let g:indent_guides_guide_size = 1
 
   nnoremap <leader>ti :IndentGuidesToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.i = [':IndentGuidesToggle', 'Toggle Indent Guide']
+  endif
 endif
 
 
@@ -4283,6 +4637,11 @@ endif
 " ---------------------------
 
 if s:isactive('vim_easy_align')
+  " Start interactive EasyAlign in visual mode (e.g. vipga)
+  xmap ga <Plug>(EasyAlign)
+  " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+  nmap ga <Plug>(EasyAlign)
+
   " Align PSI format file using vim-easy-align plugin
   function! AlignFormat()
     %EasyAlign /\<Display-Name\>/
@@ -4320,15 +4679,20 @@ if s:isactive('any_fold')
     " autocmd Filetype * AnyFoldActivate
 
     " Activate for python
+    " Should take into account &diff option?
     autocmd Filetype python AnyFoldActivate
     " Open the fold that correspond to Python classes:
     " autocmd FileType python g/^class\s\+/norm zo
 
     " Activate for tsn
-    autocmd Filetype tsn AnyFoldActivate
+    " Should take into account &diff option?
+    " autocmd Filetype tsn AnyFoldActivate
+    autocmd Filetype tsn if (getfsize(expand("<afile>")) < 0.1 * 1024 * 1024) | execute "AnyFoldActivate" | endif
 
     " Activate for json
-    autocmd Filetype json AnyFoldActivate
+    " Should take into account &diff option?
+    " autocmd Filetype json AnyFoldActivate
+    autocmd Filetype json if (getfsize(expand("<afile>")) < 0.1 * 1024 * 1024) | execute "AnyFoldActivate" | endif
   augroup END
 
   " Disable anyfold movement (e.g. ]])
@@ -4359,6 +4723,10 @@ endif
 " ------------------------
 
 if s:isactive('vim_commentary')
+  if s:isactive('which_key')
+    let g:which_key_map_g.c = ["", 'which_key_ignore']
+    let g:which_key_map_g.cc = ["<Plug>CommentaryLine", 'Comment']
+  endif
 endif
 
 
@@ -4394,17 +4762,15 @@ if s:isactive('ultisnips')
 
   " This mapping conflict with Coc mapping for completion
   " let g:UltiSnipsExpandTrigger = "<tab>"
-
-  " Bad solution since it make \ clumsy to insert in insert mode
-  " let g:UltiSnipsExpandTrigger = "<leader>u"
-
   let g:UltiSnipsExpandTrigger = "<C-s>"
   if s:isactive('emmet_vim')
     let g:UltiSnipsExpandTrigger='<C-F12>'
     let g:user_emmet_leader_key='<C-S-F12>'
   endif
 
+  " Default is <C-j>
   " let g:UltiSnipsJumpForwardTrigger = "<C-b>"
+  " Default is <C-k>
   " let g:UltiSnipsJumpBackwardTrigger = "<C-z>"
 
   " If you want :UltiSnipsEdit to split your window.
@@ -4421,7 +4787,7 @@ endif
 
 if s:isactive('emmet_vim')
   let g:user_emmet_leader_key='<C-s>'
-  " let g:user_emmet_expandabbr_key='<C-s>,'
+  let g:user_emmet_expandabbr_key='<C-s>,'
   if s:isactive('ultisnips')
     let g:UltiSnipsExpandTrigger='<C-F12>'
     let g:user_emmet_leader_key='<C-S-F12>'
@@ -4492,6 +4858,11 @@ if s:isactive('tagbar')
   " nnoremap <F8> :TagbarToggle<CR>
   nnoremap <leader>tg :TagbarOpen fj<CR>
   nnoremap <leader>tt :TagbarToggle <CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.g = [':TagbarOpen fj', 'Tag Go']
+    let g:which_key_map.t.t = [':TagbarToggle', 'Toggle Tags']
+  endif
+
 
   " The tagbar configuration for config has been moved in ftplugin\config.vim
 
@@ -4591,7 +4962,10 @@ endif
 " ----------------------
 
 if s:isactive('vista_vim')
-  nnoremap <leader>tt :Vista!! <CR>
+  nnoremap <leader>tt :Vista!!<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.t = [':Vista!!', 'Toggle Tags']
+  endif
 
   let g:vista_sidebar_width = 40
 
@@ -4673,7 +5047,10 @@ if 0
   let Tlist_Exit_OnlyWindow = 1
 
   " nnoremap <F8> :TlistToggle<CR>
-  nnoremap <leader>tt :TlistToggle <CR>
+  nnoremap <leader>tt :TlistToggle<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.t = [':TlistToggle', 'Toggle Tags']
+  endif
 endif
 
 
@@ -4737,6 +5114,9 @@ if s:isactive('coc_nvim')
 
   " GoTo code navigation.
   nmap <silent> gd <Plug>(coc-definition)
+  if s:isactive('which_key')
+    let g:which_key_map_g.d = ["\<Plug>(coc-definition)", 'Go To Definition']
+  endif
   " nmap <silent><expr> gd GoToDef()
 
   function! DelayedGotoDef(timer)
@@ -4754,6 +5134,11 @@ if s:isactive('coc_nvim')
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
+  if s:isactive('which_key')
+    let g:which_key_map_g.y = ["\<Plug>(coc-type-definition)", 'Go To Definition']
+    let g:which_key_map_g.i = ["\<Plug>(coc-implementation)", 'Go To Implementation']
+    let g:which_key_map_g.r = ["\<Plug>(coc-references)", 'Go To Reference']
+  endif
 
   " Use K to show documentation in preview window.
   nnoremap <silent> K :call ShowDocumentation()<CR>
@@ -4771,10 +5156,20 @@ if s:isactive('coc_nvim')
 
   " Symbol renaming.
   nmap <leader>rn <Plug>(coc-rename)
+  if s:isactive('which_key')
+    " let g:which_key_map.r = 'which_key_ignore'
+    let g:which_key_map.r = ['', 'which_key_ignore']
+    let g:which_key_map.rn = ['<Plug>(coc-rename)', 'Coc Rename']
+  endif
 
   " Formatting selected code.
   xmap <leader>f  <Plug>(coc-format-selected)
-  nmap <leader>f  <Plug>(coc-format-selected)
+  " nmap <leader>f  <Plug>(coc-format-selected)
+  if s:isactive('which_key')
+    " let g:which_key_map.f = 'which_key_ignore'
+    let g:which_key_map.f = ['', 'which_key_ignore']
+    let g:which_key_map.fs = ['<Plug>(coc-format-selected)', 'Coc Format Selection']
+  endif
 
   augroup mycocauto
     autocmd!
@@ -4788,7 +5183,7 @@ if s:isactive('coc_nvim')
   " Example: `<leader>aap` for current paragraph
   " Remark: in conflict with ferret search
   xmap <leader>a  <Plug>(coc-codeaction-selected)
-  nmap <leader>a  <Plug>(coc-codeaction-selected)
+  " nmap <leader>a  <Plug>(coc-codeaction-selected)
 
   " Remap keys for applying codeAction to the current buffer.
   " Remark: in conflict with ferret search
@@ -4843,21 +5238,23 @@ if s:isactive('coc_nvim')
 
   " Mappings for CoCList
   " Show all diagnostics.
-  nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+  " nnoremap <silent><nowait> <leader>a  :<C-u>CocList diagnostics<cr>
   " Manage extensions.
-  nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+  " nnoremap <silent><nowait> <leader>e  :<C-u>CocList extensions<cr>
   " Show commands.
-  nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+  " nnoremap <silent><nowait> <leader>c  :<C-u>CocList commands<cr>
   " Find symbol of current document.
-  nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+  " nnoremap <silent><nowait> <leader>o  :<C-u>CocList outline<cr>
   " Search workspace symbols.
-  nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+  " nnoremap <silent><nowait> <leader>s  :<C-u>CocList -I symbols<cr>
   " Do default action for next item.
-  nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+  " vds: In conflict with Jupyter mappings
+  " nnoremap <silent><nowait> <leader>j  :<C-u>CocNext<CR>
   " Do default action for previous item.
-  nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+  " nnoremap <silent><nowait> <leader>k  :<C-u>CocPrev<CR>
   " Resume latest coc list.
-  nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+  " vds: In conflict with Browse Project tags
+  " nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
   " Specifc Settings:
   function! CocToggle()
@@ -4871,6 +5268,9 @@ if s:isactive('coc_nvim')
 
   " nnoremap <leader>tj <cmd>CocToggle<CR>
   nnoremap <leader>tj <cmd>CocCommand document.toggleInlayHint<CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.j = [':CocCommand document.toggleInlayHint', 'Toggle Inlay Hints']
+  endif
 
   " For performance reason disable coc on non code files
   " autocmd BufNew,BufEnter *.json,*.py,*.pyw,*.vim,*.lua execute "silent! CocEnable"
@@ -4900,8 +5300,34 @@ if s:isactive('coc_nvim')
     " " autocmd ColorScheme nord hi CocWarningLine guifg=#d08770
   endif
 
+  " Coc:
+  if s:isactive('which_key')
+    " let g:which_key_map.f = 'which_key_ignore'
+    let g:which_key_map.f = ['', 'which_key_ignore']
+    let g:which_key_map.fs = ['<Plug>(coc-format-selected)', 'Coc Format Selection']
+
+    " let g:which_key_map.a = 'which_key_ignore'
+    let g:which_key_map.a = ['', 'which_key_ignore']
+    let g:which_key_map.ac = ['<Plug>(coc-codeaction)', 'Coc Code Action']
+
+    " let g:which_key_map.q = 'which_key_ignore'
+    let g:which_key_map.q = ['', 'which_key_ignore']
+    let g:which_key_map.qf = ['<Plug>(coc-fix-current)', 'Coc Quick Fix']
+
+    let g:which_key_map.c = ['', 'which_key_ignore']
+    let g:which_key_map.cl = ['<Plug>(coc-codelens-action)', 'Coc Code Lens']
+
+    " let g:which_key_map.a = [':CocList diagnostics', 'Coc List Diagnostic']
+    " let g:which_key_map.e = [':CocList extensions', 'Coc List Extensions']
+    " let g:which_key_map.c = [':CocList commands', 'Coc List Commands']
+    " let g:which_key_map.o = [':CocList outline', 'Coc List Outline']
+    " let g:which_key_map.s = [':CocList -I symbols', 'Coc List Symbols']
+    " let g:which_key_map.j = [':CocNext', 'Coc Next']
+    " let g:which_key_map.k = [':CocPrev', 'Coc Previous']
+  endif
   " More information with: :help coc-nvim
 endif
+
 
 " LSP plugin settings:
 " --------------------
@@ -4915,6 +5341,11 @@ if s:isactive('lsp')
   lua require("handlers").setup()
   lua require("config.cmp")
   lua require("config.null-ls")
+
+  nnoremap <leader>tj <cmd>:lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<cr>
+  if s:isactive('which_key')
+    let g:which_key_map.t.j = [':lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())', 'Toggle Inlay Hints']
+  endif
 endif
 
 if s:isactive("r_nvim")
@@ -4997,6 +5428,9 @@ endif
 if s:isactive('vim_prettier')
   " Change the mapping to run from the default of <Leader>p
   nmap <Leader>fp <Plug>(Prettier)
+  if s:isactive('which_key')
+      let g:which_key_map.f.p = ['<Plug>(Prettier)', 'Format Selection using Prettier']
+  endif
   " Enable auto formatting of files that have "@format" or "@prettier" tag
   let g:prettier#autoformat = 1
 
@@ -5004,6 +5438,14 @@ if s:isactive('vim_prettier')
   " be found in the current directory or any parent directory. Note that this
   " will override the g:prettier#autoformat setting!
   " let g:prettier#autoformat_config_present = 1
+endif
+
+
+" Neoformat plugin settings:
+" --------------------------
+
+if s:isactive('neoformat')
+  let g:neoformat_enabled_cs = ['csharpier']
 endif
 
 
@@ -5073,6 +5515,9 @@ if s:isactive('ale')
 
   " let g:ale_fix_on_save = 1
   nnoremap <leader>ta :ALEToggle <CR>
+  if s:isactive('which_key')
+    let g:which_key_map.t.a = [':ALEToggle', 'Toggle ALE']
+  endif
 endif
 
 
@@ -5139,6 +5584,15 @@ if s:isactive('toggleterm')
   lua require("toggleterm").setup()
 endif
 
+
+" Terminus plugin settings:
+" -------------------------
+
+if s:isactive('terminus')
+  let g:TerminusInsertCursorShape = 1
+endif
+
+
 " Neoterm plugin settings:
 " ------------------------
 
@@ -5162,9 +5616,34 @@ if s:isactive('jupyter_vim')
     vnoremap <buffer> <silent> <localleader>je :JupyterSendRange<CR>
   endfunction
 
+  if s:isactive('which_key')
+    let g:which_key_map.j = {'name' : '+Jupyter'}
+    let g:which_key_map.j.c = [':JupyterConnect', 'Connect']
+    let g:which_key_map.j.d = [':JupyterDisconnect', 'Disconnect']
+    let g:which_key_map.j.r = [':JupyterRunFile', 'Run File']
+    let g:which_key_map.j.e = [':JupyterSendCell', 'Send Cell']
+  endif
+
   autocmd FileType python call SetJupyterMapping()
 
   command! JupyterConsole !start pyw C:\Softs\run_qtconsole.py
+endif
+
+if s:isactive('magma')
+  function! MagmaInitPython()
+    MagmaInit python3
+    MagmaEvaluateArgument 5
+  endfunction
+
+  function! SetJupyterMapping()
+    nnoremap <buffer> <silent> <localleader>jc <cmd>call MagmaInitPython()<CR>
+    nnoremap <buffer> <silent> <localleader>jd <cmd>MagmaDeinit<CR>
+    " nnoremap <buffer> <silent> <localleader>jr <cmd>JupyterRunFile<CR>
+    " nnoremap <buffer> <silent> <localleader>je <cmd>JupyterSendCell<CR>
+    vnoremap <buffer> <silent> <localleader>je :MagmaEvaluateVisual<CR>
+  endfunction
+
+  autocmd FileType python call SetJupyterMapping()
 endif
 
 
@@ -5190,7 +5669,7 @@ if s:isactive('vimspector')
   " - Go to Cursor: Ctrl-Shift-F10
   nmap <C-S-F10> <Plug>VimspectorGoToCurrentLine
 
-  nnoremap <leader>vr <Cmd>VimspectorReset <CR>
+  nnoremap <leader>vr <Cmd>VimspectorReset<CR>
   nnoremap <leader>va <Cmd>call vimspector#ReadSessionFile(expand("%:h") .. "/debuggingsession.json")<CR>
   nnoremap <leader>vz <Cmd>call vimspector#WriteSessionFile(expand("%:h") .. "/debuggingsession.json")<CR>
 
@@ -5213,9 +5692,22 @@ if s:isactive('vimspector')
     edit %:h/.vimspector.json
   endfunction
 
+  if s:isactive('which_key')
+    let g:which_key_map.v = { 'name' : '+VimSpector' }
+    let g:which_key_map.v.r = [':VimspectorReset', 'Reset']
+    let g:which_key_map.v.a = ['call vimspector#ReadSessionFile(expand("%:h") .. "/debuggingsession.json")', 'Load Session']
+    let g:which_key_map.v.z = [':call vimspector#WriteSessionFile(expand("%:h") .. "/debuggingsession.json")', 'Save Session']
+    let g:which_key_map.v.c = [':call win_gotoid(g:vimspector_session_windows.code)', 'Code']
+    let g:which_key_map.v.w = [':call win_gotoid(g:vimspector_session_windows.watches)', 'Watches']
+    let g:which_key_map.v.v = [':call win_gotoid(g:vimspector_session_windows.variables)', 'Variables']
+    let g:which_key_map.v.s = [':call win_gotoid(g:vimspector_session_windows.stack_trace)', 'Stack']
+    let g:which_key_map.v.d = [':call vimspector#DownFrame', 'Frame Down']
+    let g:which_key_map.v.u = [':call vimspector#UpFrame', 'Frame Up']
+    let g:which_key_map.v.b = ['<Plug>VimspectorBalloonEval', 'Show Baloon']
+  endif
+
   " Add the VimspectorConfig command
   command! VimspectorConfig call VimspectorConfig()
-
 endif
 
 
@@ -5282,21 +5774,6 @@ if s:isactive('vimwiki')
   "   \ 'template_ext': '.tpl'}]
   " let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 
-  " Disable links key mapping to avoid overriding Ctrl-i and Ctrl-o
-  " let g:vimwiki_key_mappings =
-  "   \ {
-  "   \   'all_maps': 1,
-  "   \   'global': 1,
-  "   \   'headers': 1,
-  "   \   'text_objs': 1,
-  "   \   'table_format': 1,
-  "   \   'table_mappings': 1,
-  "   \   'lists': 1,
-  "   \   'links': 0,
-  "   \   'html': 1,
-  "   \   'mouse': 0,
-  "   \ }
-
   " let g:vimwiki_list = [{'path': '~/vimwiki'}]
   " let g:vimwiki_ext2syntax = {
   " \   '.md': 'markdown',
@@ -5304,8 +5781,38 @@ if s:isactive('vimwiki')
   " \   '.wiki': 'media'
   " \ }
 
+  " Disable links key mapping to avoid overriding Ctrl-i and Ctrl-o
+  " let g:vimwiki_key_mappings = { 'all_maps': 0, }
+  let g:vimwiki_key_mappings =
+    \ {
+    \   'global': 0,
+    \   'headers': 0,
+    \   'text_objs': 0,
+    \   'table_format': 0,
+    \   'table_mappings': 0,
+    \   'lists': 0,
+    \   'links': 0,
+    \   'html': 0,
+    \   'mouse': 0,
+    \ }
+
   " Make that only .wiki files are considered as vimwiki documents
   let g:vimwiki_global_ext = 0
+  if s:isactive('which_key')
+    if g:vimwiki_global_ext
+      let g:which_key_map.w = { 'name' : '+VimWiki' }
+      let g:which_key_map.w.i = ['<Plug>VimwikiDiaryIndex', 'Diary Index']
+      let g:which_key_map.w.s = ['<Plug>VimwikiUISelect', 'UI Select']
+      let g:which_key_map.w.t = ['<Plug>VimwikiTabIndex', 'Tab Index']
+      let g:which_key_map.w.w = ['<Plug>VimwikiIndex', 'Index']
+      let g:which_key_map.w[" "] = { "name" : "Note" }
+      let g:which_key_map.w[" "].i = ['<Plug>VimwikiDiaryGenerateLinks', 'Generate Links']
+      let g:which_key_map.w[" "].m = ['<Plug>VimwikiMakeTomorrowDiaryNote', 'Tomorrow Diary Note']
+      let g:which_key_map.w[" "].t = ['<Plug>VimwikiTabMakeDiaryNote', 'Tab Diary Note']
+      let g:which_key_map.w[" "].w = ['<Plug>VimwikiMakeDiaryNote', 'Dairy Note']
+      let g:which_key_map.w[" "].y = ['VimwikiMakeYesterdayDiaryNote', 'Yesterday Diary Note']
+    endif
+  endif
 endif
 
 
@@ -5343,7 +5850,6 @@ lua << EOF
       }
   }
 EOF
-
 endif
 
 " Vim-Markdowns plugin settings:
@@ -5512,7 +6018,9 @@ if s:isactive('vimtex')
 endif
 
 
-if s:isactive('vimlatex')
+if s:isactive('vim_latex')
+  "let g:Tex_AdvancedMath = 1
+  "set winaltkeys=no
 endif
 
 
@@ -5540,6 +6048,10 @@ endif
 " -------------------------------------------------
 
 :noremap <leader>gf :e %:h/<cfile><CR>
+if s:isactive('which_key')
+  let g:which_key_map.g = ['', 'which_key_ignore']
+  let g:which_key_map.gf =  [':e %:h/<cfile>', 'Go to New File']
+endif
 
 
 " Search in the direction of the document:
@@ -5548,141 +6060,158 @@ endif
 nnoremap <expr> n (v:searchforward ? 'n' : 'N')
 nnoremap <expr> N (v:searchforward ? 'N' : 'n')
 
+" Move divider logic instead of adapting window size logic:
+" ---------------------------------------------------------
+
+" function! s:right_ids(layout)
+"   let type = a:layout[0] 
+"   if type ==# 'leaf'
+"     return [a:layout[1]]
+"   elseif type ==# 'row'
+"     return s:right_ids(a:layout[1][-1])
+"   elseif type ==# 'col'
+"     let ret = []
+"     for sublayout in a:layout[1]
+"       let ret = ret + s:right_ids(sublayout)
+"     endfor
+"     return ret
+"   endif
+" endfunction
+
+" function! s:left_ids(layout)
+"   let type = a:layout[0] 
+"   if type ==# 'leaf'
+"     return [a:layout[1]]
+"   elseif type ==# 'row'
+"     return s:left_ids(a:layout[1][0])
+"   elseif type ==# 'col'
+"     let ret = []
+"     for sublayout in a:layout[1]
+"       let ret = ret + s:left_ids(sublayout)
+"     endfor
+"     return ret
+"   endif
+" endfunction
+
+" function! s:bottom_ids(layout)
+"   let type = a:layout[0] 
+"   if type ==# 'leaf'
+"     return [a:layout[1]]
+"   elseif type ==# 'col'
+"     return s:bottom_ids(a:layout[1][-1])
+"   elseif type ==# 'row'
+"     let ret = []
+"     for sublayout in a:layout[1]
+"       let ret = ret + s:bottom_ids(sublayout)
+"     endfor
+"     return ret
+"   endif
+" endfunction
+
+" function! s:top_ids(layout)
+"   let type = a:layout[0] 
+"   if type ==# 'leaf'
+"     return [a:layout[1]]
+"   elseif type ==# 'col'
+"     return s:top_ids(a:layout[1][0])
+"   elseif type ==# 'row'
+"     let ret = []
+"     for sublayout in a:layout[1]
+"       let ret = ret + s:top_ids(sublayout)
+"     endfor
+"     return ret
+"   endif
+" endfunction
+
+" nnoremap <expr> <C-w>< index(<SID>right_ids(winlayout()), win_getid()) >= 0 ? "<C-w>>" : "<C-w><lt>"
+" nnoremap <expr> <C-w>> index(<SID>right_ids(winlayout()), win_getid()) >= 0 ? "<C-w><lt>" : "<C-w>>"
+" nnoremap <expr> <C-w>- index(<SID>bottom_ids(winlayout()), win_getid()) >= 0 ? "<C-w>+" : "<C-w>-"
+" nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout()), win_getid()) >= 0 ? "<C-w>-" : "<C-w>+"
+
+function! s:right_ids(layout, right)
+  let type = a:layout[0] 
+  if type ==# 'leaf'
+    if a:right
+      return [a:layout[1]]
+    else
+      return []
+    endif
+  elseif type ==# 'col'
+    let ret = []
+    for sublayout in a:layout[1]
+      let ret = ret + s:right_ids(sublayout, a:right)
+    endfor
+    return ret
+  elseif type ==# 'row'
+    let ret = []
+    for index in range(len(a:layout[1]))
+      let sublayout = a:layout[1][index]
+      let right = 0
+      if index == len(a:layout[1]) - 1
+        let right = 1
+      endif
+      let ret = ret + s:right_ids(sublayout, right)
+    endfor
+    return ret
+  endif
+endfunction
+
+function! s:bottom_ids(layout, bottom)
+  let type = a:layout[0] 
+  if type ==# 'leaf'
+    if a:bottom
+      return [a:layout[1]]
+    else
+      return []
+    endif
+  elseif type ==# 'row'
+    let ret = []
+    for sublayout in a:layout[1]
+      let ret = ret + s:bottom_ids(sublayout, a:bottom)
+    endfor
+    return ret
+  elseif type ==# 'col'
+    let ret = []
+    for index in range(len(a:layout[1]))
+      let sublayout = a:layout[1][index]
+      let bottom = 0
+      if index == len(a:layout[1]) - 1
+        let bottom = 1
+      endif
+      let ret = ret + s:bottom_ids(sublayout, bottom)
+    endfor
+    return ret
+  endif
+endfunction
+
+nnoremap <expr> <C-w>< index(<SID>right_ids(winlayout(), 0), win_getid()) >= 0 ? "<C-w>>" : "<C-w><lt>"
+nnoremap <expr> <C-w>> index(<SID>right_ids(winlayout(), 0), win_getid()) >= 0 ? "<C-w><lt>" : "<C-w>>"
+nnoremap <expr> <C-w>- index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 ? "<C-w>-" : "<C-w>+"
+nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 ? "<C-w>+" : "<C-w>-"
+
+" nnoremap <expr><C-W>< printf("\<cmd>vert %dresize%+d\r", winnr('h'), -v:count1)
+" nnoremap <expr><C-W>> printf("\<cmd>vert %dresize%+d\r", winnr('h'), v:count1)
+" nnoremap <expr><C-W>- printf("\<cmd>%dresize%+d\r", winnr('k'), -v:count1)
+" nnoremap <expr><C-W>+ printf("\<cmd>%dresize%+d\r", winnr('k'), v:count1)
 
 " Which Key plugin settings:
 " --------------------------
 
 if s:isactive('which_key')
-  " Trigger Which Key with \ [ret]
-  nnoremap <silent> <leader><CR> :<C-u>WhichKey '\'<CR>
+  set timeoutlen=500
 
-  let g:which_key_map =  {}
+  " let g:which_key_ignore_outside_mappings = 1
 
-  " Spelling Suggestion:
-  let g:which_key_map['z'] = [':normal! eas', 'Spelling Suggestion']
+  autocmd! User vim-which-key
+  nnoremap <silent> <leader> :<C-u>WhichKey '<leader>'<CR>
+  autocmd User vim-which-key call which_key#register(g:mapleader, 'g:which_key_map')
 
-  " Refresh:
-  " Doesn't seems to work fine
-  let g:which_key_map['l'] = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
+  nnoremap <silent> g :<C-u>WhichKey 'g'<CR>
+  autocmd User vim-which-key call which_key#register('g', 'g:which_key_map_g')
 
-  " Toggle:
-  let g:which_key_map.t = {
-        \ 'name' : '+Toggle'
-        \ }
-  if s:isactive('ale')
-    let g:which_key_map.t.a = [':ALEToggle', 'Toggle ALE']
-  endif
-
-  if s:isactive('vim_css_color')
-    let g:which_key_map.t.h = [':call css_color#toggle()', 'Toggle Colorizer']
-  endif
-
-  if s:isactive('hexokinase')
-    let g:which_key_map.t.h = [':HexokinaseToggle', 'Toggle Colorizer']
-  endif
-
-  if s:isactive('colorizer')
-    let g:which_key_map.t.h = ['<Plug>Colorizer', 'Toggle Colorizer']
-  endif
-
-  if s:isactive('indentline')
-    let g:which_key_map.t.i = [':IndentLinesToggle', 'Toggle Indent Guide']
-  endif
-
-  if s:isactive('coc_nvim')
-    let g:which_key_map.t.j = [':CocToggle', 'Toggle Coc']
-  endif
-
-  if s:isactive('vim_signature')
-    let g:which_key_map.t.m = [':SignatureToggleSigns', 'Toggle Marks']
-  endif
-
-  if s:isactive('nerdtree')
-    let g:which_key_map.t.n = [':NERDTreeToggle', 'Toggle Nerd Tree']
-  endif
-
-  if s:isactive('vim_rooter')
-    let g:which_key_map.t.r = [':RooterToggle', 'Toggle Rooter']
-  endif
-
-  if s:isactive('vim_signify')
-    let g:which_key_map.t.s = [':SignifyToggle', 'Toggle Signify']
-  endif
-
-  if s:isactive('tagbar')
-    let g:which_key_map.t.t = [':TagbarToggle', 'Toggle Tags']
-  endif
-
-  if s:isactive('vista_vim')
-    let g:which_key_map.t.t = [':Vista!!', 'Toggle Tags']
-  endif
-
-  if s:isactive('undotree')
-    let g:which_key_map.t.u = [':UndotreeToggle', 'Toggle Undo Tree']
-  endif
-
-  if s:isactive('winresizer')
-    let g:which_key_map.t.w = [':WinResizerStartResize', 'Toggle Window Resizer']
-  endif
-
-  " vim-visual-star-search:
-  let g:which_key_map['*'] = [":execute 'noautocmd vimgrep /\\V' .. substitute(escape(expand('<cword>'), '\'), '\n', '\\n', 'g') .. '/ **'", 'Search Current Word']
-
-  " Clap:
-  if s:isactive('vim_clap')
-    let g:which_key_map['m'] = [':Clap history', 'MRU']
-    let g:which_key_map['b'] = [':Clap buffers', 'Buffers']
-    let g:which_key_map['p'] = [':Clap proj_tags', 'Tags']
-  endif
-
-  if s:isactive('nvim_telescope')
-    let g:which_key_map['m'] = [':Telescope oldfiles', 'MRU']
-    let g:which_key_map['b'] = [':Telescope buffers', 'Buffers']
-    let g:which_key_map['p'] = [':Telescope tags', 'Tags']
-  endif
-
-  " Vimspector:
-  if s:isactive('vimspector')
-    let g:which_key_map.v = {
-          \ 'name' : '+VimSpector',
-          \ 'r' : [':VimspectorReset', 'Reset'],
-          \ 's' : [':call vimspector#WriteSessionFile(expand("%:h") .. "/debuggingsession.json")', 'Save Session'],
-          \ 'l' : [':call vimspector#ReadSessionFile(expand("%:h") .. "/debuggingsession.json")', 'Load Session'],
-          \ }
-  endif
-
-  let g:which_key_map.f = {
-          \ 'name' : '+Format'
-          \ }
-
-  " Format:
-  if s:isactive('vim_prettier')
-      let g:which_key_map.f.p = ['<Plug>(Prettier)', 'Format Selection using Prettier']
-  endif
-  if s:isactive('coc_nvim')
-      let g:which_key_map.f.s = ['<Plug>(coc-format-selected)', 'Format Selection using Coc']
-  endif
-
-  " Coc:
-  if s:isactive('coc_nvim')
-    let g:which_key_map.r = {
-          \ 'n' : ['<Plug>(coc-rename)', 'Rename'],
-          \ }
-
-    let g:which_key_map.q = {
-          \ 'f' : ['<Plug>(coc-fix-current)', 'Quick Fix'],
-          \ }
-  endif
-
-  let g:which_key_map.g = {
-        \ 'name' : '+GoTo',
-        \ 'f' : [':e %:h/<cfile>', 'GoTo New File'],
-        \ }
-
-  " Standard mapping configuration:
-  " call which_key#register('\', "g:which_key_map")
-  " Plug mapping configuration:
-  autocmd! User vim-which-key call which_key#register('\', 'g:which_key_map')
+  " :help *z*
+  nnoremap <silent> z :<C-u>WhichKey 'z'<CR>
+  autocmd User vim-which-key call which_key#register('z', 'g:which_key_map_z')
 endif
 
 if s:isactive('treesitter')
@@ -5770,7 +6299,9 @@ set wildignore+=Tests/**
 
 " Add a Diff command to compare with the disk buffer
 function! DiffOrig(spec)
+    let cft=&filetype
     vertical new
+    let &filetype=cft
     setlocal bufhidden=wipe buftype=nofile nobuflisted noswapfile
         let cmd = "++edit #"
     if len(a:spec)
@@ -5785,8 +6316,23 @@ endfunction
 
 command! -nargs=? DiffOrig call DiffOrig(<q-args>)
 
-" Define the H command to display help in a vertical split:
-command! -nargs=1 H vert help <args>
+" Define the Help command to display help in a vertical split:
+command! -nargs=? Help vert help <args>
+
+function! CorrectHelpCall()
+  if getcmdtype() != ':'
+    return "\<CR>"
+  endif
+
+  let l:command = matchstr(getcmdline(), '^h\%[elp]\>')
+  if l:command == ''
+    return "\<CR>"
+  endif
+
+  let l:cmdline = getcmdline()
+  return "\<End>\<C-u>Help" . l:cmdline[len(l:command):] . "\<CR>"
+endfunction
+cnoremap <expr> <CR> CorrectHelpCall()
 
 " Add two command to increase and decrease the font size:
 function! ChangeFontSize()
@@ -5849,13 +6395,18 @@ endif
 " Leave terminal with Ctrl-q
 tnoremap <C-q>  <C-\><C-n>
 
+" Make Neovim supporting the Ctrl-w mapping like Vim does
+if has('nvim')
+  tnoremap <C-w> <C-w>
+endif
+
 " Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
 tnoremap <expr> <C-v> getreg('*')
 
 " make <kbd>Ctrl-Enter</kbd> passed correctly into the terminal
 tnoremap <expr> <C-Cr> SendToTerm("\<Esc>\<Cr>")
 
-func SendToTerm(what)
+function! SendToTerm(what)
   call term_sendkeys('', a:what)
   return ''
 endfunc
@@ -5879,6 +6430,7 @@ function! SwitchToTerminal(name) abort
     " If no terminal window create a vertical window at the right side:
     wincmd s
     wincmd L
+    100wincmd |
     let winnr = winnr()
   endif
 
@@ -5893,11 +6445,20 @@ function! SwitchToTerminal(name) abort
   endif
 
   " Load a new terminal into the window:
-  terminal ++curwin ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
-  let b:current_dir = a:name
+  if has('nvim')
+    terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject
+    " Switch to console mode:
+    norma a
+  else
+    " 96 = 100 - &numberwidth
+    " &signcolumn == yes -> 2 columns
+    " &numberwidth -> max(&numberwidth, ceil(log(line('$'))/log(10)) + 1)
+    terminal ++curwin ++cols=96 ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
+  endif
+  let b:terminal_name = a:name
 endfunction
 
-command! Term call SwitchToTerminal(expand('%:p'))
+command! Term call SwitchToTerminal(expand('%:p:h'))
 
 function! ToggleTerm(name)
   let win_infos = filter(getwininfo(), "v:val.terminal")
@@ -5911,11 +6472,18 @@ function! ToggleTerm(name)
   endif
 endfunction
 
-nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p'))<CR>
+nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p:h'))<CR>
+if s:isactive('which_key')
+  let g:which_key_map.t.b = [":call ToggleTerm(expand('%:p:h'))", 'Toggle Term']
+endif
 
 
 " Make the \z trigger the spell check context menu (floating window)
 nnoremap <Leader>z ea<C-x>s
+if s:isactive('which_key')
+  let g:which_key_map.z = [':normal! eas', 'Spelling Suggestion']
+endif
+
 " nnoremap <leader>z :call search('\w\>', 'c')<CR>a<C-x>s
 " Make <CR> validate the spell entry selected
 " inoremap <expr> <CR> pumvisible() ? "\<C-y><Esc>" : "\<CR>"
@@ -5930,10 +6498,16 @@ cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
 " Make <leader>l disable highlighting temporarily (:nohlsearch)
 " A kind of improved Ctrl-l
 nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
+if s:isactive('which_key')
+  let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
+endif
 
 " Select the text that has just been pasted
 " (inspired from gv that select the text that has been just selected)
 nnoremap gp `[v`]
+if s:isactive('which_key')
+  let g:which_key_map_g.p = ['`[v`]', 'Select Pasted']
+endif
 
 " set lazyredraw
 
@@ -5975,7 +6549,6 @@ augroup CursorLine
     au WinLeave * setlocal nocursorline
 augroup END
 
-
 " Add the search clipboard shortcut
 function! SearchClipboard()
   let pattern='\V' . @*
@@ -5992,6 +6565,9 @@ function! SearchClipboard()
 endfunction
 
 nnoremap <leader>* :call SearchClipboard()<CR>
+if s:isactive('which_key')
+  let g:which_key_map['*'] = [':call SearchClipboard()', 'Search Clipboard']
+endif
 
 function! IsSideBar(buf_nr)
 " Return 1 if the buffer correspond to a side bar:
@@ -6002,20 +6578,6 @@ function! IsSideBar(buf_nr)
 " - ...
   let listed = getbufvar(a:buf_nr, '&buflisted')
   let buf_type = getbufvar(a:buf_nr, '&buftype')
-  " let readonly = getbufvar(a:buf_nr, '&readonly')
-  " let buf_name = bufname(a:buf_nr)
-  " let file_type = getbufvar(a:buf_nr, '&filetype')
-
-  " if !has('nvim')
-  "   " Neovim doesn't support the term_list function
-  "   let term_buffers = term_list()
-  " else
-  "   let term_buffers = []
-  " endif
-
-  " if readonly
-  "   return 1
-
   if !listed
     return 1
   endif
@@ -6029,130 +6591,35 @@ function! IsSideBar(buf_nr)
   endif
 
   return 0
-
-  " if file_type ==# 'qf'
-  "   " QuickFix, LocationList:
-  "   " Not Read Only
-  "   echom 'QuickFix'
-  "   return 1
-
-  " There are situation where the only buffer you have is help and you are
-  " fine with it :-)
-  " elseif file_type ==# 'help'
-  "   " Read Only
-  "   " Help Window:
-  "   " echom 'Help'
-  "   return 1
-
-  " elseif file_type ==# 'undotree'
-  "   " Not Read Only
-  "   " echom 'UndoTree'
-  "   return 1
-
-  " elseif file_type ==# 'tagbar'
-  "   " Not Read Only
-  "   " echom 'TagBar'
-  "   return 1
-
-  " elseif file_type ==# 'nerdtree'
-  "   " Read Only
-  "   " echom 'NerdTree'
-  "   return 1
-
-  " elseif file_type ==# "fern"
-  "   " Read Only
-  "   " echom 'Fern'
-  "   return 1
-
-  " elseif buf_name =~# 'vimspector.Variables\(\[\d\+\]\)\?$'
-  "   " Read Only
-  "   " echom 'vimspector.Variables'
-  "   return 1
-
-  " elseif file_type ==# 'vimspectorPrompt'
-  "   return 1
-
-  " elseif buf_name =~# 'vimspector.Watches\(\[\d\+\]\)\?$'
-  "   " Not Read Only
-  "   " echom 'vimspector.Watches'
-  "   return 1
-
-  " elseif buf_name =~# 'vimspector.StackTrace\(\[\d\+\]\)\?$'
-  "   " Read Only
-  "   " echom 'vimspector.StackTrace'
-  "   return 1
-
-  " elseif buf_name =~# 'vimspector.Console\(\[\d\+\]\)\?$'
-  "   " Not Read Only
-  "   " echom 'vimspector.Console'
-  "   return 1
-
-  " elseif file_type ==# 'ctrlsf'
-  "   " Not Read Only
-  "   " echom 'vimspector.Console'
-  "   return 1
-
-  " elseif buf_name ==# '!python'
-  "   " Not Read Only
-  "   return 1
-
-  " elseif buf_name ==# '!python.exe'
-  "   " Not Read Only
-  "   return 1
-
-  " elseif buf_name ==# '!C:\Windows\system32\cmd.exe'
-  "   " Not Read Only
-  "   return 1
-
-  " elseif index(term_buffers, a:buf_nr) >= 0
-  "   " echom 'Console'
-  "   return 1
-
-  " else
-  "   return 0
-
-  " endif
 endfunction
 
 function! LeaveSideBar()
   " Go to a non side bar window
-  let loop = 0
-  while 1
-    let loop = loop + 1
-    let bufnr = bufnr('%')
-
-    if loop > 10
-      " Don't search for more than 10 windows
-      " To handle the case all the windows are 'side bars'
-      break
+  let win_infos = getwininfo()
+  let winindex = winnr() - 1
+  for i in range(len(win_infos))
+    let index = (winindex + i) % len(win_infos)
+    if IsSideBar(win_infos[index].bufnr)
+      continue
     endif
-
-    if IsSideBar(bufnr)
-      wincmd w
-    else
-      break
-    endif
-
-  endwhile
+    execute (index + 1) . 'wincmd w'
+    return
+  endfor
 endfunction
 
 command! LeaveSideBar call LeaveSideBar()
 
-function! GetNumWindows()
+function! GetNumNonSideBarWindows()
   let num_windows = 0
-
-  " echom 'winnr($):' .. winnr('$')
 
   for win_nr in range(1, winnr('$'))
     let buf_nr = winbufnr(win_nr)
-    " echom "Analyze buffer: " . buf_nr
     if IsSideBar(buf_nr)
       continue
     endif
     let num_windows = num_windows + 1
   endfor
 
-  " echom 'Num Windows: ' . num_windows
   return num_windows
 endfunction
 
@@ -6172,15 +6639,12 @@ function! IsAutoClose(buf_nr)
 endfunction
 
 function! KillSideBars()
-  let num_windows = GetNumWindows()
+  let num_windows = GetNumNonSideBarWindows()
   " echom "Num windows: " . num_windows
   if num_windows > 0
     " If there are non side bar windows do nothing
     return
   endif
-
-  " Debug
-  " return
 
   " Delete the terminal buffers that don't correspond to a window
   if has('nvim')
@@ -6262,20 +6726,6 @@ endfunction
 
 " Add the TrimWhitespaces command
 command! TrimWhitespaces call TrimWhitespaces()
-
-":call Exec('command')
-"This will include the output of :command into the current buffer.
-"e.g:
-":call Exec('ls')
-":call Exec('autocmd')
-" funct! Exec(command)
-"   redir =>output
-"   silent exec a:command
-"   redir END
-"   let @o = output
-"   execute "put o"
-"   return ''
-" endfunct!
 
 " Add the WipeReg command that wipe out the content of all registers
 command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
@@ -6417,3 +6867,4 @@ cnoremap <C-S-F15> <Nop>
 inoremap <C-S-F15> <Nop>
 cnoremap <M-C-S-F15> <Nop>
 inoremap <M-C-S-F15> <Nop>
+

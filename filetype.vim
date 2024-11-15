@@ -7,7 +7,7 @@ if exists("did_load_filetypes")
 endif
 
 augroup filetypedetectpsi
-  au! BufNewFile,BufRead *.cfg setf psi
+  au BufNewFile,BufRead *.cfg setf psi
 augroup END
 
 augroup filetypedetectdobatch
@@ -17,6 +17,7 @@ augroup END
 augroup filetypedetectk
   au! BufNewFile,BufRead *.k setf k
 augroup END
+
 " augroup filetypedetectdosini
 "       au! BufNewFile,BufRead *.ini setf dosini
 " augroup END

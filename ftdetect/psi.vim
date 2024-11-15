@@ -8,5 +8,5 @@ autocmd BufNewFile,BufRead *.pm setfiletype psi
 autocmd BufNewFile,BufRead *.rls setfiletype psi
 autocmd BufNewFile,BufRead *.setup setfiletype psi
 autocmd BufNewFile,BufRead *.tng setfiletype psi
-autocmd! BufNewFile,BufRead *.cfg setfiletype psi
+autocmd BufNewFile,BufRead *.cfg setfiletype psi
 

@@ -5,23 +5,23 @@ let g:remotions_version = "0.1"
 let g:remotions_debug = 0
 
 if !exists("g:remotions_motions")
-  let g:remotions_motions = #{
-        \ TtFf : {},
-        \ para : #{ backward : '#{', forward : '}' },
-        \ sentence : #{ backward : '(', forward : ')' },
-        \ change : #{ backward : 'g,', forward : 'g;' },
-        \ class : #{ backward : '[[', forward : ']]' },
-        \ classend : #{ backward : '[]', forward : '][' },
-        \ method : #{ backward : '[m', forward : ']m' },
-        \ methodend : #{ backward : '[M', forward : ']M' },
+  let g:remotions_motions = {
+        \ 'TtFf' : {},
+        \ 'para' : { 'backward' : '{', 'forward' : '}' },
+        \ 'sentence' : { 'backward' : '(', 'forward' : ')' },
+        \ 'change' : { 'backward' : 'g,', 'forward' : 'g;' },
+        \ 'class' : { 'backward' : '[[', 'forward' : ']]' },
+        \ 'classend' : { 'backward' : '[]', 'forward' : '][' },
+        \ 'method' : { 'backward' : '[m', 'forward' : ']m' },
+        \ 'methodend' : { 'backward' : '[M', 'forward' : ']M' },
         \
-        \ arg : #{ backward : '[a', forward : ']a', doc : 'unimpaired' },
-        \ buffer : #{ backward : '[b', forward : ']b', doc : 'unimpaired' },
-        \ location : #{ backward : '[l', forward : ']l', doc : 'unimpaired' },
-        \ quickfix : #{ backward : '[q', forward : ']q', doc : 'unimpaired' },
-        \ tag : #{ backward : '[t', forward : ']t', doc : 'unimpaired' },
+        \ 'arg' : { 'backward' : '[a', 'forward' : ']a', 'doc': 'unimpaired' },
+        \ 'buffer' : { 'backward' : '[b', 'forward' : ']b', 'doc': 'unimpaired' },
+        \ 'location' : { 'backward' : '[l', 'forward' : ']l', 'doc': 'unimpaired' },
+        \ 'quickfix' : { 'backward' : '[q', 'forward' : ']q', 'doc': 'unimpaired' },
+        \ 'tag' : { 'backward' : '[t', 'forward' : ']t', 'doc': 'unimpaired' },
         \
-        \ diagnostic : #{ backward : '[g', forward : ']g', doc : 'coc-diagnostic' },
+        \ 'diagnostic' : { 'backward' : '[g', 'forward' : ']g', 'doc': 'coc-diagnostic' },
         \ }
 
 " let g:remotions_motions = {
@@ -103,15 +103,23 @@ function! s:RepeatMotion(forward)
 
   call s:Log('RepeatMotion(' . a:forward . ')')
 
+  if type(g:remotions_motions) != v:t_dict
+    echom $'g:remotions_motions is not a dictionary'
+  endif
+
   let motion = {}
-  if has_key(g:remotions_motions, g:remotions_family)
+  if type(g:remotions_motions) == v:t_dict && has_key(g:remotions_motions, g:remotions_family)
     " For the 'TtFf' key there is no guarantee that the motion exist in the
     " g:remotions_motions map
     let motion = g:remotions_motions[g:remotions_family]
   endif
 
+  if type(motion) != v:t_dict
+    echom $"g:remotions_motions['{g:remotions_family}'] is: {motion} and not a dictionary"
+  endif
+
   let repeat_count = g:remotions_repeat_count
-  if has_key(motion, 'repeat_count')
+  if type(motion) == v:t_dict && has_key(motion, 'repeat_count')
     let repeat_count = motion.repeat_count
   endif
 
@@ -168,13 +176,18 @@ function! s:TtFfMotion(key)
   if has_key(g:remotions_motions, 'TtFf')
     let motion = g:remotions_motions['TtFf']
   endif
-  if v:count <= 1 && has_key(motion, 'repeat_if_count') && motion.repeat_if_count == 1
+
+  if type(motion) != v:t_dict
+    echom $"g:remotions_motions['TtFf'] is: {motion} and not a dictionary"
+  endif
+
+  if v:count <= 1 && type(motion) == v:t_dict && has_key(motion, 'repeat_if_count') && motion.repeat_if_count == 1
     " Skip the motion with the option 'repeat_if_count' if the count is <= 1
     return
   endif
 
   let direction = g:remotions_direction
-  if has_key(motion, 'direction')
+  if type(motion) == v:t_dict && has_key(motion, 'direction')
     let direction = motion.direction
   endif
 
@@ -226,27 +239,31 @@ endif
 " nnoremap <expr> t <SID>TtFfMotion('t')
 " nnoremap <expr> T <SID>TtFfMotion('T')
 
-function! s:CustomMotion(forward, backward_plug, forward_plug, motion_plug, motion_family)
+function! CustomMotion(forward, backward_plug, forward_plug, motion_plug, motion_family)
   " Method called when the original motion are used.
   " - ']m' calls CustomMotion(1, "\<Plug>forwardmethod", "\<Plug>backwardmethod")
   " The method set the variables to be able to replay the motion
-  "
+
   if a:forward == 1
-    let ret = a:forward_plug
+    let ret = "\<Plug>" . a:forward_plug
   elseif a:forward == 0
-    let ret = a:backward_plug
+    let ret = "\<Plug>" . a:backward_plug
   elseif a:forward == 2
-    let ret = a:motion_plug
+    let ret = "\<Plug>" . a:motion_plug
   endif
 
   let motion = g:remotions_motions[a:motion_family]
-  if v:count <= 1 && has_key(motion, 'repeat_if_count') && motion.repeat_if_count == 1
+  if type(motion) != v:t_dict
+    echom $"g:remotions_motions['{a:motion_family}'] is: {motion} and not a dictionary"
+  endif
+
+  if v:count <= 1 && type(motion) == v:t_dict && has_key(motion, 'repeat_if_count') && motion.repeat_if_count == 1
     " Skip the motion with the option 'repeat_if_count' if the count is <= 1
     return ret
   endif
 
   let direction = g:remotions_direction
-  if has_key(motion, 'direction')
+  if type(motion) == v:t_dict && has_key(motion, 'direction')
     let direction = motion.direction
   endif
 
@@ -254,11 +271,11 @@ function! s:CustomMotion(forward, backward_plug, forward_plug, motion_plug, moti
   let g:remotions_family = a:motion_family
 
   if a:forward
-    let g:remotions_backward_plug = a:backward_plug
-    let g:remotions_forward_plug = a:forward_plug
+    let g:remotions_backward_plug = "\<Plug>" . a:backward_plug
+    let g:remotions_forward_plug = "\<Plug>" . a:forward_plug
   else
-    let g:remotions_backward_plug = a:forward_plug
-    let g:remotions_forward_plug = a:backward_plug
+    let g:remotions_backward_plug = "\<Plug>" . a:forward_plug
+    let g:remotions_forward_plug = "\<Plug>" . a:backward_plug
   endif
 
   let g:remotions_count = v:count
@@ -285,7 +302,8 @@ function! s:HijackMotion(modes, motion, motion_family)
 
     let motion_mapping = maparg(a:motion, mode, 0, 1)
     let motion_key = '<Plug>(' . a:motion_family . ')'
-    let motion_plug = "\<Plug>(" . a:motion_family . ')'
+    " let motion_plug = "\<Plug>(" . a:motion_family . ')'
+    let motion_plug = "(" . a:motion_family . ')'
 
     if len(motion_mapping) == 0
       " There is no mapping for that motion
@@ -330,7 +348,7 @@ function! s:HijackMotion(modes, motion, motion_family)
       " reset of the mapping
       let motion_mapping = copy(motion_mapping)
       let motion_mapping.lhs = motion_key
-      let motion_mapping.lhsraw = motion_plug
+      let motion_mapping.lhsraw = "\<Plug>" . motion_plug
       let motion_mapping.buffer = 1
 
       if motion_mapping.mode == ' ' || motion_mapping.mode == ''
@@ -355,6 +373,10 @@ function! s:HijackMotions(modes, backward, forward, motion, motion_plug, motion_
   " a backward and forward motion that use the CustomMotion method
   " that use the plugged version of the motion to execute the original motion
 
+  if !exists('b:added_mappings')
+    let b:added_mappings = []
+  endif
+
   if a:motion == ''
     let backward_plug = s:HijackMotion(a:modes, a:backward, "backward" . a:motion_family)
     let forward_plug = s:HijackMotion(a:modes, a:forward, "forward" . a:motion_family)
@@ -377,21 +399,21 @@ function! s:HijackMotions(modes, backward, forward, motion, motion_plug, motion_
       let mapping.mode = mode
       let mapping.buffer = 1
       call add(b:added_mappings, mapping)
-      execute mode . 'map <buffer> <silent> <expr> ' . a:backward . " <SID>CustomMotion(0, '" . backward_plug . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
+      execute mode . 'map <buffer> <silent> <expr> ' . a:backward . " CustomMotion(0, '" . backward_plug . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
 
       let mapping = {}
       let mapping.lhs = a:forward
       let mapping.mode = mode
       let mapping.buffer = 1
       call add(b:added_mappings, mapping)
-      execute mode . 'map <buffer> <silent> <expr> ' . a:forward . " <SID>CustomMotion(1, '" . backward_plug  . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
+      execute mode . 'map <buffer> <silent> <expr> ' . a:forward . " CustomMotion(1, '" . backward_plug  . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
     else
       let mapping = {}
       let mapping.lhs = a:motion
       let mapping.mode = mode
       let mapping.buffer = 1
       call add(b:added_mappings, mapping)
-      execute mode . 'map <buffer> <silent> <expr> ' . a:motion . " <SID>CustomMotion(2, '" . backward_plug  . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
+      execute mode . 'map <buffer> <silent> <expr> ' . a:motion . " CustomMotion(2, '" . backward_plug  . "', '" . forward_plug . "', '" . motion_plug . "', '" . a:motion_family . "')"
     endif
   endfor
 endfunction
@@ -431,6 +453,7 @@ function! RemotionsResetMappings()
 endfunction
 
 function! s:SetMappings()
+  " echom 'SetMapping()'
   call s:Log("SetMappings()")
 
   call RemotionsResetMappings()
@@ -460,17 +483,27 @@ function s:BufNew()
 endfunction
 
 function s:BufEnter()
+  " echom 'BufEnter()'
+  call s:Log("BufEnter()")
+
   if &filetype != ''
     return
   endif
+
   if exists('b:added_mappings')
     return
   endif
+
   call s:SetMappings()
 endfunction
 
 function! s:SetFileType()
+  " echom 'SetFileType()'
   call s:Log("SetFileType()")
+
+  if exists('b:added_mappings')
+    return
+  endif
 
   call s:SetMappings()
   if !exists('b:undo_ftplugin')
