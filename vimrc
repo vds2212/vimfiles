@@ -243,6 +243,8 @@ let maplocalleader=" "
 " set notimeout
 
 " Set mapping timeout to 2000 ms (2 sec)
+" vds: the ]m and [m when not executed fast enough for Python code
+" fallback to the Vim default
 set timeoutlen=2000
 
 " Show line numbers
@@ -6198,7 +6200,8 @@ nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 
 " --------------------------
 
 if s:isactive('which_key')
-  set timeoutlen=500
+  set timeoutlen=1000
+  let g:which_key_timeout=300
 
   " let g:which_key_ignore_outside_mappings = 1
 
