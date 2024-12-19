@@ -1290,6 +1290,7 @@ function! s:setup() dict
   let g:remotions_repeat_count = 1
 
   let g:remotions_motions = {
+        \ 'TtFf' : {},
         \ 'para' : { 'backward' : '{', 'forward' : '}' },
         \ 'sentence' : { 'backward' : '(', 'forward' : ')' },
         \ 'change' : { 'backward' : 'g,', 'forward' : 'g;' },
@@ -3574,7 +3575,7 @@ function! s:setup() dict
   " More information with: :help coc-nvim
 endfunction
 let coc_nvim.setup = funcref("s:setup")
-call s:addplugin("coc_nvim", coc_nvim)
+" call s:addplugin("coc_nvim", coc_nvim)
 
 " Remark: Install additional lsp modules with:
 " - MasonInstall pyright
@@ -4528,7 +4529,7 @@ function! s:setup() dict
   let g:vimtex_imaps_disabled = ['b', 'B', 'c', 'f', '/', '-']
 endfunction
 let s:vimtex.setup = funcref("s:setup")
-" call s:addplugin("vimtex", s:vimtex)
+call s:addplugin("vimtex", s:vimtex)
 
 
 let s:vim_latex = {}
@@ -4538,7 +4539,7 @@ function! s:setup() dict
   "set winaltkeys=no
 endfunction
 let s:vim_latex.setup = funcref("s:setup")
-call s:addplugin("vim_latex", s:vim_latex)
+" call s:addplugin("vim_latex", s:vim_latex)
 
 
 " 2.23.8 Vim Help

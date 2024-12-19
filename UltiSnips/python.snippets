@@ -20,7 +20,7 @@ def main():
     formatter = logging.Formatter(
         # "%(asctime)s:"
         # "%(name)s:"
-        # "%(levelname)s:"
+        "%(levelname)s:"
         "%(message)s",
         datefmt="%Y/%m/%d %H:%M:%S",
     )
@@ -110,8 +110,10 @@ def convert_to_datetime(date):
             ret = datetime.datetime.strptime(date, "%Y/%m/%d %H:%M:%S")
             return ret
 
+        log("Fail to parse date '%s'" % date, level=logging.WARNING)
+
     except ValueError as e:
-        log("Fail to parse date '%s' %s" % (date, str(e)))
+        log("Fail to parse date '%s' %s" % (date, str(e)), level=logging.WARNING)
         return datetime.datetime.now()
 
 
@@ -228,4 +230,9 @@ reload()
 
 def ${1:macro}(line_plan: "beta.LinePlan"):
     pass
+endsnippet
+
+snippet for "for loop" b
+for ${1:item} in ${2:iterable}:
+	${3:${VISUAL:pass}}
 endsnippet
