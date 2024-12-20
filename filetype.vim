@@ -19,6 +19,6 @@ augroup filetypedetectk
 augroup END
 
 " augroup filetypedetectdosini
-"       au! BufNewFile,BufRead *.ini setf dosini
+"  au! BufNewFile,BufRead *.ini setf dosini
 " augroup END
 "

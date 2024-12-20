@@ -20,3 +20,7 @@ setlocal formatoptions-=o
 " Make join removing the comment prefix
 setlocal formatoptions+=j
 
+" Make s:identifier or g:identifier a keyword such that ctags find it
+" correctly
+setlocal iskeyword+=:
+

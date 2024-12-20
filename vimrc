@@ -4197,6 +4197,12 @@ endif
 " Helper to analyze vim scripts
 let s:vim_scriptease = {}
 let s:vim_scriptease.url = 'tpope/vim-scriptease'
+function! s:setup() dict
+  " Avoid scriptease removes the ':' for the iskeyword such that ctags works
+  " correctly
+  let g:scriptease_iskeyword = 0
+endfunction
+let s:vim_scriptease.setup = funcref("s:setup")
 call s:addplugin("vim_scriptease", s:vim_scriptease)
 
 

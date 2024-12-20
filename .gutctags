@@ -1,0 +1,4 @@
+--exclude=coc
+--exclude=plugged
+--exclude=swap
+--exclude=undo
