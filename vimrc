@@ -2884,7 +2884,9 @@ function! s:setup() dict
   let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 endfunction
 let s:editorconfig.setup = funcref("s:setup")
-call s:addplugin("editorconfig", s:editorconfig)
+if !has('nvim')
+  call s:addplugin("editorconfig", s:editorconfig)
+endif
 
 " 2.9.3. Sleuth
 " ------------
@@ -3575,7 +3577,7 @@ function! s:setup() dict
   " More information with: :help coc-nvim
 endfunction
 let coc_nvim.setup = funcref("s:setup")
-" call s:addplugin("coc_nvim", coc_nvim)
+call s:addplugin("coc_nvim", coc_nvim)
 
 " Remark: Install additional lsp modules with:
 " - MasonInstall pyright
@@ -4529,7 +4531,7 @@ function! s:setup() dict
   let g:vimtex_imaps_disabled = ['b', 'B', 'c', 'f', '/', '-']
 endfunction
 let s:vimtex.setup = funcref("s:setup")
-call s:addplugin("vimtex", s:vimtex)
+" call s:addplugin("vimtex", s:vimtex)
 
 
 let s:vim_latex = {}
