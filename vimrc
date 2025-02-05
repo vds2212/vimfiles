@@ -3053,12 +3053,11 @@ let s:nerdcommenter.setup = funcref("s:setup")
 " Add additional commands to manage pairs
 let s:vim_surround = {}
 let s:vim_surround.url = 'tpope/vim-surround'
-" call s:addplugin("vim_surround", s:vim_surround)
+call s:addplugin("vim_surround", s:vim_surround)
 
 let s:vim_sandwich = {}
 let s:vim_sandwich.url = 'machakann/vim-sandwich'
-call s:addplugin("vim_sandwich", s:vim_sandwich)
-call s:addplugin("vim_sandwich", s:vim_sandwich)
+" call s:addplugin("vim_sandwich", s:vim_sandwich)
 
 " 2.13.2. Auto-Pair
 " ----------------
