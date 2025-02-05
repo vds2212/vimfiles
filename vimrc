@@ -1236,7 +1236,7 @@ function! s:setup() dict
   " More information with: :help wilder.txt
 endfunction
 let s:wilder.setup = funcref("s:setup")
-call s:addplugin("wilder", s:wilder)
+" call s:addplugin("wilder", s:wilder)
 
 " 2.2.3. Repeat
 " ------------
@@ -1972,6 +1972,26 @@ function! s:setup() dict
 endfunction
 let s:context.setup = funcref("s:setup")
 call s:addplugin("context", s:context)
+
+let s:splitjoin = {}
+let s:splitjoin.url = 'AndrewRadev/splitjoin.vim'
+function! s:setup() dict
+endfunction
+let s:splitjoin.setup = funcref("s:setup")
+" call s:addplugin("context", s:splitjoin)
+
+let s:treejs = {}
+let s:treejs.url = 'Wansmer/treesj'
+let s:treejs.dependencies = ['nvim-treesitter/nvim-treesitter']
+function! s:setup() dict
+lua << EOF
+require("treejs").setup({})
+EOF
+endfunction
+let s:treejs.setup = funcref("s:setup")
+if has('nvim')
+  " call s:addplugin("treejs", s:treejs)
+endif
 
 " Spell checking
 let s:vim_spellcheck = {}
@@ -3033,7 +3053,12 @@ let s:nerdcommenter.setup = funcref("s:setup")
 " Add additional commands to manage pairs
 let s:vim_surround = {}
 let s:vim_surround.url = 'tpope/vim-surround'
-call s:addplugin("vim_surround", s:vim_surround)
+" call s:addplugin("vim_surround", s:vim_surround)
+
+let s:vim_sandwich = {}
+let s:vim_sandwich.url = 'machakann/vim-sandwich'
+call s:addplugin("vim_sandwich", s:vim_sandwich)
+call s:addplugin("vim_sandwich", s:vim_sandwich)
 
 " 2.13.2. Auto-Pair
 " ----------------
@@ -3588,19 +3613,15 @@ let s:mason.options = { 'do': ':MasonUpdate' }
 let s:mason.dependencies = [
       \ 'williamboman/mason-lspconfig.nvim',
       \ 'neovim/nvim-lspconfig',
-      \ 'hrsh7th/nvim-cmp',
-      \ 'hrsh7th/cmp-nvim-lsp',
       \ 'jose-elias-alvarez/null-ls.nvim',
       \ ]
 function! s:setup() dict
   lua require("mason").setup()
   lua require("mason-lspconfig").setup()
-  lua require("null-ls")
 
+  " local configuration:
   lua require("config.mason")
   lua require("handlers").setup()
-  lua require("config.cmp")
-  lua require("config.null-ls")
 
   nnoremap <leader>tj <cmd>:lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<cr>
   if s:isactive('which_key')
@@ -3611,6 +3632,75 @@ let s:mason.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin("mason", s:mason)
 endif
+
+let s:null_ls = {}
+let s:null_ls.url = 'jose-elias-alvarez/null-ls.nvim'
+function! s:setup() dict
+  lua require("null-ls")
+
+  " local configuration:
+  lua require("config.null-ls")
+endfunction
+let s:null_ls.setup = funcref("s:setup")
+if has('nvim')
+  " call s:addplugin("null_ls", s:null_ls)
+endif
+
+let s:nvim_cmp = {}
+let s:nvim_cmp.url = 'hrsh7th/nvim-cmp'
+let s:nvim_cmp.dependencies = [
+      \ 'hrsh7th/cmp-nvim-lsp',
+      \ 'hrsh7th/cmp-buffer',
+      \ 'hrsh7th/cmp-path',
+      \ 'hrsh7th/cmp-cmdline',
+      \ ]
+function! s:setup() dict
+  " local configuration:
+  lua require("config.cmp")
+endfunction
+let s:nvim_cmp.setup = funcref("s:setup")
+if has('nvim')
+  " call s:addplugin("nvim_cmp", s:nvim_cmp)
+endif
+
+let s:blink_cmp = {}
+let s:blink_cmp.url = 'Saghen/blink.cmp'
+" let s:blink_cmp.dependencies = [
+"       \ 'rafamadriz/friendly-snippets',
+"       \ ]
+function! s:setup() dict
+  " local configuration:
+lua << EOF
+require("blink.cmp").setup({
+    -- 'default' for mappings similar to built-in completion
+    -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
+    -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+    -- See the full "keymap" documentation for information on defining your own keymap.
+    keymap = { preset = 'enter' },
+
+    appearance = {
+      -- Sets the fallback highlight groups to nvim-cmp's highlight groups
+      -- Useful for when your theme doesn't support blink.cmp
+      -- Will be removed in a future release
+      use_nvim_cmp_as_default = true,
+      -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+      -- Adjusts spacing to ensure icons are aligned
+      nerd_font_variant = 'mono'
+    },
+
+    -- Default list of enabled providers defined so that you can extend it
+    -- elsewhere in your config, without redefining it, due to `opts_extend`
+    sources = {
+      default = { 'lsp', 'path', 'snippets', 'buffer' },
+    },
+})
+EOF
+endfunction
+let s:blink_cmp.setup = funcref("s:setup")
+if has('nvim')
+  call s:addplugin("blink_cmp", s:blink_cmp)
+endif
+
 
 let s:r_nvim = {}
 let s:r_nvim.url = 'R-nvim/R.nvim'
@@ -3704,6 +3794,7 @@ let s:jedi_vim.setup = funcref("s:setup")
 " Semantic highlighting
 let s:semshi = {}
 let s:semshi.url = 'numirias/semshi'
+let s:semshi.dependencies = ['nvim-treesitter/nvim-treesitter']
 let s:semshi.options = { 'do': ':UpdateRemotePlugins' }
 " call s:addplugin("semshi", s:semshi)
 
@@ -3711,6 +3802,7 @@ let s:semshi.options = { 'do': ':UpdateRemotePlugins' }
 " Semantic highlighting
 let s:hlargs = {}
 let s:hlargs.url = 'm-demare/hlargs.nvim'
+let s:hlargs.dependencies = ['nvim-treesitter/nvim-treesitter']
 function! s:setup() dict
   lua require('hlargs').setup()
 endfunction
@@ -4296,6 +4388,7 @@ call s:addplugin("vimwiki", s:vimwiki)
 
 let s:neorg = {}
 let s:neorg.url = 'nvim-neorg/neorg'
+let s:neorg.dependencies = ['nvim-treesitter/nvim-treesitter']
 function! s:setup() dict
 lua << EOF
 require('neorg').setup {
@@ -4597,13 +4690,6 @@ if s:isactive('deoplete') || s:isactive('wilder')
     " Requires pynvim
     "   C:\Python312_x64\Scripts\pip install pynvim
     Plug 'roxma/vim-hug-neovim-rpc'
-  endif
-endif
-
-if s:isactive('neorg') || s:isactive('hlargs') || s:isactive('semshi')
-  if !s:isactive('treesitter')
-    Plug 'nvim-treesitter/nvim-treesitter',
-    s:activate('treesitter')
   endif
 endif
 
@@ -5332,17 +5418,43 @@ if 1
     return ''
   endfunc
 
-  function! SwitchToTerminal(name) abort
+  function! SwitchToTerminal(...) abort
+    if a:0 == 0
+      let l:name = expand('%:p:h')
+    else
+      let l:name = expand(a:1)
+      if !isdirectory(l:name)
+        let l:name = fnamemodify(l:name, ':h')
+      endif
+    endif
+
+    let l:workingdir = expand('%:p:h')
+    if l:name != l:workingdir
+      execute 'cd' l:name
+    endif
+
+    let l:restore_rooter = 0
+    if exists('g:rooter_manual_only') && !g:rooter_manual_only
+      RooterToggle
+      let l:restore_rooter = 1
+    endif
+
     let win_infos = filter(getwininfo(), "v:val.terminal")
 
     if len(win_infos)
       let winnr = win_infos[-1].winnr
 
-      let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . a:name . "'")
+      let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
       if len(win_info) > 0
         " If a terminal window exist with the right name switch to it:
         let winnr = win_info[0].winnr
         execute winnr . 'wincmd w'
+        if l:name != l:workingdir
+          execute 'cd' l:workingdir
+        endif
+        if l:restore_rooter
+          RooterToggle
+        endif
         return
       endif
       " If a terminal window exist reuse it:
@@ -5357,10 +5469,16 @@ if 1
 
     let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
     if len(buf_infos)
-      let buf_info = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . a:name . "'")
+      let buf_info = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
       if len(buf_info)
         " If a hidden terminal with the right name exist use it:
         execute 'buffer ' . buf_info[0].bufnr
+        if l:name != l:workingdir
+          execute 'cd' l:workingdir
+        endif
+        if l:restore_rooter
+          RooterToggle
+        endif
         return
       endif
     endif
@@ -5376,10 +5494,16 @@ if 1
       " &numberwidth -> max(&numberwidth, ceil(log(line('$'))/log(10)) + 1)
       terminal ++curwin ++cols=96 ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
     endif
-    let b:terminal_name = a:name
+    let b:terminal_name = l:name
+    if l:name != l:workingdir
+      execute 'cd' l:workingdir
+    endif
+    if l:restore_rooter
+      RooterToggle
+    endif
   endfunction
 
-  command! Term call SwitchToTerminal(expand('%:p:h'))
+  command! -nargs=? Term call SwitchToTerminal(<f-args>)
 
   function! ToggleTerm(name)
     let win_infos = filter(getwininfo(), "v:val.terminal")
@@ -5641,18 +5765,20 @@ if 1
 
   " Add the trim white spaces function
   " (that trim the trailing white spaces ;-) )
-  function! TrimWhitespaces()
+  function! TrimWhitespaces() range
+    let cmd = a:firstline . ',' . a:lastline . 's/\s\+$//e'
     mark Z
-    %s/\s\+$//e
-    if line("'Z") != line(".")
-      echo "Some white spaces trimmed"
-    endif
+    " echom cmd
+    execute cmd
+    " if line("'Z") != line(".")
+    "   echo "Some white spaces trimmed"
+    " endif
     normal `Z
     delmarks Z
   endfunction
 
   " Add the TrimWhitespaces command
-  command! TrimWhitespaces call TrimWhitespaces()
+  command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
 
   " Add the WipeReg command that wipe out the content of all registers
   command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
@@ -5691,7 +5817,8 @@ if 1
       let g:python3_host_prog='C:\Python39_x64\python.exe'
     " let g:python3_host_prog='C:\Python312_x64\python.exe'
     else
-      let g:python3_host_prog='C:\Python39_x64\python.exe'
+      " let g:python3_host_prog='C:\Python39_x64\python.exe'
+      let g:python3_host_prog='C:\Python310_x64\python.exe'
       " set pyxversion=0
       " set pythonthreedll=python39.dll
       " set pythonthreehome=C:\Python39_x64
@@ -5777,19 +5904,35 @@ if 1
 endif
 
 " Ignore Caffeine input
-cnoremap <F15> <Nop>
-inoremap <F15> <Nop>
-cnoremap <M-F15> <Nop>
-inoremap <M-F15> <Nop>
-cnoremap <C-F15> <Nop>
-inoremap <C-F15> <Nop>
-cnoremap <S-F15> <Nop>
-inoremap <S-F15> <Nop>
-cnoremap <M-C-F15> <Nop>
-inoremap <M-C-F15> <Nop>
-cnoremap <M-S-F15> <Nop>
-inoremap <M-S-F15> <Nop>
-cnoremap <C-S-F15> <Nop>
-inoremap <C-S-F15> <Nop>
-cnoremap <M-C-S-F15> <Nop>
-inoremap <M-C-S-F15> <Nop>
+" cnoremap <F15> <Nop>
+" inoremap <F15> <Nop>
+" cnoremap <M-F15> <Nop>
+" inoremap <M-F15> <Nop>
+" cnoremap <C-F15> <Nop>
+" inoremap <C-F15> <Nop>
+" cnoremap <S-F15> <Nop>
+" inoremap <S-F15> <Nop>
+" cnoremap <M-C-F15> <Nop>
+" inoremap <M-C-F15> <Nop>
+" cnoremap <M-S-F15> <Nop>
+" inoremap <M-S-F15> <Nop>
+" cnoremap <C-S-F15> <Nop>
+" inoremap <C-S-F15> <Nop>
+" cnoremap <M-C-S-F15> <Nop>
+" inoremap <M-C-S-F15> <Nop>
+
+" function! SetAnsiEsc()
+"   let c = min([50, line('$')])
+"   for line in getline(1, c)
+"     if matchstr(line, '\e\[') != ''
+"       AnsiEsc
+"       return
+"     endif
+"   endfor
+" endfunction
+" autocmd! BufRead * call SetAnsiEsc()
+
+" autocmd BufRead *
+"   \ if matchstr(getline(1) . getline(2) . getline(3), '\e\[') != '' |
+"   \   execute 'AnsiEsc' |
+"   \ endif
