@@ -988,10 +988,16 @@ function! s:setup() dict
 
   " Add the arrow like separator
   let g:airline_powerline_fonts = 1
+
+  if has('win32')
+    if has("terminal")
+      " vds: It seems that airline is not compatible with the '!' option
+      set guioptions-=!
+    endif
+  endif
 endfunction
 let s:vim_airline.setup = funcref("s:setup")
-call s:addplugin("vim_airline", s:vim_airline)
-
+" call s:addplugin("vim_airline", s:vim_airline)
 
 let s:powerline = {}
 let s:powerline.url = 'powerline/powerline'
@@ -1077,7 +1083,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
-" call s:addplugin("vim_lightline", s:vim_lightline)
+call s:addplugin("vim_lightline", s:vim_lightline)
 
 
 " 2.2. Ergonomic
@@ -1236,7 +1242,7 @@ function! s:setup() dict
   " More information with: :help wilder.txt
 endfunction
 let s:wilder.setup = funcref("s:setup")
-" call s:addplugin("wilder", s:wilder)
+call s:addplugin("wilder", s:wilder)
 
 " 2.2.3. Repeat
 " ------------
@@ -3986,6 +3992,8 @@ require'nvim-treesitter.configs'.setup {
   ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
   -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
 
+  indent = {enable = true},
+
   highlight = {
     enable = true,
 
@@ -4649,9 +4657,26 @@ let s:helpful = {}
 let s:helpful.url = 'tweekmonster/helpful.vim'
 " call s:addplugin("helpful", s:helpful)
 
-" let a = len(s:plugin_list)
-" let s:plugin_list = s:plugin_list[:a/2 + a/8 + a/16 + a/16]
-" let g:plugin_list = s:plugin_list
+function! GetSubrange(l, locator)
+  let low_bound = 0
+  let high_bound = len(a:l) - 1
+  for loc in a:locator
+    let num = high_bound - low_bound + 1
+    if loc == '0'
+      let high_bound -= num / 2
+    else
+      if num % 2 == 1
+        let num += 1
+      endif
+      let low_bound += num / 2
+    endif
+  endfor
+  return a:l[low_bound:high_bound]
+endfunction
+
+" let s:plugin_list = GetSubrange(s:plugin_list, "101101")
+let g:plugin_list = s:plugin_list
+" echom map(copy(g:plugin_list), {_, val -> val.url})
 
 call plug#begin()
 
@@ -5901,37 +5926,3 @@ if 1
   " command! VimClippy call s:vimclippy()
   command! Explorer silent !open_folder.vbs "%:h"
 endif
-
-" Ignore Caffeine input
-" cnoremap <F15> <Nop>
-" inoremap <F15> <Nop>
-" cnoremap <M-F15> <Nop>
-" inoremap <M-F15> <Nop>
-" cnoremap <C-F15> <Nop>
-" inoremap <C-F15> <Nop>
-" cnoremap <S-F15> <Nop>
-" inoremap <S-F15> <Nop>
-" cnoremap <M-C-F15> <Nop>
-" inoremap <M-C-F15> <Nop>
-" cnoremap <M-S-F15> <Nop>
-" inoremap <M-S-F15> <Nop>
-" cnoremap <C-S-F15> <Nop>
-" inoremap <C-S-F15> <Nop>
-" cnoremap <M-C-S-F15> <Nop>
-" inoremap <M-C-S-F15> <Nop>
-
-" function! SetAnsiEsc()
-"   let c = min([50, line('$')])
-"   for line in getline(1, c)
-"     if matchstr(line, '\e\[') != ''
-"       AnsiEsc
-"       return
-"     endif
-"   endfor
-" endfunction
-" autocmd! BufRead * call SetAnsiEsc()
-
-" autocmd BufRead *
-"   \ if matchstr(getline(1) . getline(2) . getline(3), '\e\[') != '' |
-"   \   execute 'AnsiEsc' |
-"   \ endif
