@@ -4825,13 +4825,15 @@ function! GetColorSchemes()
 endfunction
 
 let s:schemes = GetColorSchemes()
-if s:isactive('gui_running') || has('unix')
+if has('gui_running') || has('unix')
   if s:isactive('tokyonight')
     colorscheme tokyonight
   endif
 
-  if s:isactive('nord_vim') && index(s:schemes, 'nord') >= 0
+  if index(s:schemes, 'nord') >= 0
     colorscheme nord
+  else
+    colorscheme desert
   endif
 
   if s:isactive('nord_vim')
@@ -4844,7 +4846,11 @@ if s:isactive('gui_running') || has('unix')
 else
   " Seems that termguicolors and nord colorscheme work well on Windows console
   set termguicolors
-  colorscheme nord
+  try
+    colorscheme nord
+  catch
+    colorscheme desert
+  endtry
 endif
 
 for plugin in s:plugin_list
