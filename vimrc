@@ -5546,7 +5546,7 @@ if 1
       " 96 = 100 - &numberwidth
       " &signcolumn == yes -> 2 columns
       " &numberwidth -> max(&numberwidth, ceil(log(line('$'))/log(10)) + 1)
-      terminal ++curwin ++cols=96 ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
+      terminal ++curwin ++cols=96 ++close ++kill=kill cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
     endif
 
     setlocal nobuflisted
