@@ -840,6 +840,27 @@ function! s:isactive(name)
   return 0
 endfunction
 
+function! s:getsubrange(l, locator)
+  let low_bound = 0
+  let high_bound = len(a:l) - 1
+  for loc in a:locator
+    let num = high_bound - low_bound + 1
+    if loc == '0'
+      let high_bound -= num / 2
+    else
+      if num % 2 == 1
+        let num += 1
+      endif
+      let low_bound += num / 2
+    endif
+  endfor
+  return a:l[low_bound:high_bound]
+endfunction
+
+function! GetInstalledPlugins()
+  return map(copy(s:plugin_list), {_, val -> val.url})
+endfunction
+
 let s:mappings = {}
 function! s:mapkeys(mode, keys, action, options, description)
   let prefix = keys[0]
@@ -992,7 +1013,7 @@ function! s:setup() dict
   if has('win32')
     if has("terminal")
       " vds: It seems that airline is not compatible with the '!' option
-      set guioptions-=!
+      " set guioptions-=!
     endif
   endif
 endfunction
@@ -3665,7 +3686,7 @@ function! s:setup() dict
 endfunction
 let s:nvim_cmp.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("nvim_cmp", s:nvim_cmp)
+  call s:addplugin("nvim_cmp", s:nvim_cmp)
 endif
 
 let s:blink_cmp = {}
@@ -3703,7 +3724,7 @@ EOF
 endfunction
 let s:blink_cmp.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("blink_cmp", s:blink_cmp)
+  " call s:addplugin("blink_cmp", s:blink_cmp)
 endif
 
 
@@ -3801,7 +3822,9 @@ let s:semshi = {}
 let s:semshi.url = 'numirias/semshi'
 let s:semshi.dependencies = ['nvim-treesitter/nvim-treesitter']
 let s:semshi.options = { 'do': ':UpdateRemotePlugins' }
-" call s:addplugin("semshi", s:semshi)
+if has('nvim')
+  call s:addplugin("semshi", s:semshi)
+endif
 
 
 " Semantic highlighting
@@ -4657,29 +4680,9 @@ let s:helpful = {}
 let s:helpful.url = 'tweekmonster/helpful.vim'
 " call s:addplugin("helpful", s:helpful)
 
-function! GetSubrange(l, locator)
-  let low_bound = 0
-  let high_bound = len(a:l) - 1
-  for loc in a:locator
-    let num = high_bound - low_bound + 1
-    if loc == '0'
-      let high_bound -= num / 2
-    else
-      if num % 2 == 1
-        let num += 1
-      endif
-      let low_bound += num / 2
-    endif
-  endfor
-  return a:l[low_bound:high_bound]
-endfunction
-
-" let s:plugin_list = GetSubrange(s:plugin_list, "101101")
-let g:plugin_list = s:plugin_list
-" echom map(copy(g:plugin_list), {_, val -> val.url})
+" let s:plugin_list = getsubrange(s:plugin_list, "101101")
 
 call plug#begin()
-
 for plugin in s:plugin_list
   if plugin.url == ''
     continue
@@ -4716,7 +4719,6 @@ if s:isactive('deoplete') || s:isactive('wilder')
     Plug 'roxma/vim-hug-neovim-rpc'
   endif
 endif
-
 call plug#end()
 
 if s:isactive('which_key')
@@ -5449,45 +5451,46 @@ if 1
   endfunc
 
   function! SwitchToTerminal(...) abort
+    let l:bufindex = 0
     if a:0 == 0
-      let l:name = expand('%:p:h')
+      " If no name is given use the working directory:
+      " End with '/'
+      let l:name = fnamemodify(getcwd(), ':p')
     else
-      let l:name = expand(a:1)
-      if !isdirectory(l:name)
-        let l:name = fnamemodify(l:name, ':h')
+      if a:1 =~ '^\d\+'
+        let l:bufindex = str2nr(a:1)
+        let l:name = ''
+      else
+        let l:name = expand(a:1)
+        if !isdirectory(l:name)
+          " If the name given is the name of a file
+          " use the parent folder
+          " End with '/'
+          let l:name = fnamemodify(fnamemodify(l:name, ':p:h'), ':p')
+        else
+          " End with '/'
+          let l:name = fnamemodify(l:name, ':p')
+        endif
       endif
-    endif
-
-    let l:workingdir = expand('%:p:h')
-    if l:name != l:workingdir
-      execute 'cd' l:name
-    endif
-
-    let l:restore_rooter = 0
-    if exists('g:rooter_manual_only') && !g:rooter_manual_only
-      RooterToggle
-      let l:restore_rooter = 1
     endif
 
     let win_infos = filter(getwininfo(), "v:val.terminal")
-
     if len(win_infos)
       let winnr = win_infos[-1].winnr
 
-      let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
+      " If a terminal window exist with the right name/index switch to it:
+      if l:bufindex == 0
+        let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
+      else
+        let win_info = filter(win_infos, "v:val.bufnr ==" . l:bufindex)
+      endif
       if len(win_info) > 0
-        " If a terminal window exist with the right name switch to it:
         let winnr = win_info[0].winnr
         execute winnr . 'wincmd w'
-        if l:name != l:workingdir
-          execute 'cd' l:workingdir
-        endif
-        if l:restore_rooter
-          RooterToggle
-        endif
         return
       endif
-      " If a terminal window exist reuse it:
+
+      " Otherwise if a terminal window exist reuse it:
       execute winnr . 'wincmd w'
     else
       " If no terminal window create a vertical window at the right side:
@@ -5497,19 +5500,39 @@ if 1
       let winnr = winnr()
     endif
 
-    let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+    " Search among existing terminal buffer:
+    if l:bufindex == 0
+      let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+    else
+      let buf_infos = filter(getbufinfo(), "v:val.bufnr ==" . l:bufindex)
+    endif
     if len(buf_infos)
-      let buf_info = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
-      if len(buf_info)
+      if l:bufindex == 0
+        let buf_infos = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
+      endif
+      if len(buf_infos)
         " If a hidden terminal with the right name exist use it:
-        execute 'buffer ' . buf_info[0].bufnr
-        if l:name != l:workingdir
-          execute 'cd' l:workingdir
-        endif
-        if l:restore_rooter
-          RooterToggle
-        endif
+        execute 'buffer ' . buf_infos[0].bufnr
         return
+      endif
+    endif
+
+    if l:bufindex != 0
+      echom 'Fail to find buffer:' . l:bufindex
+      return
+    endif
+
+    let l:workingdir = getcwd()
+    if l:name != l:workingdir
+      " Change the working directory temporarily
+      " In order to create the terminal with the correct working directory
+      execute 'cd' l:name
+
+      let l:restore_rooter = 0
+      if exists('g:rooter_manual_only') && !g:rooter_manual_only
+        " Disable vim-rooter temporarily
+        RooterToggle
+        let l:restore_rooter = 1
       endif
     endif
 
@@ -5524,22 +5547,44 @@ if 1
       " &numberwidth -> max(&numberwidth, ceil(log(line('$'))/log(10)) + 1)
       terminal ++curwin ++cols=96 ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
     endif
-    execute 'file' 'Term ' . bufnr()
 
     let b:terminal_name = l:name
+    " Set a name for the terminal buffer:
+    execute 'file' 'Term ' . bufnr()
+
     if l:name != l:workingdir
       execute 'cd' l:workingdir
-    endif
-    if l:restore_rooter
-      RooterToggle
+      if l:restore_rooter
+        RooterToggle
+      endif
     endif
   endfunction
 
-  command! -nargs=? Term call SwitchToTerminal(<f-args>)
+  function! ListTerm()
+    let ret = []
+    let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+
+    for buf_info in buf_infos
+      if !has_key(buf_info.variables, 'terminal_name')
+        continue
+      endif
+      let terminal_name  = buf_info.variables.terminal_name
+      call add(ret, terminal_name)
+    endfor
+    return ret
+  endfunction
+
+  function! CompleteTerm(arg_lead, cmd_line, position)
+    return join(ListTerm(), "\n")
+  endfunction
+
+  " command! -nargs=? Term call SwitchToTerminal(<f-args>)
+  command! -complete=custom,CompleteTerm -nargs=? Term call SwitchToTerminal(<f-args>)
 
   function! ToggleTerm(name)
     let win_infos = filter(getwininfo(), "v:val.terminal")
     if len(win_infos)
+      " If a terminal window exist go to the terminal:
       for i in range(len(win_infos)-1, 0, -1)
         execute win_infos[i].winnr . 'wincmd c'
       endfor
@@ -5553,7 +5598,6 @@ if 1
   if s:isactive('which_key')
     let g:which_key_map.t.b = [":call ToggleTerm(expand('%:p:h'))", 'Toggle Term']
   endif
-
 
   " Make the \z trigger the spell check context menu (floating window)
   nnoremap <Leader>z ea<C-x>s
@@ -5932,5 +5976,5 @@ if 1
   endfunction
 
   " command! VimClippy call s:vimclippy()
-  command! Explorer silent !open_folder.vbs "%:h"
+  command! Browse silent !open_folder.vbs "%:h"
 endif
