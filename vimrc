@@ -5454,8 +5454,9 @@ if 1
     let l:bufindex = 0
     if a:0 == 0
       " If no name is given use the working directory:
-      " End with '/'
-      let l:name = fnamemodify(getcwd(), ':p')
+      " let l:name = fnamemodify(getcwd(), ':p')
+      " If no name is given use the current file directory:
+      let l:name = fnamemodify(expand('%:p:h'), ':p')
     else
       if a:1 =~ '^\d\+'
         let l:bufindex = str2nr(a:1)
@@ -5548,6 +5549,7 @@ if 1
       terminal ++curwin ++cols=96 ++close ++kill=SIGTERM cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
     endif
 
+    setlocal nobuflisted
     let b:terminal_name = l:name
     " Set a name for the terminal buffer:
     execute 'file' 'Term ' . bufnr()
@@ -5560,26 +5562,38 @@ if 1
     endif
   endfunction
 
-  function! ListTerm()
+  function! TermList()
     let ret = []
     let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+
+    let cwd = getcwd()
+    let cwd = fnamemodify(cwd, ':p')
 
     for buf_info in buf_infos
       if !has_key(buf_info.variables, 'terminal_name')
         continue
       endif
       let terminal_name  = buf_info.variables.terminal_name
-      call add(ret, terminal_name)
+      if terminal_name[0:len(cwd)-1] ==# cwd
+        let terminal_name = terminal_name[len(cwd):] 
+        if terminal_name == ''
+          let terminal_name = '.'
+        endif
+      endif
+      call add(ret, [buf_info.bufnr, terminal_name])
     endfor
     return ret
   endfunction
 
   function! CompleteTerm(arg_lead, cmd_line, position)
-    return join(ListTerm(), "\n")
+    let ret = map(TermList(), {_, val -> val[1]})
+    return join(ret, "\n")
   endfunction
 
   " command! -nargs=? Term call SwitchToTerminal(<f-args>)
   command! -complete=custom,CompleteTerm -nargs=? Term call SwitchToTerminal(<f-args>)
+
+  command TermList echo join(map(TermList(), {_, val -> printf("%3d %s", val[0], val[1])}), "\n")
 
   function! ToggleTerm(name)
     let win_infos = filter(getwininfo(), "v:val.terminal")
@@ -5976,5 +5990,5 @@ if 1
   endfunction
 
   " command! VimClippy call s:vimclippy()
-  command! Browse silent !open_folder.vbs "%:h"
+  command! Browse silent !open_folder.vbs "%p:h"
 endif
