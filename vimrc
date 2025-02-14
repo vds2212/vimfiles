@@ -5761,6 +5761,7 @@ if 1
   function! LeaveSideBar()
     " Go to a non side bar window
     let win_infos = getwininfo()
+    let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
     let winindex = winnr() - 1
     for i in range(len(win_infos))
       let index = (winindex + i) % len(win_infos)
@@ -5812,8 +5813,10 @@ if 1
     endif
 
     " Delete the terminal buffers that don't correspond to a window
+    wininfos = getwininfo()
+    let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
     if has('nvim')
-      let term_buffers = map(filter(getwininfo(), 'v:val.terminal'), 'v:val.winnr')
+      let term_buffers = map(filter(win_infos, 'v:val.terminal'), 'v:val.winnr')
     else
       let term_buffers = term_list()
     endif
