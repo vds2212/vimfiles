@@ -47,7 +47,7 @@ set showcmd		" display incomplete commands
 
 " Basic wildmenu (propose possible completion in the status bar)
 set wildmenu		" display completion matches in a status line
-" set wildmode=full
+set wildmode=full
 
 set ttimeout		" time out for key codes
 set ttimeoutlen=100	" wait up to 100ms after Esc for special key
@@ -1142,6 +1142,10 @@ if has('nvim')
   endfunction
 
   let s:wilder.options = { 'do': function('UpdateRemotePlugins') }
+else
+  if !has('nvim')
+    let s:wilder.dependencies = [{'url': 'roxma/nvim-yarp', 'options': { 'do': 'pip install -r requirements.txt' }}, 'roxma/vim-hug-neovim-rpc']
+  endif
 endif
 function! s:setup() dict
   " let g:python3_host_prog='C:\Python36_x64\python.exe'
@@ -3785,6 +3789,9 @@ if has('nvim')
   let s:deoplete.options = { 'do': ':UpdateRemotePlugins' }
 endif
 let s:deoplete.dependencies = ['deoplete-plugins/deoplete-jedi']
+if !has('nvim')
+  let s:deoplete.dependencies += [{'url': 'roxma/nvim-yarp', 'options': { 'do': 'pip install -r requirements.txt' }}, 'roxma/vim-hug-neovim-rpc']
+endif
 function! s:setup() dict
   let g:deoplete#enable_at_startup = 1
 endfunction
@@ -4689,16 +4696,29 @@ for plugin in s:plugin_list
   endif
   if has_key(plugin, 'manager')
     if plugin.manager ==# 'packadd'
+      " packadd
       execute 'packadd' plugin.url
     elseif plugin.manager ==# 'runtime'
+      " runtime
       execute 'runtime' plugin.url
     endif
   else
+    " Plug
     if has_key(plugin, 'dependencies')
-      for url in plugin.dependencies
-        Plug url
+      " Install dependencies
+      for dplugin in plugin.dependencies
+        if type(dplugin) == type({})
+          if has_key(plugin, 'options')
+            Plug dplugin.url, dplugin.options
+          else
+            Plug dplugin.url
+          endif
+        else
+          Plug dplugin
+        endif
       endfor
     endif
+    " Install plugin
     if has_key(plugin, 'options')
       Plug plugin.url, plugin.options
     else
@@ -4706,19 +4726,6 @@ for plugin in s:plugin_list
     endif
   endif
 endfor
-
-" Dependencies
-" ------------
-
-if s:isactive('deoplete') || s:isactive('wilder')
-  if !has('nvim')
-    Plug 'roxma/nvim-yarp', { 'do': 'pip install -r requirements.txt' }
-    " Remark:
-    " Requires pynvim
-    "   C:\Python312_x64\Scripts\pip install pynvim
-    Plug 'roxma/vim-hug-neovim-rpc'
-  endif
-endif
 call plug#end()
 
 if s:isactive('which_key')
