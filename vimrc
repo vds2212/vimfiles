@@ -5990,5 +5990,15 @@ if 1
   endfunction
 
   " command! VimClippy call s:vimclippy()
-  command! Browse silent !open_folder.vbs "%p:h"
+
+  function! Browse(...)
+    let l:dir = '"%:p:h"'
+    if a:0 > 0
+      let l:dir = a:1
+    endif
+
+    execute 'silent !open_folder.vbs' l:dir
+  endfunction
+
+  command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 endif
