@@ -5453,7 +5453,14 @@ if 1
 
   " Make Neovim supporting the Ctrl-w mapping like Vim does
   if has('nvim')
-    tnoremap <C-w> <C-w>
+    " tnoremap <C-w> <C-w>
+    tnoremap <C-w><C-w> <cmd>wincmd w<CR>
+    tnoremap <C-w>w <cmd>wincmd w<CR>
+    tnoremap <C-w>h <cmd>wincmd h<CR>
+    tnoremap <C-w>l <cmd>wincmd l<CR>
+    tnoremap <C-w>j <cmd>wincmd j<CR>
+    tnoremap <C-w>k <cmd>wincmd k<CR>
+    tnoremap <C-w>p <cmd>wincmd p<CR>
   endif
 
   " Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
@@ -5556,7 +5563,7 @@ if 1
 
     " Load a new terminal into the window:
     if has('nvim')
-      terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject
+      terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject >nul
       " Switch to console mode:
       norma a
     else
