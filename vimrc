@@ -857,6 +857,57 @@ function! s:getsubrange(l, locator)
   return a:l[low_bound:high_bound]
 endfunction
 
+function! s:selectplugins(locator)
+  let s:plugin_list = s:getsubrange(s:plugin_list, a:locator)
+endfunction
+
+function s:installplugin(plugin)
+  if type(a:plugin) == type({})
+    if has_key(a:plugin, 'options')
+      Plug a:plugin.url, a:plugin.options
+    else
+      Plug a:plugin.url
+    endif
+  else
+    Plug a:plugin
+  endif
+endfunction
+
+function! s:installplugins()
+  call plug#begin()
+  for plugin in s:plugin_list
+    if plugin.url == ''
+      continue
+    endif
+    if has_key(plugin, 'manager')
+      if plugin.manager ==# 'packadd'
+        " packadd
+        execute 'packadd' plugin.url
+      elseif plugin.manager ==# 'runtime'
+        " runtime
+        execute 'runtime' plugin.url
+      endif
+    else
+      " Plug
+      if has_key(plugin, 'dependencies')
+        " Install dependencies
+        for dplugin in plugin.dependencies
+          call s:installplugin(dplugin)
+        endfor
+      endif
+      " Install plugin
+      call s:installplugin(plugin)
+    endif
+  endfor
+  call plug#end()
+
+  for plugin in s:plugin_list
+    if has_key(plugin, 'setup')
+      call plugin.setup()
+    endif
+  endfor
+endfunction
+
 function! GetInstalledPlugins()
   return map(copy(s:plugin_list), {_, val -> val.url})
 endfunction
@@ -4688,55 +4739,7 @@ let s:helpful = {}
 let s:helpful.url = 'tweekmonster/helpful.vim'
 " call s:addplugin("helpful", s:helpful)
 
-" let s:plugin_list = getsubrange(s:plugin_list, "101101")
-
-function s:installplugin(plugin)
-  if type(a:plugin) == type({})
-    if has_key(a:plugin, 'options')
-      Plug a:plugin.url, a:plugin.options
-    else
-      Plug a:plugin.url
-    endif
-  else
-    Plug a:plugin
-  endif
-endfunction
-
-function! s:installplugins()
-  call plug#begin()
-  for plugin in s:plugin_list
-    if plugin.url == ''
-      continue
-    endif
-    if has_key(plugin, 'manager')
-      if plugin.manager ==# 'packadd'
-        " packadd
-        execute 'packadd' plugin.url
-      elseif plugin.manager ==# 'runtime'
-        " runtime
-        execute 'runtime' plugin.url
-      endif
-    else
-      " Plug
-      if has_key(plugin, 'dependencies')
-        " Install dependencies
-        for dplugin in plugin.dependencies
-          call s:installplugin(dplugin)
-        endfor
-      endif
-      " Install plugin
-      call s:installplugin(plugin)
-    endif
-  endfor
-  call plug#end()
-
-  for plugin in s:plugin_list
-    if has_key(plugin, 'setup')
-      call plugin.setup()
-    endif
-  endfor
-endfunction
-
+" call s:selectplugins("10110")
 call s:installplugins()
 
 if s:ispluginactive('which_key')
