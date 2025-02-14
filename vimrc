@@ -830,7 +830,7 @@ function! s:addplugin(name, plugin)
   call add(s:plugin_list, a:plugin)
 endfunction
 
-function! s:isactive(name)
+function! s:ispluginactive(name)
   if has_key(s:plugin_set, a:name)
     return s:plugin_set[a:name]
   endif
@@ -983,24 +983,24 @@ function! s:setup() dict
   " let g:airline#extensions#tabline#enabled = 1
   " let g:airline#extensions#tabline#formatter = 'unique_tail'
 
-  if s:isactive('vista_vim')
+  if s:ispluginactive('vista_vim')
     " Make sure airline report the function you are in:
     let g:airline#extensions#vista#enabled = 0
   endif
 
-  if s:isactive('tagbar')
+  if s:ispluginactive('tagbar')
     " Make sure airline report the function you are in:
     let g:airline#extensions#tagbar#enabled = 1
     let g:airline#extensions#tagbar#flags = 'f'
   endif
 
-  if s:isactive('ale')
+  if s:ispluginactive('ale')
     " Disable code error and warning detection in airline
     " There are just too much false positives
     let g:airline#extensions#ale#enabled = 0
   endif
 
-  if s:isactive('coc_nvim')
+  if s:ispluginactive('coc_nvim')
     " Disable code error and warning detection in airline
     " There are just too much false positives
     let g:airline#extensions#coc#enabled = 0
@@ -1043,7 +1043,7 @@ function! s:setup() dict
 
   " Replace the relative buffer name by the absolute buffer path
   " let g:lightline.component.filename="%{fnamemodify(bufname(), ':p')}"
-  if s:isactive('vim_fugitive')
+  if s:ispluginactive('vim_fugitive')
     function! MyFugitiveHead()
       let head = FugitiveHead()
       if head != ""
@@ -1069,7 +1069,7 @@ function! s:setup() dict
           \ },
           \}
 
-  elseif s:isactive('vimcaps')
+  elseif s:ispluginactive('vimcaps')
     function! MyVimCaps()
       return vimcaps#statusline(7)
     endfunction
@@ -1099,7 +1099,8 @@ function! s:setup() dict
           \}
   endif
 
-  if s:isactive('nord_vim') && index(s:schemes, 'nord') >= 0
+  " if s:ispluginactive('nord_vim') && index(s:schemes, 'nord') >= 0
+  if s:ispluginactive('nord_vim')
     let g:lightline.colorscheme = 'nord'
   endif
 endfunction
@@ -1182,11 +1183,11 @@ function! s:setup() dict
   " cnoremap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<up>"
 
   nnoremap <leader>tx :call wilder#toggle()<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.x = [':call wilder#toggle()', 'Toggle Wilder']
   endif
 
-  if s:isactive('wilder_simple')
+  if s:ispluginactive('wilder_simple')
     call wilder#set_option('pipeline', [
           \   wilder#branch(
           \     wilder#cmdline_pipeline(),
@@ -1366,21 +1367,21 @@ function! s:setup() dict
   "       \ },
   "       \ }
 
-  if s:isactive('vim_easymotion')
+  if s:ispluginactive('vim_easymotion')
     let g:remotions_motions.easymotion = { 'backward' : '<Plug>(easymotion-prev)', 'forward' : '<Plug>(easymotion-next)', 'motion': '<leader><leader>', 'motion_plug' : '<Plug>(easymotion-prefix)', 'doc': 'easymotion' }
   endif
 
-  if s:isactive('leap')
+  if s:ispluginactive('leap')
     let g:remotions_motions.leap_fwd = { 'backward' : '<Plug>(leapbackward)', 'forward' : '<Plug>(leapforward)', 'motion': 's', 'motion_plug' : '<Plug>(leap-forward-to)', 'doc': 'leap' }
     let g:remotions_motions.leap_bck = { 'backward' : '<Plug>(leapbackward)', 'forward' : '<Plug>(leapforward)', 'motion': 'S', 'motion_plug' : '<Plug>(leap-backward-to)', 'doc': 'leap' }
   endif
 
-  if s:isactive('vim_sneak')
+  if s:ispluginactive('vim_sneak')
     let g:remotions_motions.sneak_fwd = { 'backward' : '<Plug>Sneak_,', 'forward' : '<Plug>Sneak_;', 'motion': 's', 'motion_plug' : '<Plug>Sneak_s', 'doc': 'vim_sneak' }
     let g:remotions_motions.sneak_bck = { 'backward' : '<Plug>Sneak_,', 'forward' : '<Plug>Sneak_;', 'motion': 'S', 'motion_plug' : '<Plug>Sneak_S', 'doc': 'vim_sneak' }
   endif
 
-  if s:isactive('hop')
+  if s:ispluginactive('hop')
   endif
 endfunction
 let s:vim_remotions.setup = funcref("s:setup")
@@ -1450,11 +1451,11 @@ function! s:setup() dict
         \ 'silent! lclose'
         \ ]
 
-  if s:isactive('tagbar')
+  if s:ispluginactive('tagbar')
     let g:startify_session_before_save += ['silent! TagbarClose']
   endif
 
-  if s:isactive('nerdtree')
+  if s:ispluginactive('nerdtree')
     let g:startify_session_before_save += ['silent! NERDTreeTabsClose']
   endif
 
@@ -1484,13 +1485,13 @@ let s:dashboard_vim = {}
 let s:dashboard_vim.url = 'nvimdev/dashboard-nvim'
 let s:dashboard_vim.options = {}
 function! s:setup() dict
-  if s:isactive('vim_clap')
+  if s:ispluginactive('vim_clap')
     let g:dashboard_default_executive ='clap'
   endif
-  if s:isactive('nvim_telescope')
+  if s:ispluginactive('nvim_telescope')
     let g:dashboard_default_executive ='telescope'
   endif
-  if s:isactive('fzf')
+  if s:ispluginactive('fzf')
     let g:dashboard_default_executive ='fzf'
   endif
 endfunction
@@ -1515,7 +1516,7 @@ let s:winresizer.url = 'simeji/winresizer'
 function! s:setup() dict
   " let g:winresizer_start_key=<C-e>
   let g:winresizer_start_key = "<leader>tw"
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.w = [':WinResizerStartResize', 'Toggle Window Resizer']
   endif
   " More information with: :help winresizer
@@ -1612,7 +1613,7 @@ function! s:setup() dict
 
   nmap [y <plug>(YoinkRotateBack)
   nmap ]y <plug>(YoinkRotateForward)
-  if s:isactive('vim_cutlass')
+  if s:ispluginactive('vim_cutlass')
     let g:yoinkIncludeDeleteOperations = 1
   endif
 endfunction
@@ -1658,13 +1659,13 @@ function! s:setup() dict
   " Make sure the <C-k> is not overridden:
   let g:is#do_default_mappings = 0
   for s:map in ['n', 'N', '*', '#', 'g*', 'g#']
-    if mapcheck(s:isactive('map'), 'n') ==# ''
+    if mapcheck(s:ispluginactive('map'), 'n') ==# ''
       execute printf(':nmap %s <Plug>(is-%s)', s:map, s:map)
     endif
-    if mapcheck(s:isactive('map'), 'x') ==# ''
+    if mapcheck(s:ispluginactive('map'), 'x') ==# ''
       execute printf(':xmap %s <Plug>(is-%s)', s:map, s:map)
     endif
-    if mapcheck(s:isactive('map'), 'o') ==# ''
+    if mapcheck(s:ispluginactive('map'), 'o') ==# ''
       execute printf(':omap %s <Plug>(is-%s)', s:map, s:map)
     endif
   endfor
@@ -1685,7 +1686,7 @@ let s:local_search = {}
 let s:local_search.url = 'mox-mox/vim-localsearch'
 function! s:setup() dict
   nmap <leader>/ <Plug>localsearch_toggle
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map['/'] = ['<Plug>localsearch_toggle', 'Toggle Local Search']
   endif
 endfunction
@@ -1700,7 +1701,7 @@ let s:matchit_legacy = {}
 let s:matchit_legacy.url = 'macros/matchit.vim'
 let s:matchit_legacy.manager = 'runtime'
 function! s:setup() dict
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map_g['%'] = ["<Plug>(MatchitNormalBackward)", 'Matchit']
   endif
 endfunction
@@ -1724,7 +1725,7 @@ let s:leap.url = 'ggandor/leap.nvim'
 let s:leap.options = {}
 function! s:setup() dict
   lua require('leap').add_default_mappings()
-  if s:isactive('vim_remotions')
+  if s:ispluginactive('vim_remotions')
     lua require('leap').add_repeat_mappings('<Plug>(leapforward)', '<Plug>(leapbackward)')
   else
     lua require('leap').add_repeat_mappings(';', ',')
@@ -1798,7 +1799,7 @@ let s:vim_css_color.url = 'ap/vim-css-color'
 let s:vim_css_color.options = {}
 function! s:setup() dict
   nnoremap <leader>th :call css_color#toggle()<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.h = [':call css_color#toggle()', 'Toggle Colorizer']
   endif
 endfunction
@@ -1852,7 +1853,7 @@ function! s:setup() dict
   " \ }
 
   nnoremap <leader>th :HexokinaseToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.h = [':HexokinaseToggle', 'Toggle Colorizer']
   endif
 endfunction
@@ -1874,7 +1875,7 @@ let s:colorizer.url = 'lilydjwg/colorizer'
 let s:colorizer.options = {}
 function! s:setup() dict
   let g:colorizer_maxlines = 1000
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.h = ['<Plug>Colorizer', 'Toggle Colorizer']
   endif
 endfunction
@@ -1997,7 +1998,7 @@ function! s:setup() dict
   " let g:context_extend_regex = '^\s*\([]{})]\|end\|else\|\(case\|default\|done\|elif\|fi\)\>\)'
 
   nnoremap <leader>tc :ContextToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.c = [':ContextToggle', 'Toggle Context']
   endif
 endfunction
@@ -2147,7 +2148,7 @@ function! s:setup() dict
   let g:rooter_change_directory_for_non_project_files = 'current'
 
   nnoremap <leader>tr :RooterToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.r = [':RooterToggle', 'Toggle Rooter']
   endif
 
@@ -2172,7 +2173,7 @@ function! s:setup() dict
   nnoremap <leader>m :History<CR>
   nnoremap <leader>b :Buffers<CR>
   nnoremap <leader>p :Tags<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.m = [':History', 'Browse MRU']
     let g:which_key_map.b = [':Buffers', 'Browse Buffers']
     let g:which_key_map.p = [':Tags', 'Browse Tags']
@@ -2205,7 +2206,7 @@ function! s:setup() dict
   " <C-p> is the default of CtrlP ;-)
   nnoremap <leader>m :CtrlPMRUFiles<CR>
   nnoremap <leader>b :CtrlPBuffer<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.m = [':CtrlPMRUFiles', 'Browse MRU']
     let g:which_key_map.b = [':CtrlPBuffer', 'Browse Buffers']
     " let g:which_key_map.p = [':Tags', 'Browse Tags']
@@ -2233,14 +2234,14 @@ function! s:setup() dict
   nnoremap <C-p> :call LeaveSideBar() <bar> Clap files<CR>
   nnoremap <leader>m :call LeaveSideBar() <bar> Clap history<CR>
   nnoremap <leader>b :call LeaveSideBar() <bar> Clap buffers<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.m = [':Clap history', 'Browse MRU']
     let g:which_key_map.b = [':Clap buffers', 'Browse Buffers']
   endif
 
   " Requires Vista and maple
   nnoremap <leader>p :call LeaveSideBar() <bar> Clap proj_tags<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.p = [':Clap proj_tags', 'Browse Tags']
   endif
 
@@ -2276,14 +2277,14 @@ function! s:setup() dict
   nnoremap <C-p> <cmd>Telescope find_files<cr>
   nnoremap <leader>m <cmd>Telescope oldfiles<cr>
   nnoremap <leader>b <cmd>Telescope buffers<cr>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.m = [':Telescope oldfiles', 'Browse MRU']
     let g:which_key_map.b = [':Telescope buffers', 'Browse Buffers']
   endif
 
   " Requires tags to be generate (manually or via vim-gutentags)
   nnoremap <leader>p <cmd>Telescope tags<cr>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.p = [':Telescope tags', 'Browse Tags']
   endif
 
@@ -2337,7 +2338,7 @@ function! s:setup() dict
   " Any empty ack search will search for the work the cursor is on
   let g:ack_use_cword_for_empty_search = 1
 
-  if s:isactive('vim_dispatch')
+  if s:ispluginactive('vim_dispatch')
     " let g:ack_use_dispatch = 1
   endif
 
@@ -2349,7 +2350,7 @@ function! s:setup() dict
 
   " More information with: :help ack.txt
   nnoremap <silent> <leader>ts <cmd>call ToggleQuickFix()<cr>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.s = [':call ToggleQuickFix()', 'Toggle Quick Fix']
   endif
 endfunction
@@ -2406,7 +2407,7 @@ function! s:setup() dict
   endfunction
 
   function! CtrlSFNextMatch()
-    if QuickFixVisible() && s:isactive('vim_unimpaired')
+    if QuickFixVisible() && s:ispluginactive('vim_unimpaired')
       execute "normal \<Plug>(unimpaired-cnext)"
       return
     endif
@@ -2416,7 +2417,7 @@ function! s:setup() dict
   endfunction
 
   function! CtrlSFPreviousMatch()
-    if QuickFixVisible() && s:isactive('vim_unimpaired')
+    if QuickFixVisible() && s:ispluginactive('vim_unimpaired')
       execute "normal \<Plug>(unimpaired-cprevious)"
       return
     endif
@@ -2452,7 +2453,7 @@ function! s:setup() dict
 
   nnoremap <leader>ts <Cmd>call ToggleQuickFix()<CR>
   " nnoremap <leader>ts <Cmd>CtrlSFToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.s = [':call ToggleQuickFix()', 'Toggle Quick Fix']
   endif
 
@@ -2480,7 +2481,7 @@ function! s:setup() dict
   " from one to the next
 
   nnoremap <silent> <leader>ts <cmd>call ToggleQuickFix()<cr>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.s = [':call ToggleQuickFix()', 'Toggle Quick Fix']
   endif
 endfunction
@@ -2502,7 +2503,7 @@ function! s:setup() dict
 
   " noremap <F4> :NERDTreeToggle<CR>
   nnoremap <leader>tn :NERDTreeToggle <CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.n = [':NERDTreeToggle', 'Toggle Nerd Tree']
   endif
 
@@ -2545,7 +2546,7 @@ function! s:setup() dict
 
   " noremap <F4> :NvimTreeToggle<CR>
   nnoremap <leader>tn :NvimTreeToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.n = [':NvimTreeToggle', 'Toggle Nvim Tree']
   endif
 endfunction
@@ -2603,7 +2604,7 @@ function! s:setup() dict
   let g:fern#renderer = "nerdfont"
 
   noremap <silent> <Leader>tn :Fern .. -drawer -reveal=% -toggle -width=35<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.n = [':Fern .. -drawer -reveal=% -toggle -width=35', 'Toggle Fern']
   endif
 
@@ -2648,19 +2649,19 @@ function! s:setup() dict
   " Read session with \sr
   " exec 'nnoremap <Leader>sr :so ' .. g:sessions_dir. '\*.vim<C-D><BS><BS><BS><BS><BS>'
 
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.s = { 'name' : '+Session' }
   endif
 
   " Display the active session
   nnoremap <Leader>sn :echo v:this_session<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.s.n = [':echo v:this_session', 'Session Name']
   endif
 
   " Pause session update with \sp
   nnoremap <Leader>sp :Obsession<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.s.p = [':Obsession', 'Session Update']
   endif
 
@@ -2686,7 +2687,7 @@ let s:vim_signature = {}
 let s:vim_signature.url = 'kshenoy/vim-signature'
 function! s:setup() dict
   nnoremap <leader>tm :SignatureToggleSigns <CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.m = [':SignatureToggleSigns', 'Toggle Marks']
   endif
   " More information with: :help signature.txt
@@ -2729,7 +2730,7 @@ function! s:setup() dict
   let g:undotree_ShortIndicators = 1
 
   nnoremap <leader>tu :UndotreeToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.u = [':UndotreeToggle', 'Toggle Undo Tree']
   endif
 
@@ -2822,7 +2823,7 @@ function! s:setup() dict
   let g:signify_disable_by_default = 1
 
   nnoremap <leader>tf :SignifyToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.f = [':SignifyToggle', 'Toggle Git Signs']
   endif
 
@@ -2857,7 +2858,7 @@ function! s:setup() dict
   let g:gitgutter_grep=''
 
   let g:gitgutter_map_keys = 1
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     if g:gitgutter_map_keys
       let g:which_key_map.h = {'name' : '+Hunk'}
       let g:which_key_map.h.p = ['<Plug>(GitGutterPreviewHunk)', 'Hunk Preview']
@@ -2897,7 +2898,7 @@ function! s:setup() dict
   " set listchars+=lead:\
 
   nnoremap <leader>ti :IndentLinesToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.i = [':IndentLinesToggle', 'Toggle Indent Guide']
   endif
 
@@ -2913,7 +2914,7 @@ function! s:setup() dict
   let g:indent_guides_guide_size = 1
 
   nnoremap <leader>ti :IndentGuidesToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.i = [':IndentGuidesToggle', 'Toggle Indent Guide']
   endif
 endfunction
@@ -3058,7 +3059,7 @@ let s:fast_fold.setup = funcref("s:setup")
 let s:vim_commentary = {}
 let s:vim_commentary.url = 'tpope/vim-commentary'
 function! s:setup() dict
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map_g.c = ["", 'which_key_ignore']
     let g:which_key_map_g.cc = ["<Plug>CommentaryLine", 'Comment']
   endif
@@ -3136,7 +3137,7 @@ function! s:setup() dict
   " This mapping conflict with Coc mapping for completion
   " let g:UltiSnipsExpandTrigger = "<tab>"
   let g:UltiSnipsExpandTrigger = "<C-s>"
-  if s:isactive('emmet_vim')
+  if s:ispluginactive('emmet_vim')
     let g:UltiSnipsExpandTrigger='<C-F12>'
     let g:user_emmet_leader_key='<C-S-F12>'
   endif
@@ -3163,7 +3164,7 @@ let s:emmet_vim.url = 'mattn/emmet-vim'
 function! s:setup() dict
   let g:user_emmet_leader_key='<C-s>'
   let g:user_emmet_expandabbr_key='<C-s>,'
-  if s:isactive('ultisnips')
+  if s:ispluginactive('ultisnips')
     let g:UltiSnipsExpandTrigger='<C-F12>'
     let g:user_emmet_leader_key='<C-S-F12>'
   endif
@@ -3213,7 +3214,7 @@ function! s:setup() dict
   " nnoremap <F8> :TagbarToggle<CR>
   nnoremap <leader>tg :TagbarOpen fj<CR>
   nnoremap <leader>tt :TagbarToggle <CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.g = [':TagbarOpen fj', 'Tag Go']
     let g:which_key_map.t.t = [':TagbarToggle', 'Toggle Tags']
   endif
@@ -3281,7 +3282,7 @@ function! s:setup() dict
   " Add support for markdown file when considered as vimwiki.
   " Requires markdown2ctags
   " pip install markdown2ctags
-  if s:isactive('vimwiki')
+  if s:ispluginactive('vimwiki')
     let g:tagbar_type_vimwiki = g:tagbar_type_markdown
   endif
 
@@ -3318,7 +3319,7 @@ let s:vista_vim.url = 'liuchengxu/vista.vim'
 let s:vista_vim.options = {}
 function! s:setup() dict
   nnoremap <leader>tt :Vista!!<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.t = [':Vista!!', 'Toggle Tags']
   endif
 
@@ -3369,7 +3370,7 @@ function! s:setup() dict
         \ 'php': 'vim_lsp',
         \ }
 
-  if s:isactive('coc_nvim')
+  if s:ispluginactive('coc_nvim')
     let g:vista_executive_for.python = 'coc_nvim'
   endif
 
@@ -3467,7 +3468,7 @@ function! s:setup() dict
 
   " GoTo code navigation.
   nmap <silent> gd <Plug>(coc-definition)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map_g.d = ["\<Plug>(coc-definition)", 'Go To Definition']
   endif
 
@@ -3487,7 +3488,7 @@ function! s:setup() dict
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map_g.y = ["\<Plug>(coc-type-definition)", 'Go To Definition']
     let g:which_key_map_g.i = ["\<Plug>(coc-implementation)", 'Go To Implementation']
     let g:which_key_map_g.r = ["\<Plug>(coc-references)", 'Go To Reference']
@@ -3509,7 +3510,7 @@ function! s:setup() dict
 
   " Symbol renaming.
   nmap <leader>rn <Plug>(coc-rename)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     " let g:which_key_map.r = 'which_key_ignore'
     let g:which_key_map.r = ['', 'which_key_ignore']
     let g:which_key_map.rn = ['<Plug>(coc-rename)', 'Coc Rename']
@@ -3518,7 +3519,7 @@ function! s:setup() dict
   " Formatting selected code.
   xmap <leader>f  <Plug>(coc-format-selected)
   " nmap <leader>f  <Plug>(coc-format-selected)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     " let g:which_key_map.f = 'which_key_ignore'
     let g:which_key_map.f = ['', 'which_key_ignore']
     let g:which_key_map.fs = ['<Plug>(coc-format-selected)', 'Coc Format Selection']
@@ -3541,21 +3542,21 @@ function! s:setup() dict
   " Remap keys for applying codeAction to the current buffer.
   " Remark: in conflict with ferret search
   nmap <leader>ac  <Plug>(coc-codeaction)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.a = ['', 'which_key_ignore']
     let g:which_key_map.ac = ['<Plug>(coc-codeaction)', 'Coc Code Action']
   endif
 
   " Apply AutoFix to problem on the current line.
   nmap <leader>qf  <Plug>(coc-fix-current)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.q = ['', 'which_key_ignore']
     let g:which_key_map.qf = ['<Plug>(coc-fix-current)', 'Coc Quick Fix']
   endif
 
   " Run the Code Lens action on the current line.
   nmap <leader>cl  <Plug>(coc-codelens-action)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.c = ['', 'which_key_ignore']
     let g:which_key_map.cl = ['<Plug>(coc-codelens-action)', 'Coc Code Lens']
   endif
@@ -3614,7 +3615,7 @@ function! s:setup() dict
 
   " nnoremap <leader>tj <cmd>CocToggle<CR>
   nnoremap <leader>tj <cmd>CocCommand document.toggleInlayHint<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.j = [':CocCommand document.toggleInlayHint', 'Toggle Inlay Hints']
   endif
 
@@ -3654,7 +3655,7 @@ function! s:setup() dict
   lua require("handlers").setup()
 
   nnoremap <leader>tj <cmd>:lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<cr>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.j = [':lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())', 'Toggle Inlay Hints']
   endif
 endfunction
@@ -3885,7 +3886,7 @@ let s:vim_prettier.url = 'prettier/vim-prettier'
 function! s:setup() dict
   " Change the mapping to run from the default of <Leader>p
   nmap <Leader>fp <Plug>(Prettier)
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.f.p = ['<Plug>(Prettier)', 'Format Selection using Prettier']
   endif
   " Enable auto formatting of files that have "@format" or "@prettier" tag
@@ -3981,7 +3982,7 @@ function! s:setup() dict
 
   " let g:ale_fix_on_save = 1
   nnoremap <leader>ta :ALEToggle <CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.a = [':ALEToggle', 'Toggle ALE']
   endif
 endfunction
@@ -4177,7 +4178,7 @@ function! s:setup() dict
     vnoremap <buffer> <silent> <localleader>je :JupyterSendRange<CR>
   endfunction
 
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.j = {'name' : '+Jupyter'}
     let g:which_key_map.j.c = [':JupyterConnect', 'Connect']
     let g:which_key_map.j.d = [':JupyterDisconnect', 'Disconnect']
@@ -4272,7 +4273,7 @@ function! s:setup() dict
     edit %:h/.vimspector.json
   endfunction
 
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.v = { 'name' : '+VimSpector' }
     let g:which_key_map.v.r = [':VimspectorReset', 'Reset']
     let g:which_key_map.v.a = ['call vimspector#ReadSessionFile(expand("%:h") .. "/debuggingsession.json")', 'Load Session']
@@ -4404,7 +4405,7 @@ function! s:setup() dict
 
   " Make that only .wiki files are considered as vimwiki documents
   let g:vimwiki_global_ext = 0
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     if g:vimwiki_global_ext
       let g:which_key_map.w = { 'name' : '+VimWiki' }
       let g:which_key_map.w.i = ['<Plug>VimwikiDiaryIndex', 'Diary Index']
@@ -4689,46 +4690,56 @@ let s:helpful.url = 'tweekmonster/helpful.vim'
 
 " let s:plugin_list = getsubrange(s:plugin_list, "101101")
 
-call plug#begin()
-for plugin in s:plugin_list
-  if plugin.url == ''
-    continue
-  endif
-  if has_key(plugin, 'manager')
-    if plugin.manager ==# 'packadd'
-      " packadd
-      execute 'packadd' plugin.url
-    elseif plugin.manager ==# 'runtime'
-      " runtime
-      execute 'runtime' plugin.url
+function s:installplugin(plugin)
+  if type(a:plugin) == type({})
+    if has_key(a:plugin, 'options')
+      Plug a:plugin.url, a:plugin.options
+    else
+      Plug a:plugin.url
     endif
   else
-    " Plug
-    if has_key(plugin, 'dependencies')
-      " Install dependencies
-      for dplugin in plugin.dependencies
-        if type(dplugin) == type({})
-          if has_key(plugin, 'options')
-            Plug dplugin.url, dplugin.options
-          else
-            Plug dplugin.url
-          endif
-        else
-          Plug dplugin
-        endif
-      endfor
-    endif
-    " Install plugin
-    if has_key(plugin, 'options')
-      Plug plugin.url, plugin.options
-    else
-      Plug plugin.url
-    endif
+    Plug a:plugin
   endif
-endfor
-call plug#end()
+endfunction
 
-if s:isactive('which_key')
+function! s:installplugins()
+  call plug#begin()
+  for plugin in s:plugin_list
+    if plugin.url == ''
+      continue
+    endif
+    if has_key(plugin, 'manager')
+      if plugin.manager ==# 'packadd'
+        " packadd
+        execute 'packadd' plugin.url
+      elseif plugin.manager ==# 'runtime'
+        " runtime
+        execute 'runtime' plugin.url
+      endif
+    else
+      " Plug
+      if has_key(plugin, 'dependencies')
+        " Install dependencies
+        for dplugin in plugin.dependencies
+          call s:installplugin(dplugin)
+        endfor
+      endif
+      " Install plugin
+      call s:installplugin(plugin)
+    endif
+  endfor
+  call plug#end()
+
+  for plugin in s:plugin_list
+    if has_key(plugin, 'setup')
+      call plugin.setup()
+    endif
+  endfor
+endfunction
+
+call s:installplugins()
+
+if s:ispluginactive('which_key')
   let g:which_key_map =  {}
   let g:which_key_map.f = { 'name' : '+Format' }
   let g:which_key_map.t = { 'name' : '+Toggle' }
@@ -4835,7 +4846,7 @@ endfunction
 
 let s:schemes = GetColorSchemes()
 if has('gui_running') || has('unix')
-  if s:isactive('tokyonight')
+  if s:ispluginactive('tokyonight')
     colorscheme tokyonight
   endif
 
@@ -4845,7 +4856,7 @@ if has('gui_running') || has('unix')
     colorscheme desert
   endif
 
-  if s:isactive('nord_vim')
+  if s:ispluginactive('nord_vim')
     " Make the search background a bit less bright:
     autocmd ColorScheme nord hi Search guibg=#67909e guifg=#2e3440
 
@@ -4862,13 +4873,9 @@ else
   endtry
 endif
 
-for plugin in s:plugin_list
-  if has_key(plugin, 'setup')
-    call plugin.setup()
-  endif
-endfor
 
-if s:isactive('which_key')
+
+if s:ispluginactive('which_key')
   let g:which_key_map_g.x = ["<Plug>NetrwBrowseX", 'Open File']
 endif
 
@@ -4973,7 +4980,7 @@ function! ToggleQuickFix()
       let g:bottom_bar = 'location'
       lclose
     endif
-    if s:isactive('ctrlsf') && ctrlsf#win#FindMainWindow() != -1
+    if s:ispluginactive('ctrlsf') && ctrlsf#win#FindMainWindow() != -1
       let g:bottom_bar = 'ctrlsf'
       CtrlSFClose
       " Trick to force the redraw of the cmdheight:
@@ -4990,8 +4997,8 @@ let g:sessions_dir = GetVimDataFolder() .. 'session'
 " Sessions settings:
 " ------------------
 
-let s:session = s:isactive('vim_startify') || s:isactive('vim_obsession') || s:isactive('vim_prosession') || s:isactive('reload_session_at_start')
-if s:isactive('session')
+let s:session = s:ispluginactive('vim_startify') || s:ispluginactive('vim_obsession') || s:ispluginactive('vim_prosession') || s:ispluginactive('reload_session_at_start')
+if s:ispluginactive('session')
   if !isdirectory(g:sessions_dir)
     call mkdir(g:sessions_dir)
   endif
@@ -5001,8 +5008,8 @@ if s:isactive('session')
   endif
 
   " Make sure the commands: SSave and SLoad are defined
-  if s:isactive('vim_startify')
-  elseif s:isactive('vim_obsession') || s:isactive('vim_prosession')
+  if s:ispluginactive('vim_startify')
+  elseif s:ispluginactive('vim_obsession') || s:ispluginactive('vim_prosession')
     command! -nargs=1 SSave exec 'Obsession ' .. g:sessions_dir .. '/<args>'
     command! -nargs=1 SLoad exec 'so' .. g:sessions_dir .. '/<args>'
   else
@@ -5014,13 +5021,13 @@ endif
 
 " Reload the my session at start
 " ------------------------------
-if s:isactive('reload_session_at_start')
+if s:ispluginactive('reload_session_at_start')
   " Try to close the terminals before closing vim:
-  if s:isactive('vim_floaterm')
+  if s:ispluginactive('vim_floaterm')
     autocmd QuitPre * FloatermKill!
   endif
 
-  if s:isactive('nerdtree')
+  if s:ispluginactive('nerdtree')
     " Close NERDTree before the session is stored.
     " It seems the session restoring doesn't restore it right
     function! CloseNerdTree()
@@ -5032,7 +5039,7 @@ if s:isactive('reload_session_at_start')
     autocmd VimLeavePre * call CloseNerdTree()
   endif
 
-  if s:isactive('vista_vim')
+  if s:ispluginactive('vista_vim')
     " Close Vista before the session is stored.
     " It seems the session restoring doesn't restore it right
     autocmd VimLeavePre * Vista!
@@ -5042,9 +5049,9 @@ if s:isactive('reload_session_at_start')
   " It seems the session restoring doesn't restore it right
   autocmd VimLeavePre * helpclose
 
-  if s:isactive('vim_startify')
+  if s:ispluginactive('vim_startify')
     autocmd VimEnter * SLoad startup
-  elseif s:isactive('vim_obsession')
+  elseif s:ispluginactive('vim_obsession')
     autocmd vimEnter * Obsess startup
   else
     " autocmd SessionLoadPost * wincmd =
@@ -5084,7 +5091,7 @@ function! IsEmmet(filetype)
   return 0
 endf
 
-if s:isactive('ultisnips') && s:isactive('emmet_vim')
+if s:ispluginactive('ultisnips') && s:ispluginactive('emmet_vim')
   imap <expr> <C-s> IsEmmet(&filetype) ? "\<C-S-F12>" : "\<C-F12>"
 endif
 
@@ -5110,7 +5117,7 @@ if 0
 
   " nnoremap <F8> :TlistToggle<CR>
   nnoremap <leader>tt :TlistToggle<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.t = [':TlistToggle', 'Toggle Tags']
   endif
 endif
@@ -5126,7 +5133,7 @@ endif
 " Remark:
 " - It is incompatible with tagbar jump to tag
 " - The default.vim comes with a better solution for the purpose
-if !s:isactive('tagbar')
+if !s:ispluginactive('tagbar')
     augroup saveview
         au!
         au BufLeave * let b:winview = winsaveview()
@@ -5139,7 +5146,7 @@ endif
 " -------------------------------------------------
 
 :noremap <leader>gf :e %:h/<cfile><CR>
-if s:isactive('which_key')
+if s:ispluginactive('which_key')
     let g:which_key_map.g = ['', 'which_key_ignore']
     let g:which_key_map.gf =  [':e %:h/<cfile>', 'Go to New File']
 endif
@@ -5288,7 +5295,7 @@ nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 
 " Which Key plugin settings:
 " --------------------------
 
-if s:isactive('which_key')
+if s:ispluginactive('which_key')
     set timeoutlen=1000
     let g:which_key_timeout=300
 
@@ -5434,7 +5441,7 @@ if 1
   command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '<args>', '')
 
   " Maximize the current window without deleting the other windows:
-  if !s:isactive('vim_maximizer')
+  if !s:ispluginactive('vim_maximizer')
     " nnoremap <C-w>m <cmd>500wincmd ><bar>500wincmd +<cr>
   endif
 
@@ -5616,13 +5623,13 @@ if 1
   endfunction
 
   nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p:h'))<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.t.b = [":call ToggleTerm(expand('%:p:h'))", 'Toggle Term']
   endif
 
   " Make the \z trigger the spell check context menu (floating window)
   nnoremap <Leader>z ea<C-x>s
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.z = [':normal! eas', 'Spelling Suggestion']
   endif
 
@@ -5640,14 +5647,14 @@ if 1
   " Make <leader>l disable highlighting temporarily (:nohlsearch)
   " A kind of improved Ctrl-l
   nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
   endif
 
   " Select the text that has just been pasted
   " (inspired from gv that select the text that has been just selected)
   nnoremap gp `[v`]
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map_g.p = ['`[v`]', 'Select Pasted']
   endif
 
@@ -5707,7 +5714,7 @@ if 1
   endfunction
 
   nnoremap <leader>* :call SearchClipboard()<CR>
-  if s:isactive('which_key')
+  if s:ispluginactive('which_key')
     let g:which_key_map['*'] = [':call SearchClipboard()', 'Search Clipboard']
   endif
 
