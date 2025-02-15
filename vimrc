@@ -47,7 +47,7 @@ set showcmd		" display incomplete commands
 
 " Basic wildmenu (propose possible completion in the status bar)
 set wildmenu		" display completion matches in a status line
-set wildmode=full
+" set wildmode=full
 
 set ttimeout		" time out for key codes
 set ttimeoutlen=100	" wait up to 100ms after Esc for special key
@@ -869,6 +869,9 @@ function s:installplugin(plugin)
       Plug a:plugin.url
     endif
   else
+    if a:plugin == ''
+      return
+    endif
     Plug a:plugin
   endif
 endfunction
@@ -876,10 +879,10 @@ endfunction
 function! s:installplugins()
   call plug#begin()
   for plugin in s:plugin_list
-    if plugin.url == ''
-      continue
-    endif
-    if has_key(plugin, 'manager')
+    " if plugin.url == ''
+    "   continue
+    " endif
+    if type(plugin) == type({}) && has_key(plugin, 'manager') && plugin.manager != 'plug'
       if plugin.manager ==# 'packadd'
         " packadd
         execute 'packadd' plugin.url
@@ -889,7 +892,7 @@ function! s:installplugins()
       endif
     else
       " Plug
-      if has_key(plugin, 'dependencies')
+      if type(plugin) == type({}) && has_key(plugin, 'dependencies')
         " Install dependencies
         for dplugin in plugin.dependencies
           call s:installplugin(dplugin)
@@ -902,7 +905,7 @@ function! s:installplugins()
   call plug#end()
 
   for plugin in s:plugin_list
-    if has_key(plugin, 'setup')
+    if  type(plugin) == type({}) && has_key(plugin, 'setup')
       call plugin.setup()
     endif
   endfor
@@ -1556,9 +1559,7 @@ endif
 
 " Allows you to close buffer without closing the corresponding window
 " Introducing the :Bd command
-let s:vim_bbye = {}
-let s:vim_bbye.url = 'moll/vim-bbye'
-call s:addplugin("vim_bbye", s:vim_bbye)
+call s:addplugin("vim_bbye", 'moll/vim-bbye')
 
 " Re-size windows
 " Split management
@@ -1590,10 +1591,7 @@ call s:addplugin("vim_maximizer", s:vim_maximizer)
 " Allow to run vim in full screen
 " Requires pywin32:
 "   C:\Python312_x64\Scripts\pip install pywin32
-let s:vim_fullscreen = {}
-let s:vim_fullscreen.url = 'ruedigerha/vim-fullscreen'
-let s:vim_fullscreen.setup = funcref("s:setup")
-" call s:addplugin("vim_fullscreen", s:vim_fullscreen)
+" call s:addplugin("vim_fullscreen", 'ruedigerha/vim-fullscreen')
 
 " 2.2.7. Clipboard
 " ----------------
@@ -1675,9 +1673,7 @@ let s:vim_yoink.setup = funcref("s:setup")
 " -------------
 
 " Visual Selection Search (using '*' and '#')
-let s:vim_visual_star_search = {}
-let s:vim_visual_star_search.url = 'nelstrom/vim-visual-star-search'
-call s:addplugin("vim_visual_star_search", s:vim_visual_star_search)
+call s:addplugin("vim_visual_star_search", 'nelstrom/vim-visual-star-search')
 
 " Preview substitution of the s command before performing it
 " Remarks:
@@ -3882,7 +3878,7 @@ let s:semshi.url = 'numirias/semshi'
 let s:semshi.dependencies = ['nvim-treesitter/nvim-treesitter']
 let s:semshi.options = { 'do': ':UpdateRemotePlugins' }
 if has('nvim')
-  call s:addplugin("semshi", s:semshi)
+  " call s:addplugin("semshi", s:semshi)
 endif
 
 
@@ -5375,20 +5371,30 @@ if 1
   " Define the Help command to display help in a vertical split:
   command! -nargs=? Help vert help <args>
 
-  function! CorrectHelpCall()
+  function! CorrectCommand()
     if getcmdtype() != ':'
       return "\<CR>"
     endif
 
-    let l:command = matchstr(getcmdline(), '^h\%[elp]\>')
-    if l:command == ''
-      return "\<CR>"
+    let l:substitutions = []
+    call add(l:substitutions, ['\v^(h%[elp])>(.*)', 'Help\2'])
+    if s:ispluginactive('vim_bbye')
+      call add(l:substitutions, ['\v^(bd>)(.*)', 'Bd\2'])
     endif
+    let g:substitutions = l:substitutions
 
-    let l:cmdline = getcmdline()
-    return "\<End>\<C-u>Help" . l:cmdline[len(l:command):] . "\<CR>"
+    let l:command = getcmdline()
+    for l:substitution in l:substitutions
+      if matchstr(l:command, l:substitution[0]) != ''
+        let l:command = substitute(l:command, l:substitution[0], l:substitution[1], '')
+        return "\<End>\<C-u>" . l:command . "\<CR>"
+      endif
+    endfor
+
+    return "\<CR>"
   endfunction
-  cnoremap <expr> <CR> CorrectHelpCall()
+
+  cnoremap <expr> <CR> CorrectCommand()
 
   " Add two command to increase and decrease the font size:
   function! ChangeFontSize()
@@ -5563,7 +5569,8 @@ if 1
 
     " Load a new terminal into the window:
     if has('nvim')
-      terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject >nul
+      " The redirection to >nul hide the output of the console
+      terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject
       " Switch to console mode:
       norma a
     else
@@ -5813,7 +5820,7 @@ if 1
     endif
 
     " Delete the terminal buffers that don't correspond to a window
-    wininfos = getwininfo()
+    let wininfos = getwininfo()
     let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
     if has('nvim')
       let term_buffers = map(filter(win_infos, 'v:val.terminal'), 'v:val.winnr')
@@ -5828,8 +5835,10 @@ if 1
       endif
     endfor
 
+    let wininfos = getwininfo()
+    let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
     if has('nvim')
-      let term_buffers = map(filter(getwininfo(), 'v:val.terminal'), 'v:val.winnr')
+      let term_buffers = map(filter(wininfos, 'v:val.terminal'), 'v:val.winnr')
     else
       let term_buffers = term_list()
     endif
