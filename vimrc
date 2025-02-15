@@ -825,14 +825,47 @@ endfunction
 let s:plugin_set = {}
 let s:plugin_list = []
 
+function! s:newplugin(plugin)
+  let l:plugin = {}
+  if type(a:plugin) == type('')
+    let l:plugin.url = a:plugin
+  elseif type(a:plugin) == type({})
+    let l:plugin = a:plugin
+  else
+    echoerr 'Not supported plugin format:' . plugin
+  endif
+
+  if !has_key(l:plugin, 'name')
+    let l:plugin.name = l:plugin.url
+  endif
+
+  if !has_key(l:plugin, 'manager')
+    let l:plugin.manager = 'plug'
+  endif
+
+  if !has_key(l:plugin, 'dependencies')
+    let l:plugin.dependencies = []
+  else
+    let l:dependencies = []
+    for l:dplugin in l:plugin.dependencies
+      let l:dplugin = s:newplugin(l:dplugin)
+      call add(l:dependencies, l:dplugin)
+    endfor
+    let l:plugin.dependencies = l:dependencies
+  endif
+
+  return l:plugin
+endfunction
+
 function! s:addplugin(name, plugin)
-  let s:plugin_set[a:name] = 1
-  call add(s:plugin_list, a:plugin)
+  let l:plugin = s:newplugin(a:plugin)
+  let s:plugin_set[a:name] = l:plugin
+  call add(s:plugin_list, l:plugin)
 endfunction
 
 function! s:ispluginactive(name)
   if has_key(s:plugin_set, a:name)
-    return s:plugin_set[a:name]
+    return 1
   endif
   if exists("s:" . a:name . '_flag')
     return s:[a:name . '_flag']
@@ -859,6 +892,22 @@ endfunction
 
 function! s:selectplugins(locator)
   let s:plugin_list = s:getsubrange(s:plugin_list, a:locator)
+
+  " Update s:plugin_set
+  let l:values = values(s:plugin_set)
+  let l:keys = keys(s:plugin_set)
+
+  let l:plugin_set = {}
+  for l:plugin in s:plugin_list
+    let l:index = index(l:values, l:plugin)
+    if l:index < 0
+      continue
+    endif
+    let l:name = l:keys[l:index]
+    let l:plugin_set[l:name] = l:plugin
+  endfor
+  let s:plugin_set = l:plugin_set
+  let g:plugin_set = s:plugin_set
 endfunction
 
 function s:installplugin(plugin)
@@ -882,15 +931,13 @@ function! s:installplugins()
     " if plugin.url == ''
     "   continue
     " endif
-    if type(plugin) == type({}) && has_key(plugin, 'manager') && plugin.manager != 'plug'
-      if plugin.manager ==# 'packadd'
-        " packadd
-        execute 'packadd' plugin.url
-      elseif plugin.manager ==# 'runtime'
-        " runtime
-        execute 'runtime' plugin.url
-      endif
-    else
+    if plugin.manager ==# 'packadd'
+      " packadd
+      execute 'packadd' plugin.url
+    elseif plugin.manager ==# 'runtime'
+      " runtime
+      execute 'runtime' plugin.url
+    elseif plugin.manager ==# 'plug'
       " Plug
       if type(plugin) == type({}) && has_key(plugin, 'dependencies')
         " Install dependencies
@@ -900,19 +947,22 @@ function! s:installplugins()
       endif
       " Install plugin
       call s:installplugin(plugin)
+    else
+      echoerr 'Unsupported plugin manager:' . plugin.manager
     endif
   endfor
   call plug#end()
 
   for plugin in s:plugin_list
-    if  type(plugin) == type({}) && has_key(plugin, 'setup')
+    if  has_key(plugin, 'setup')
       call plugin.setup()
     endif
   endfor
 endfunction
 
 function! GetInstalledPlugins()
-  return map(copy(s:plugin_list), {_, val -> val.url})
+  return keys(s:plugin_set)
+  " return map(copy(s:plugin_list), {_, val -> val.url})
 endfunction
 
 let s:mappings = {}
@@ -1154,9 +1204,11 @@ function! s:setup() dict
   endif
 
   " if s:ispluginactive('nord_vim') && index(s:schemes, 'nord') >= 0
-  if s:ispluginactive('nord_vim')
-    let g:lightline.colorscheme = 'nord'
-  endif
+  " let g:lightline.colorscheme = g:colors_name
+  let g:lightline.colorscheme = s:colorscheme_desired
+  " if s:ispluginactive('nord_vim')
+  "   let g:lightline.colorscheme = 'nord'
+  " endif
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
 call s:addplugin("vim_lightline", s:vim_lightline)
@@ -4735,7 +4787,9 @@ let s:helpful = {}
 let s:helpful.url = 'tweekmonster/helpful.vim'
 " call s:addplugin("helpful", s:helpful)
 
-" call s:selectplugins("10110")
+let s:colorscheme_desired = 'nord'
+
+" call s:selectplugins("1011")
 call s:installplugins()
 
 if s:ispluginactive('which_key')
@@ -4836,43 +4890,58 @@ if s:ispluginactive('which_key')
 endif
 
 " Set the colorscheme before customizing the plugins colors
-function! GetColorSchemes()
-  return uniq(sort(map(
-        \  globpath(&runtimepath, "colors/*.vim", 0, 1),
-        \  'fnamemodify(v:val, ":t:r")'
-        \)))
-endfunction
+" function! GetColorSchemes()
+"   return uniq(sort(map(
+"         \  globpath(&runtimepath, "colors/*.vim", 0, 1),
+"         \  'fnamemodify(v:val, ":t:r")'
+"         \)))
+" endfunction
 
-let s:schemes = GetColorSchemes()
-if has('gui_running') || has('unix')
-  if s:ispluginactive('tokyonight')
-    colorscheme tokyonight
-  endif
+" let s:schemes = GetColorSchemes()
+" if has('gui_running') || has('unix')
+"   if s:ispluginactive('tokyonight')
+"     colorscheme tokyonight
+"   endif
 
-  if index(s:schemes, 'nord') >= 0
-    colorscheme nord
-  else
-    colorscheme desert
-  endif
+"   if index(s:schemes, 'nord') >= 0
+"     colorscheme nord
+"   else
+"     colorscheme desert
+"   endif
 
-  if s:ispluginactive('nord_vim')
-    " Make the search background a bit less bright:
-    autocmd ColorScheme nord hi Search guibg=#67909e guifg=#2e3440
+"   if s:ispluginactive('nord_vim')
+"     " Make the search background a bit less bright:
+"     autocmd ColorScheme nord hi Search guibg=#67909e guifg=#2e3440
 
-    " Make the foreground color of the folded line more bright:
-    autocmd ColorScheme nord hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
-  endif
-else
+"     " Make the foreground color of the folded line more bright:
+"     autocmd ColorScheme nord hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
+"   endif
+" else
+"   " Seems that termguicolors and nord colorscheme work well on Windows console
+"   set termguicolors
+"   try
+"     colorscheme nord
+"   catch
+"     colorscheme desert
+"   endtry
+" endif
+
+if !(has('gui_running') || has('unix'))
   " Seems that termguicolors and nord colorscheme work well on Windows console
   set termguicolors
-  try
-    colorscheme nord
-  catch
-    colorscheme desert
-  endtry
 endif
+if s:ispluginactive('nord_vim')
+  " Make the search background a bit less bright:
+  autocmd ColorScheme nord hi Search guibg=#67909e guifg=#2e3440
 
-
+  " Make the foreground color of the folded line more bright:
+  autocmd ColorScheme nord hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
+endif
+try
+  execute 'colorscheme' s:colorscheme_desired
+catch
+  colorscheme desert
+endtry
 
 if s:ispluginactive('which_key')
   let g:which_key_map_g.x = ["<Plug>NetrwBrowseX", 'Open File']
@@ -5606,7 +5675,7 @@ if 1
       endif
       let terminal_name  = buf_info.variables.terminal_name
       if terminal_name[0:len(cwd)-1] ==# cwd
-        let terminal_name = terminal_name[len(cwd):] 
+        let terminal_name = terminal_name[len(cwd):]
         if terminal_name == ''
           let terminal_name = '.'
         endif
