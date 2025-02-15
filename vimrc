@@ -857,9 +857,12 @@ function! s:newplugin(plugin)
   return l:plugin
 endfunction
 
-function! s:addplugin(name, plugin)
+function! s:addplugin(plugin, ...)
   let l:plugin = s:newplugin(a:plugin)
-  let s:plugin_set[a:name] = l:plugin
+  if a:0 >= 1
+    let l:plugin.name = a:1
+  endif
+  let s:plugin_set[l:plugin.name] = l:plugin
   call add(s:plugin_list, l:plugin)
 endfunction
 
@@ -894,19 +897,24 @@ function! s:selectplugins(locator)
   let s:plugin_list = s:getsubrange(s:plugin_list, a:locator)
 
   " Update s:plugin_set
-  let l:values = values(s:plugin_set)
-  let l:keys = keys(s:plugin_set)
-
-  let l:plugin_set = {}
+  let s:plugin_set = {}
   for l:plugin in s:plugin_list
-    let l:index = index(l:values, l:plugin)
-    if l:index < 0
-      continue
-    endif
-    let l:name = l:keys[l:index]
-    let l:plugin_set[l:name] = l:plugin
+    let s:plugin_set[l:plugin.name] = l:plugin
   endfor
-  let s:plugin_set = l:plugin_set
+
+  " let l:values = values(s:plugin_set)
+  " let l:keys = keys(s:plugin_set)
+
+  " let l:plugin_set = {}
+  " for l:plugin in s:plugin_list
+  "   let l:index = index(l:values, l:plugin)
+  "   if l:index < 0
+  "     continue
+  "   endif
+  "   let l:name = l:keys[l:index]
+  "   let l:plugin_set[l:name] = l:plugin
+  " endfor
+  " let s:plugin_set = l:plugin_set
   let g:plugin_set = s:plugin_set
 endfunction
 
@@ -1012,45 +1020,45 @@ endfunction
 let s:nord_vim = {}
 let s:nord_vim.url = 'nordtheme/vim'
 let s:nord_vim.options = {'as': 'nordtheme'}
-call s:addplugin("nord_vim", s:nord_vim)
+call s:addplugin(s:nord_vim, "nord_vim")
 
 let s:rose_pine = {}
 let s:rose_pine.url = 'rose-pine/neovim'
 let s:rose_pine.options = {'as': 'rose-pine'}
 if has('nvim')
-  call s:addplugin("rose_pine", s:rose_pine)
+  call s:addplugin(s:rose_pine, "rose_pine")
 endif
 
 let s:vim_gruvbox = {'url' : 'morhetz/gruvbox'}
-" call s:addplugin("vim_gruvbox", s:vim_gruvbox)
+" call s:addplugin(s:vim_gruvbox, "vim_gruvbox")
 
 let s:vim_color_solarized = {'url' : 'altercation/vim-colors-solarized'}
-" call s:addplugin("vim_color_solarized", s:vim_color_solarized)
+" call s:addplugin(s:vim_color_solarized, "vim_color_solarized")
 
 let s:tokyonight = {'url' : 'folke/tokyonight.nvim'}
-" call s:addplugin("tokyonight", s:tokyonight)
+" call s:addplugin(s:tokyonight, "tokyonight")
 
 let s:onedark = {'url' : 'joshdick/onedark.vim'}
-" call s:addplugin("onedark", s:onedark)
+" call s:addplugin(s:onedark, "onedark")
 
 let s:catppuccin = {'url' : 'catppuccin/nvim'}
 let s:catppuccin.options = { 'as': 'catppuccin' }
-" call s:addplugin("catppuccin", s:catppuccin)
+" call s:addplugin(s:catppuccin, "catppuccin")
 
 let s:molokai = {'url' : 'tomasr/molokai'}
-" call s:addplugin("molokai", s:molokai)
+" call s:addplugin(s:molokai, "molokai")
 
 let s:papercolor = {'url' : 'NLKNguyen/papercolor-theme'}
-" call s:addplugin("papercolor", s:papercolor)
+" call s:addplugin(s:papercolor, "papercolor")
 
 let s:everforest = {'url' : 'sainnhe/everforest'}
-" call s:addplugin("everforest", s:everforest)
+" call s:addplugin(s:everforest, "everforest")
 
 let s:kanagawa = {'url' : 'rebelot/kanagawa.nvim'}
-" call s:addplugin("kanagawa", s:kanagawa)
+" call s:addplugin(s:kanagawa, "kanagawa")
 
 let s:afterglow = {'url' : 'danilo-augusto/vim-afterglow'}
-" call s:addplugin("afterglow", s:afterglow)
+" call s:addplugin(s:afterglow, "afterglow")
 
 " 2.1.2. Devicon
 " -------------
@@ -1060,7 +1068,7 @@ let s:afterglow = {'url' : 'danilo-augusto/vim-afterglow'}
 " Set the guifont to the installed Nerd-Font (e.g.: Cousine_Nerd_Font_Mono)
 let s:vim_devicons = {}
 let s:vim_devicons.url = 'ryanoasis/vim-devicons'
-call s:addplugin("vim_devicons", s:vim_devicons)
+call s:addplugin(s:vim_devicons, "vim_devicons")
 
 " 2.1.3. Status Line
 " -----------------
@@ -1122,11 +1130,11 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_airline.setup = funcref("s:setup")
-" call s:addplugin("vim_airline", s:vim_airline)
+" call s:addplugin(s:vim_airline, "vim_airline")
 
 let s:powerline = {}
 let s:powerline.url = 'powerline/powerline'
-" call s:addplugin("powerline", s:powerline)
+" call s:addplugin(s:powerline, "powerline")
 
 
 let s:vim_lightline = {}
@@ -1211,7 +1219,7 @@ function! s:setup() dict
   " endif
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
-call s:addplugin("vim_lightline", s:vim_lightline)
+call s:addplugin(s:vim_lightline, "vim_lightline")
 
 
 " 2.2. Ergonomic
@@ -1221,9 +1229,7 @@ call s:addplugin("vim_lightline", s:vim_lightline)
 " ----------------
 
 " Add a number of [x ]x mapping
-let s:vim_unimpaired = {}
-let s:vim_unimpaired.url = 'tpope/vim-unimpaired'
-call s:addplugin("vim_unimpaired", s:vim_unimpaired)
+call s:addplugin('tpope/vim-unimpaired', "vim_unimpaired")
 
 " 2.2.2. Wilder
 " ------------
@@ -1374,7 +1380,7 @@ function! s:setup() dict
   " More information with: :help wilder.txt
 endfunction
 let s:wilder.setup = funcref("s:setup")
-call s:addplugin("wilder", s:wilder)
+call s:addplugin(s:wilder, "wilder")
 
 " 2.2.3. Repeat
 " ------------
@@ -1383,9 +1389,7 @@ call s:addplugin("wilder", s:wilder)
 " - vim-unimpaired
 " - vim-surround
 " - vim-easyclip
-let s:vim_repeat = {}
-let s:vim_repeat.url = 'tpope/vim-repeat'
-" call s:addplugin("vim_repeat", s:vim_repeat)
+" call s:addplugin('tpope/vim-repeat', "vim_repeat")
 
 let s:repmo = {}
 let s:repmo.url = 'Houl/repmo-vim'
@@ -1406,17 +1410,16 @@ function! s:setup() dict
   endfor
 endfunction
 let s:repmo.setup = funcref("s:setup")
-" call s:addplugin("repmo", s:repmo)
+" call s:addplugin(s:repmo, "repmo")
 
-let s:repeatable_motion = {}
-let s:repeatable_motion.url = 'repeatable-motions'
-let s:repeatable_motion.options = {}
-let s:repeatable_motion.manager = "packadd"
+let s:repeatable_motion = #{ url:'repeatable-motions', manager: 'packadd'}
+" let s:repeatable_motion.url = 'repeatable-motions'
+" let s:repeatable_motion.manager = "packadd"
 function! s:setup() dict
   " call AddRepeatableMotion("[m", "]m", 1)
 endfunction
 let s:repeatable_motion.setup = funcref("s:setup")
-" call s:addplugin("repeatable_motion", s:repeatable_motion)
+" call s:addplugin(s:repeatable_motion, "repeatable_motion")
 
 " Make the ';', ',' repeat motion working for more motions:
 let s:vim_remotions = {}
@@ -1491,7 +1494,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_remotions.setup = funcref("s:setup")
-call s:addplugin("vim_remotions", s:vim_remotions)
+call s:addplugin(s:vim_remotions, "vim_remotions")
 
 " 2.2.4. Text Objects
 " -------------------
@@ -1500,30 +1503,21 @@ call s:addplugin("vim_remotions", s:vim_remotions)
 " - Multiple line strings
 " Remark: seems buggy with nested brace on multilines
 " see [issue#228](https://github.com/wellle/targets.vim/issues/288)
-let s:target_vim = {}
-let s:target_vim.url = 'wellle/targets.vim'
-" call s:addplugin("target_vim", s:target_vim)
+" call s:addplugin('wellle/targets.vim', "target_vim")
 
 " - Indentation block
-let s:vim_ident_object = {}
-let s:vim_ident_object.url = 'michaeljsmith/vim-indent-object'
-" call s:addplugin("vim_ident_object", s:vim_ident_object)
+" call s:addplugin('michaeljsmith/vim-indent-object', "vim_ident_object")
 
 " Text object and motions for Python code
-let s:vim_pythonsense = {}
-let s:vim_pythonsense.url = 'jeetsukumaran/vim-pythonsense'
-" call s:addplugin("vim_pythonsense", s:vim_pythonsense)
+" call s:addplugin('jeetsukumaran/vim-pythonsense', "vim_pythonsense")
 
 " Indentation moves (seems to be buggy):
 " [- parent indentation
 " [= previous sibling indentation
 " ]= next sibling indentation
-let s:vim_indentwise = {}
-let s:vim_indentwise.url = 'jeetsukumaran/vim-indentwise'
-" call s:addplugin("vim_indentwise", s:vim_indentwise)
+" call s:addplugin('jeetsukumaran/vim-indentwise', "vim_indentwise")
 
-let s:vim_sentence = {}
-let s:vim_sentence.url = 'preservim/vim-textobj-sentence'
+let s:vim_sentence = #{url: 'preservim/vim-textobj-sentence'}
 let s:vim_sentence.dependencies = ['kana/vim-textobj-user']
 function! s:setup() dict
   augroup textobj_sentence
@@ -1534,7 +1528,7 @@ function! s:setup() dict
   augroup END
 endfunction
 let s:vim_sentence.setup = funcref("s:setup")
-" call s:addplugin("vim_sentence", s:vim_sentence)
+" call s:addplugin(s:vim_sentence, "vim_sentence")
 
 " 2.2.5. Dashboard
 " ---------------
@@ -1585,7 +1579,7 @@ function! s:setup() dict
   " More information with: :help startify
 endfunction
 let s:vim_startify.setup = funcref("s:setup")
-" call s:addplugin("vim_startify", s:vim_startify)
+" call s:addplugin(s:vim_startify, "vim_startify")
 
 let s:dashboard_vim = {}
 let s:dashboard_vim.url = 'nvimdev/dashboard-nvim'
@@ -1603,7 +1597,7 @@ function! s:setup() dict
 endfunction
 let s:dashboard_vim.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("dashboard_vim", s:dashboard_vim)
+  " call s:addplugin(s:dashboard_vim, "dashboard_vim")
 endif
 
 " 2.2.6. Windows
@@ -1611,7 +1605,7 @@ endif
 
 " Allows you to close buffer without closing the corresponding window
 " Introducing the :Bd command
-call s:addplugin("vim_bbye", 'moll/vim-bbye')
+call s:addplugin('moll/vim-bbye', "vim_bbye")
 
 " Re-size windows
 " Split management
@@ -1626,7 +1620,7 @@ function! s:setup() dict
   " More information with: :help winresizer
 endfunction
 let s:winresizer.setup = funcref("s:setup")
-" call s:addplugin("winresizer", s:winresizer)
+" call s:addplugin(s:winresizer, "winresizer")
 
 let s:vim_maximizer = {}
 let s:vim_maximizer.url = 'szw/vim-maximizer'
@@ -1638,12 +1632,12 @@ function! s:setup() dict
   nnoremap <C-w>m :MaximizerToggle<CR>
 endfunction
 let s:vim_maximizer.setup = funcref("s:setup")
-call s:addplugin("vim_maximizer", s:vim_maximizer)
+call s:addplugin(s:vim_maximizer, "vim_maximizer")
 
 " Allow to run vim in full screen
 " Requires pywin32:
 "   C:\Python312_x64\Scripts\pip install pywin32
-" call s:addplugin("vim_fullscreen", 'ruedigerha/vim-fullscreen')
+" call s:addplugin('ruedigerha/vim-fullscreen', "vim_fullscreen")
 
 " 2.2.7. Clipboard
 " ----------------
@@ -1657,7 +1651,7 @@ function! s:setup() dict
 endfunction
 let s:vim_highlightedyank.setup = funcref("s:setup")
 if !has('nvim')
-  call s:addplugin("vim_highlightedyank", s:vim_highlightedyank)
+  call s:addplugin(s:vim_highlightedyank, "vim_highlightedyank")
 else
   " NeoVim alternative to highlightedyank
   augroup highlight_yank
@@ -1674,7 +1668,7 @@ function! s:setup() dict
   autocmd VimEnter * hi illuminatedWord guifg=#2e3440 guibg=#8fbcbb
 endfunction
 let s:vim_illuminate.setup = funcref("s:setup")
-" call s:addplugin("vim_illuminate", s:vim_illuminate)
+" call s:addplugin(s:vim_illuminate, "vim_illuminate")
 
 " Vim is slow on buffer with long lines
 " Changing the synmaxcol from 3000 (the default) to 300 improve the
@@ -1694,7 +1688,7 @@ function! s:setup() dict
   nnoremap X D
 endfunction
 let s:vim_cutlass.setup = funcref("s:setup")
-" call s:addplugin("vim_cutlass", s:vim_cutlass)
+" call s:addplugin(s:vim_cutlass, "vim_cutlass")
 
 
 " Introduce a Yank Ring:
@@ -1719,13 +1713,13 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_yoink.setup = funcref("s:setup")
-" call s:addplugin("vim_yoink", s:vim_yoink)
+" call s:addplugin(s:vim_yoink, "vim_yoink")
 
 " 2.2.8. Search
 " -------------
 
 " Visual Selection Search (using '*' and '#')
-call s:addplugin("vim_visual_star_search", 'nelstrom/vim-visual-star-search')
+call s:addplugin('nelstrom/vim-visual-star-search', "vim_visual_star_search")
 
 " Preview substitution of the s command before performing it
 " Remarks:
@@ -1735,19 +1729,13 @@ let s:traces = {}
 let s:traces.url = 'markonm/traces.vim'
 let s:traces.options = {}
 if !has('nvim')
-  call s:addplugin("traces", s:traces)
+  call s:addplugin(s:traces, "traces")
 endif
 
 " Highlight all pattern match
 " Remark:
 "   In the meantime the set incsearch bring a fair fraction of the features
-let s:incsearch = {}
-let s:incsearch.url = 'haya14busa/incsearch'
-let s:incsearch.options = {}
-function! s:setup() dict
-endfunction
-let s:incsearch.setup = funcref("s:setup")
-" call s:addplugin("incsearch", s:incsearch)
+" call s:addplugin('haya14busa/incsearch', "incsearch")
 
 " New version of incsearch
 " - Highlight all pattern match
@@ -1773,12 +1761,10 @@ function! s:setup() dict
   " More information with: :help is.txt?
 endfunction
 let s:is_vim.setup = funcref("s:setup")
-" call s:addplugin("is_vim", s:is_vim)
+" call s:addplugin(s:is_vim, "is_vim")
 
 " Case sensitive search and replace
-let s:vim_abolish = {}
-let s:vim_abolish.url = 'tpope/vim-abolish'
-call s:addplugin("vim_abolish", s:vim_abolish)
+call s:addplugin('tpope/vim-abolish', "vim_abolish")
 
 " Allow buffer specific search register
 let s:local_search = {}
@@ -1790,7 +1776,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:local_search.setup = funcref("s:setup")
-" call s:addplugin("local_search", s:local_search)
+" call s:addplugin(s:local_search, "local_search")
 
 " 2.2.9. Moves
 " -------------
@@ -1805,19 +1791,15 @@ function! s:setup() dict
   endif
 endfunction
 let s:matchit_legacy.setup = funcref("s:setup")
-call s:addplugin("matchit_legacy", s:matchit_legacy)
+call s:addplugin(s:matchit_legacy, "matchit_legacy")
 
 " Extend the matching '%' movement to matching keywords
-let s:vim_matchup = {}
-let s:vim_matchup.url = 'andymass/vim-matchup'
-" call s:addplugin("vim_matchup", s:vim_matchup)
+" call s:addplugin('andymass/vim-matchup', "vim_matchup")
 
 " Add alternatives to the f <char> motion and friends (f, F, t, T)
 " Remark:
 " - You get the \\f <char> motion and friends (f, F, t, T)
-let s:vim_easymotion = {}
-let s:vim_easymotion.url = 'easymotion/vim-easymotion'
-" call s:addplugin("vim_easymotion", s:vim_easymotion)
+" call s:addplugin('easymotion/vim-easymotion', "vim_easymotion")
 
 let s:leap = {}
 let s:leap.url = 'ggandor/leap.nvim'
@@ -1833,7 +1815,7 @@ function! s:setup() dict
 endfunction
 let s:leap.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("leap", s:leap)
+  " call s:addplugin(s:leap, "leap")
 endif
 
 let s:vim_sneak = {}
@@ -1842,7 +1824,7 @@ function! s:setup() dict
   let g:sneak#label = 1
 endfunction
 let s:vim_sneak.setup = funcref("s:setup")
-" call s:addplugin("vim_sneak", s:vim_sneak)
+" call s:addplugin(s:vim_sneak, "vim_sneak")
 
 let s:hop = {}
 let s:hop.url = 'smoka7/hop.nvim'
@@ -1852,7 +1834,7 @@ function! s:setup() dict
 endfunction
 let s:hop.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("hop", s:hop)
+  " call s:addplugin(s:hop, "hop")
 endif
 
 " 2.2.10. Unicode
@@ -1869,25 +1851,19 @@ function! s:setup() dict
   " let g:Unicode_no_default_mappings = v:true
 endfunction
 let s:unicode_helper.setup = funcref("s:setup")
-" call s:addplugin("unicode_helper", s:unicode_helper)
+" call s:addplugin(s:unicode_helper, "unicode_helper")
 
 " Help to understand Unicode characters
-let s:vim_characterize = {}
-let s:vim_characterize.url = 'tpope/vim-characterize'
-" call s:addplugin("vim_characterize", s:vim_characterize)
+" call s:addplugin('tpope/vim-characterize', "vim_characterize")
 
 " 2.2.11. Multiple Cursors
 " -----------------------
 
 " Multiple cursors
-let s:vim_visual_multi = {}
-let s:vim_visual_multi.url = 'mg979/vim-visual-multi'
-" call s:addplugin("vim_visual_multi", s:vim_visual_multi)
+" call s:addplugin('mg979/vim-visual-multi', "vim_visual_multi")
 
 " Multiple cursors for parallel modifications
-let s:vim_multiple_cursors = {}
-let s:vim_multiple_cursors.url = 'terryma/vim-multiple-cursors'
-" call s:addplugin("vim_multiple_cursors", s:vim_multiple_cursors)
+" call s:addplugin('terryma/vim-multiple-cursors', "vim_multiple_cursors")
 
 " 2.2.12. CSS Colors
 " -----------------
@@ -1903,7 +1879,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_css_color.setup = funcref("s:setup")
-call s:addplugin("vim_css_color", s:vim_css_color)
+call s:addplugin(s:vim_css_color, "vim_css_color")
 
 " Remarks:
 " - Requires: Go Language installation
@@ -1957,15 +1933,13 @@ function! s:setup() dict
   endif
 endfunction
 let s:hexokinase.setup = funcref("s:setup")
-" call s:addplugin("hexokinase", s:hexokinase)
+" call s:addplugin(s:hexokinase, "hexokinase")
 
 " Remarks:
 " - Requires: awk
 " - Requires: Cygwin?
 " - Doesn't seems to work on windows
-let s:clrzr = {}
-let s:clrzr.url = 'BourgeoisBear/clrzr'
-" call s:addplugin("clrzr", s:clrzr)
+" call s:addplugin('BourgeoisBear/clrzr', "clrzr")
 
 " Remarks:
 " - Doesn't seems to be supported anymore
@@ -1979,7 +1953,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:colorizer.setup = funcref("s:setup")
-" call s:addplugin("colorizer", s:colorizer)
+" call s:addplugin(s:colorizer, "colorizer")
 
 " 2.2.13. Miscellaneous
 " ---------------------
@@ -1991,7 +1965,7 @@ function! s:setup() dict
   imap <C-x><C-f> <Plug>RelativelyCompleteFile
 endfunction
 let s:vim_relatively_complete.setup = funcref("s:setup")
-call s:addplugin("vim_relatively_complete", s:vim_relatively_complete)
+call s:addplugin(s:vim_relatively_complete, "vim_relatively_complete")
 
 let s:vim_expand_region = {}
 let s:vim_expand_region.url = 'terryma/vim-expand-region'
@@ -2001,7 +1975,7 @@ function! s:setup() dict
   map - <Plug>(expand_region_shrink)
 endfunction
 let s:vim_expand_region.setup = funcref("s:setup")
-" call s:addplugin("vim_expand_region", s:vim_expand_region)
+" call s:addplugin(s:vim_expand_region, "vim_expand_region")
 
 " Hint about keyboard shortcuts
 let s:which_key = {}
@@ -2025,22 +1999,16 @@ function! s:setup() dict
   autocmd User vim-which-key call which_key#register('z', 'g:which_key_map_z')
 endfunction
 let s:which_key.setup = funcref("s:setup")
-" call s:addplugin("which_key", s:which_key)
+" call s:addplugin(s:which_key, "which_key")
 
 " Register visibility
-let s:vim_peekaboo = {}
-let s:vim_peekaboo.url = 'junegunn/vim-peekaboo'
-" call s:addplugin("vim_peekaboo", s:vim_peekaboo)
+" call s:addplugin('junegunn/vim-peekaboo', "vim_peekaboo")
 
 " Distraction free mode:
-let s:goyo = {}
-let s:goyo.url = 'junegunn/goyo.vim'
-" call s:addplugin("goyo", s:goyo)
+" call s:addplugin('junegunn/goyo.vim', "goyo")
 
 " Distraction free colorization of the other paragraphs
-let s:limelight = {}
-let s:limelight.url = 'junegunn/limelight.vim'
-" call s:addplugin("limelight", s:limelight)
+" call s:addplugin('junegunn/limelight.vim', "limelight")
 
 " Basic large files support
 " Make large files not slowing down vim as much as possible
@@ -2054,28 +2022,16 @@ function! s:setup() dict
   " let g:LargeFile_dont = ["syntax", "filetype"]
 endfunction
 let s:large_file.setup = funcref("s:setup")
-call s:addplugin("large_file", s:large_file)
+call s:addplugin(s:large_file, "large_file")
 
-let s:argumentative = {}
-let s:argumentative.url = 'PeterRincker/vim-argumentative'
-function! s:setup() dict
-endfunction
-let s:argumentative.setup = funcref("s:setup")
-call s:addplugin("argumentative", s:argumentative)
+call s:addplugin('PeterRincker/vim-argumentative', "argumentative")
 
 " Add the CheckHealth command to Vim
-let s:checkhealth = {}
-let s:checkhealth.url = 'rhysd/vim-healthcheck'
-function! s:setup() dict
-endfunction
-let s:checkhealth.setup = funcref("s:setup")
 if !has('nvim')
-  " call s:addplugin("checkhealth", s:checkhealth)
+  " call s:addplugin('rhysd/vim-healthcheck', "checkhealth")
 endif
 
-let s:startuptime = {}
-let s:startuptime.url = 'dstein64/vim-startuptime'
-" call s:addplugin("startuptime", s:startuptime)
+" call s:addplugin('dstein64/vim-startuptime', "startuptime")
 
 " Ensure the context lines keep being visible
 let s:context = {}
@@ -2102,14 +2058,9 @@ function! s:setup() dict
   endif
 endfunction
 let s:context.setup = funcref("s:setup")
-call s:addplugin("context", s:context)
+call s:addplugin(s:context, "context")
 
-let s:splitjoin = {}
-let s:splitjoin.url = 'AndrewRadev/splitjoin.vim'
-function! s:setup() dict
-endfunction
-let s:splitjoin.setup = funcref("s:setup")
-" call s:addplugin("context", s:splitjoin)
+" call s:addplugin('AndrewRadev/splitjoin.vim', "context")
 
 let s:treejs = {}
 let s:treejs.url = 'Wansmer/treesj'
@@ -2121,36 +2072,21 @@ EOF
 endfunction
 let s:treejs.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("treejs", s:treejs)
+  " call s:addplugin(s:treejs, "treejs")
 endif
 
 " Spell checking
 let s:vim_spellcheck = {}
 let s:vim_spellcheck.url = 'inkarkat/vim-SpellCheck'
 let s:vim_spellcheck.dependencies = ['inkarkat/vim-ingo-library']
-function! s:setup() dict
-endfunction
-let s:vim_spellcheck.setup = funcref("s:setup")
-" call s:addplugin("vim_spellcheck", s:vim_spellcheck)
+" call s:addplugin(s:vim_spellcheck, "vim_spellcheck")
 
 " Add database query support
-let s:vim_dadbod = {}
-let s:vim_dadbod.url = 'tpope/vim-dadbod'
-call s:addplugin("vim_dadbod", s:vim_dadbod)
+call s:addplugin('tpope/vim-dadbod', "vim_dadbod")
 
-let s:vim_dadbod_completion = {}
-let s:vim_dadbod_completion.url = 'kristijanhusak/vim-dadbod-completion'
-function! s:setup() dict
-endfunction
-let s:vim_dadbod_completion.setup = funcref("s:setup")
-" call s:addplugin("vim_dadbod_completion", s:vim_dadbod_completion)
+" call s:addplugin('kristijanhusak/vim-dadbod-completion', "vim_dadbod_completion")
 
-let s:vim_dadbod_ui = {}
-let s:vim_dadbod_ui.url = 'kristijanhusak/vim-dadbod-ui'
-function! s:setup() dict
-endfunction
-let s:vim_dadbod_ui.setup = funcref("s:setup")
-call s:addplugin("vim_dadbod_ui", s:vim_dadbod_ui)
+call s:addplugin('kristijanhusak/vim-dadbod-ui', "vim_dadbod_ui")
 
 " Remarks:
 " - It seems that when a file is locked by Excel sudo prevent the saveas
@@ -2162,15 +2098,11 @@ function! s:setup() dict
   " More information with: :help SudoEdit.txt
 endfunction
 let s:sudoedit_vim.setup = funcref("s:setup")
-" call s:addplugin("sudoedit_vim", s:sudoedit_vim)
+" call s:addplugin(s:sudoedit_vim, "sudoedit_vim")
 
-let s:vim_cool = {}
-let s:vim_cool.url = 'romainl/vim-cool'
-" call s:addplugin("vim_cool", s:vim_cool)
+" call s:addplugin('romainl/vim-cool', "vim_cool")
 
-let s:vimcaps = {}
-let s:vimcaps.url = 'suxpert/vimcaps'
-" call s:addplugin("vimcaps", s:vimcaps)
+" call s:addplugin('suxpert/vimcaps', "vimcaps")
 
 " Highlight briefly the cursor when it jump from split to split
 let s:beacon = {}
@@ -2188,15 +2120,10 @@ function! s:setup() dict
   let g:beacon_show_jumps = 0
 endfunction
 let s:beacon.setup = funcref("s:setup")
-" call s:addplugin("beacon", s:beacon)
+" call s:addplugin(s:beacon, "beacon")
 
 " Introduce a LongLines mode where the j and k key works like gj and gk
-let s:vim_long_lines = {}
-let s:vim_long_lines.url = 'manu-mannattil/vim-longlines'
-function! s:setup() dict
-endfunction
-let s:vim_long_lines.setup = funcref("s:setup")
-" call s:addplugin("vim_long_lines", s:vim_long_lines)
+" call s:addplugin('manu-mannattil/vim-longlines', "vim_long_lines")
 
 " Interactive Scratchpad
 " Remarks:
@@ -2212,20 +2139,14 @@ function! s:setup() dict
         \ }
 endfunction
 let s:codi_vim.setup = funcref("s:setup")
-" call s:addplugin("codi_vim", s:codi_vim)
+" call s:addplugin(s:codi_vim, "codi_vim")
 
 " Tridactyl Firefox add-on support
-let s:vim_tridactyl = {}
-let s:vim_tridactyl.url = 'tridactyl/vim-tridactyl'
-" call s:addplugin("vim_tridactyl", s:vim_tridactyl)
+" call s:addplugin('tridactyl/vim-tridactyl', "vim_tridactyl")
 
-let s:vim_orpheus = {}
-let s:vim_orpheus.url = 'vds2212/vim-orpheus'
-" call s:addplugin("vim_orpheus", s:vim_orpheus)
+" call s:addplugin('vds2212/vim-orpheus', "vim_orpheus")
 
-let s:vim_be_good = {}
-let s:vim_be_good.url = 'ThePrimeagen/vim-be-good'
-" call s:addplugin("vim_be_good", s:vim_be_good)
+" call s:addplugin('ThePrimeagen/vim-be-good', "vim_be_good")
 
 " 2.3. File Browsing
 " ------------------
@@ -2254,7 +2175,7 @@ function! s:setup() dict
   " More information with: :help rooter.txt
 endfunction
 let s:vim_rooter.setup = funcref("s:setup")
-call s:addplugin("vim_rooter", s:vim_rooter)
+call s:addplugin(s:vim_rooter, "vim_rooter")
 
 " 2.3.2. Fuzzy Searching
 " ---------------------
@@ -2295,7 +2216,7 @@ function! s:setup() dict
   " let g:fzf_preview_window = []
 endfunction
 let s:fzf.setup = funcref("s:setup")
-" call s:addplugin("fzf", s:fzf)
+" call s:addplugin(s:fzf, "fzf")
 
 " Fuzzy finder
 let s:ctrlp = {}
@@ -2316,7 +2237,7 @@ function! s:setup() dict
   let g:ctrlp_root_markers = ['.git', '.gitignore', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', '.vimspector.json']
 endfunction
 let s:ctrlp.setup = funcref("s:setup")
-" call s:addplugin("ctrlp", s:ctrlp)
+" call s:addplugin(s:ctrlp, "ctrlp")
 
 " In order to make tag generation working install maple:
 " Downloading from GitHub:
@@ -2363,7 +2284,7 @@ function! s:setup() dict
   " More information with: :help clap
 endfunction
 let s:vim_clap.setup = funcref("s:setup")
-call s:addplugin("vim_clap", s:vim_clap)
+call s:addplugin(s:vim_clap, "vim_clap")
 
 " Remark:
 "   Only available for NeoVim
@@ -2394,7 +2315,7 @@ function! s:setup() dict
 endfunction
 let s:nvim_telescope.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("nvim_telescope", s:nvim_telescope)
+  call s:addplugin(s:nvim_telescope, "nvim_telescope")
 endif
 
 let s:bufexplorer = {}
@@ -2409,11 +2330,9 @@ function! s:setup() dict
   let g:bufExplorerSplitRight=0
 endfunction
 let s:bufexplorer.setup = funcref("s:setup")
-call s:addplugin("bufexplorer", s:bufexplorer)
+call s:addplugin(s:bufexplorer, "bufexplorer")
 
-let s:easybuffer = {}
-let s:easybuffer.url = 'troydm/easybuffer.vim'
-" call s:addplugin("easybuffer", s:easybuffer)
+" call s:addplugin('troydm/easybuffer.vim', "easybuffer")
 
 " 2.3.3. File searching
 " --------------------
@@ -2454,7 +2373,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:ack_vim.setup = funcref("s:setup")
-" call s:addplugin("ack_vim", s:ack_vim)
+" call s:addplugin(s:ack_vim, "ack_vim")
 
 " Remark:
 " - Seems to work in asynchronous mode on Windows
@@ -2561,7 +2480,7 @@ function! s:setup() dict
   command! -nargs=* Ack CtrlSF <args>
 endfunction
 let s:ctrlsf.setup = funcref("s:setup")
-call s:addplugin("ctrlsf", s:ctrlsf)
+call s:addplugin(s:ctrlsf, "ctrlsf")
 
 let s:ferret = {}
 let s:ferret.url = 'wincent/ferret'
@@ -2585,7 +2504,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:ferret.setup = funcref("s:setup")
-" call s:addplugin("ferret", s:ferret)
+" call s:addplugin(s:ferret, "ferret")
 
 
 " 2.3.4. File browsing
@@ -2634,7 +2553,7 @@ function! s:setup() dict
   " More information with: :help NERDTree.txt
 endfunction
 let s:nerdtree.setup = funcref("s:setup")
-call s:addplugin("nerdtree", s:nerdtree)
+call s:addplugin(s:nerdtree, "nerdtree")
 " Plug 'Xuyuanp/nerdtree-git-plugin'
 
 let s:nvim_tree = {}
@@ -2651,13 +2570,11 @@ function! s:setup() dict
 endfunction
 let s:nvim_tree.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("nvim_tree", s:nvim_tree)
+  call s:addplugin(s:nvim_tree, "nvim_tree")
 endif
 
-let s:oil = {}
-let s:oil.url = 'stevearc/oil.nvim'
 if has('nvim')
-  " call s:addplugin("oil", s:oil)
+  " call s:addplugin('stevearc/oil.nvim', "oil")
 endif
 
 let s:fern = {}
@@ -2724,13 +2641,11 @@ function! s:setup() dict
   command! -nargs=* -complete=file E call FernExplore(<f-args>)
 endfunction
 let s:fern.setup = funcref("s:setup")
-" call s:addplugin("fern", s:fern)
+" call s:addplugin(s:fern, "fern")
 
 
 " File browser netrw helper
-let s:vim_vinegar = {}
-let s:vim_vinegar.url = 'tpope/vim-vinegar'
-" call s:addplugin("vim_vinegar", s:vim_vinegar)
+" call s:addplugin('tpope/vim-vinegar', "vim_vinegar")
 
 " 2.4. Sessions
 " -------------
@@ -2768,12 +2683,10 @@ function! s:setup() dict
   " nnoremap s <Nop>
 endfunction
 let s:vim_obsession.setup = funcref("s:setup")
-" call s:addplugin("vim_obsession", s:vim_obsession)
+" call s:addplugin(s:vim_obsession, "vim_obsession")
 
 " Addition to Obsession
-let s:vim_prosession = {}
-let s:vim_prosession.url = 'dhruvasagar/vim-prosession'
-" call s:addplugin("vim_prosession", s:vim_prosession)
+" call s:addplugin('dhruvasagar/vim-prosession', "vim_prosession")
 
 
 " 2.5. Bookmark
@@ -2792,7 +2705,7 @@ function! s:setup() dict
   " More information with: :help signature.txt
 endfunction
 let s:vim_signature.setup = funcref("s:setup")
-call s:addplugin("vim_signature", s:vim_signature)
+call s:addplugin(s:vim_signature, "vim_signature")
 
 " Bookmarks made easy
 let s:vim_bookmarks = {}
@@ -2812,7 +2725,7 @@ function! s:setup() dict
   " let g:bookmark_auto_save_file = $VIMFILES .'/vim-bookmarks'
 endfunction
 let s:vim_bookmarks.setup = funcref("s:setup")
-" call s:addplugin("vim_bookmarks", s:vim_bookmarks)
+" call s:addplugin(s:vim_bookmarks, "vim_bookmarks")
 
 " 2.6. Undo Tree
 " --------------
@@ -2836,17 +2749,13 @@ function! s:setup() dict
   " More information with: :help undotree.txt
 endfunction
 let s:undotree.setup = funcref("s:setup")
-call s:addplugin("undotree", s:undotree)
+call s:addplugin(s:undotree, "undotree")
 
 " Visualize and Navigate the undo tree:
-let s:gundo = {}
-let s:gundo.url = 'sjl/gundo.vim'
-" call s:addplugin("gundo", s:gundo)
+" call s:addplugin('sjl/gundo.vim', "gundo")
 
 " Visualize and Navigate the undo tree:
-let s:vim_mundo = {}
-let s:vim_mundo.url = 'simnalamburt/vim-mundo'
-" call s:addplugin("vim_mundo", s:vim_mundo)
+" call s:addplugin('simnalamburt/vim-mundo', "vim_mundo")
 
 " 2.7. Difference
 " ---------------
@@ -2863,16 +2772,14 @@ function! s:setup() dict
   let g:DiffPairVisible = 1
 endfunction
 let s:diffchar.setup = funcref("s:setup")
-" call s:addplugin("diffchar", s:diffchar)
+" call s:addplugin(s:diffchar, "diffchar")
 
 " 2.7.2. Diff Command
 " ------------------
 
 " Introduces the DiffOrig command that compare the current file with the
 " saved version
-let s:difforig = {}
-let s:difforig.url = 'lifecrisis/vim-difforig'
-" call s:addplugin("difforig", s:difforig)
+" call s:addplugin('lifecrisis/vim-difforig', "difforig")
 
 " 2.7.3 Spot Diff
 " ---------------
@@ -2893,7 +2800,7 @@ function! s:setup() dict
   " augroup END
 endfunction
 let s:spotdiff.setup = funcref("s:setup")
-" call s:addplugin("spotdiff", s:spotdiff)
+" call s:addplugin(s:spotdiff, "spotdiff")
 
 
 " 2.8. Git
@@ -2909,7 +2816,7 @@ let s:vim_fugitive.url = 'tpope/vim-fugitive'
 "   " let g:fugitive_git_executable = fnamemodify('C:/Program Files/Git/bin/git.exe', ':8')
 " endfunction
 " let s:vim_fugitive.setup = funcref("s:setup")
-call s:addplugin("vim_fugitive", s:vim_fugitive)
+call s:addplugin(s:vim_fugitive, "vim_fugitive")
 
 
 " 2.8.2. Git Signs
@@ -2929,7 +2836,7 @@ function! s:setup() dict
   " More information with: :help signify.txt
 endfunction
 let s:vim_signify.setup = funcref("s:setup")
-" call s:addplugin("vim_signify", s:vim_signify)
+" call s:addplugin(s:vim_signify, "vim_signify")
 
 
 " Remarks:
@@ -2943,7 +2850,7 @@ function! s:setup() dict
 endfunction
 let s:gitsigns.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("gitsigns", s:gitsigns)
+  " call s:addplugin(s:gitsigns, "gitsigns")
 endif
 
 
@@ -2967,15 +2874,13 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_gitgutter.setup = funcref("s:setup")
-call s:addplugin("vim_gitgutter", s:vim_gitgutter)
+call s:addplugin(s:vim_gitgutter, "vim_gitgutter")
 
 
 " 2.8.3. Git Helper
 " ----------------
 
-let s:vim_gitbranch = {}
-let s:vim_gitbranch.url = 'itchyny/vim-gitbranch'
-" call s:addplugin("vim_gitbranch", s:vim_gitbranch)
+" call s:addplugin('itchyny/vim-gitbranch', "vim_gitbranch")
 
 
 " 2.9. Indentation
@@ -3004,7 +2909,7 @@ function! s:setup() dict
   " More information with: :help indent_guides.txt
 endfunction
 let s:indentline.setup = funcref("s:setup")
-" call s:addplugin("indentline", s:indentline)
+" call s:addplugin(s:indentline, "indentline")
 
 let s:vim_indent_guides = {}
 let s:vim_indent_guides.url = 'preservim/vim-indent-guides'
@@ -3018,7 +2923,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_indent_guides.setup = funcref("s:setup")
-" call s:addplugin("vim_indent_guides", s:vim_indent_guides)
+" call s:addplugin(s:vim_indent_guides, "vim_indent_guides")
 
 
 " 2.9.2. EditorConfig
@@ -3036,15 +2941,13 @@ function! s:setup() dict
 endfunction
 let s:editorconfig.setup = funcref("s:setup")
 if !has('nvim')
-  call s:addplugin("editorconfig", s:editorconfig)
+  call s:addplugin(s:editorconfig, "editorconfig")
 endif
 
 " 2.9.3. Sleuth
 " ------------
 
-let s:vim_sleuth = {}
-let s:vim_sleuth.url = 'tpope/vim-sleuth'
-" call s:addplugin("vim_sleuth", s:vim_sleuth)
+" call s:addplugin('tpope/vim-sleuth', "vim_sleuth")
 
 " 2.10. Align
 " -----------
@@ -3078,12 +2981,10 @@ function! s:setup() dict
   " More information with: :help easy-align.txt
 endfunction
 let s:vim_easy_align.setup = funcref("s:setup")
-call s:addplugin("vim_easy_align", s:vim_easy_align)
+call s:addplugin(s:vim_easy_align, "vim_easy_align")
 
 " Alignment made easy
-let s:tabular = {}
-let s:tabular.url = 'godlygeek/tabular'
-" call s:addplugin("tabular", s:tabular)
+" call s:addplugin('godlygeek/tabular', "tabular")
 
 " 2.11. Folding
 " -------------
@@ -3123,22 +3024,18 @@ function! s:setup() dict
   " More information with: :help anyfold.txt
 endfunction
 let s:any_fold.setup = funcref("s:setup")
-call s:addplugin("any_fold", s:any_fold)
+call s:addplugin(s:any_fold, "any_fold")
 
 " Python code folding
 " Remarks:
 "   any_fold seems to give better results
-let s:simpylfold = {}
-let s:simpylfold.url = 'tmhedberg/SimpylFold'
-" call s:addplugin("simpylfold", s:simpylfold)
+" call s:addplugin('tmhedberg/SimpylFold', "simpylfold")
 
 " 2.11.2. Fold Handling
 " --------------------
 
 " Folding level control using [ret] and [bs]
-let s:cycle_fold = {}
-let s:cycle_fold.url = 'arecarn/vim-fold-cycle'
-" call s:addplugin("cycle_fold", s:cycle_fold)
+" call s:addplugin('arecarn/vim-fold-cycle', "cycle_fold")
 
 " Limit fold computation and update to improve speed
 let s:fast_fold = {}
@@ -3150,7 +3047,7 @@ function! s:setup() dict
   let g:fastfold_fold_movement_commands = [']z', '[z', 'zj', 'zk']
 endfunction
 let s:fast_fold.setup = funcref("s:setup")
-" call s:addplugin("fast_fold", s:fast_fold)
+" call s:addplugin(s:fast_fold, "fast_fold")
 
 " 2.12. Commenting
 " ----------------
@@ -3164,7 +3061,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_commentary.setup = funcref("s:setup")
-call s:addplugin("vim_commentary", s:vim_commentary)
+call s:addplugin(s:vim_commentary, "vim_commentary")
 
 let s:nerdcommenter = {}
 let s:nerdcommenter.url = 'preservim/nerdcommenter'
@@ -3173,7 +3070,7 @@ function! s:setup() dict
   let g:NERDCreateDefaultMappings = 0
 endfunction
 let s:nerdcommenter.setup = funcref("s:setup")
-" call s:addplugin("nerdcommenter", s:nerdcommenter)
+" call s:addplugin(s:nerdcommenter, "nerdcommenter")
 
 " 2.13. Parenthesis
 " -----------------
@@ -3182,13 +3079,9 @@ let s:nerdcommenter.setup = funcref("s:setup")
 " ---------------
 
 " Add additional commands to manage pairs
-let s:vim_surround = {}
-let s:vim_surround.url = 'tpope/vim-surround'
-call s:addplugin("vim_surround", s:vim_surround)
+call s:addplugin('tpope/vim-surround', "vim_surround")
 
-let s:vim_sandwich = {}
-let s:vim_sandwich.url = 'machakann/vim-sandwich'
-" call s:addplugin("vim_sandwich", s:vim_sandwich)
+" call s:addplugin('machakann/vim-sandwich', "vim_sandwich")
 
 " 2.13.2. Auto-Pair
 " ----------------
@@ -3198,25 +3091,17 @@ let s:vim_sandwich.url = 'machakann/vim-sandwich'
 
 " Remark:
 " - Seems to support the dot command
-let s:auto_pairs = {}
-let s:auto_pairs.url = 'jiangmiao/auto-pairs'
-" call s:addplugin("auto_pairs", s:auto_pairs)
+" call s:addplugin('jiangmiao/auto-pairs', "auto_pairs")
 
 " Remark:
 " - Claim to support the dot command
-let s:lexima = {}
-let s:lexima.url = 'cohama/lexima.vim'
-" call s:addplugin("lexima", s:lexima)
+" call s:addplugin('cohama/lexima.vim', "lexima")
 
-let s:vim_closing_brackets = {}
-let s:vim_closing_brackets.url = 'tpenguinltg/vim-closing-brackets'
-" call s:addplugin("vim_closing_brackets", s:vim_closing_brackets)
+" call s:addplugin('tpenguinltg/vim-closing-brackets', "vim_closing_brackets")
 
 " Remark:
 " - Seems not to support the dot command
-let s:auto_pairs_gentle = {}
-let s:auto_pairs_gentle.url = 'vim-scripts/auto-pairs-gentle'
-" call s:addplugin("auto_pairs_gentle", s:auto_pairs_gentle)
+" call s:addplugin('vim-scripts/auto-pairs-gentle', "auto_pairs_gentle")
 
 " 2.14. Snippet
 " -------------
@@ -3255,7 +3140,7 @@ function! s:setup() dict
 endfunction
 let s:ultisnips.setup = funcref("s:setup")
 if has('python3')
-  call s:addplugin("ultisnips", s:ultisnips)
+  call s:addplugin(s:ultisnips, "ultisnips")
 endif
 
 let s:emmet_vim = {}
@@ -3271,7 +3156,7 @@ function! s:setup() dict
   " More information with: :help emmet.txt
 endfunction
 let s:emmet_vim.setup = funcref("s:setup")
-" call s:addplugin("emmet_vim", s:emmet_vim)
+" call s:addplugin(s:emmet_vim, "emmet_vim")
 
 " 2.15. Tags
 " ----------
@@ -3291,7 +3176,7 @@ function! s:setup() dict
   " let g:gutentags_ctags_exclude = [".mypy_cache", "*.json"]
 endfunction
 let s:vim_gutentags.setup = funcref("s:setup")
-call s:addplugin("vim_gutentags", s:vim_gutentags)
+call s:addplugin(s:vim_gutentags, "vim_gutentags")
 
 " 2.15.2. Tag Browsing
 " -------------------
@@ -3411,7 +3296,7 @@ function! s:setup() dict
   " \ }
 endfunction
 let s:tagbar.setup = funcref("s:setup")
-call s:addplugin("tagbar", s:tagbar)
+call s:addplugin(s:tagbar, "tagbar")
 
 let s:vista_vim = {}
 let s:vista_vim.url = 'liuchengxu/vista.vim'
@@ -3484,7 +3369,7 @@ function! s:setup() dict
   hi VistaTag        guifg=#d8dee9    ctermfg=White
 endfunction
 let s:vista_vim.setup = funcref("s:setup")
-" call s:addplugin("vista_vim", s:vista_vim)
+" call s:addplugin(s:vista_vim, "vista_vim")
 
 " 2.16. Code Completion
 " ---------------------
@@ -3732,7 +3617,7 @@ function! s:setup() dict
   " More information with: :help coc-nvim
 endfunction
 let coc_nvim.setup = funcref("s:setup")
-call s:addplugin("coc_nvim", coc_nvim)
+call s:addplugin(coc_nvim, "coc_nvim")
 
 " Remark: Install additional lsp modules with:
 " - MasonInstall pyright
@@ -3760,7 +3645,7 @@ function! s:setup() dict
 endfunction
 let s:mason.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("mason", s:mason)
+  call s:addplugin(s:mason, "mason")
 endif
 
 let s:null_ls = {}
@@ -3773,7 +3658,7 @@ function! s:setup() dict
 endfunction
 let s:null_ls.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("null_ls", s:null_ls)
+  " call s:addplugin(s:null_ls, "null_ls")
 endif
 
 let s:nvim_cmp = {}
@@ -3790,7 +3675,7 @@ function! s:setup() dict
 endfunction
 let s:nvim_cmp.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("nvim_cmp", s:nvim_cmp)
+  call s:addplugin(s:nvim_cmp, "nvim_cmp")
 endif
 
 let s:blink_cmp = {}
@@ -3828,7 +3713,7 @@ EOF
 endfunction
 let s:blink_cmp.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("blink_cmp", s:blink_cmp)
+  " call s:addplugin(s:blink_cmp, "blink_cmp")
 endif
 
 
@@ -3841,7 +3726,7 @@ function! s:setup() dict
 endfunction
 let s:r_nvim.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("r_nvim", s:r_nvim)
+  " call s:addplugin(s:r_nvim, "r_nvim")
 endif
 
 
@@ -3853,9 +3738,7 @@ endif
 "   - The Python that match Vim (e.g.: Python 3.10 for Vim 9.0)
 "   - Go
 " - Run: install.py
-let s:you_complete_me = {}
-let s:you_complete_me.url = 'ycm-core/YouCompleteMe'
-" call s:addplugin("you_complete_me", s:you_complete_me)
+" call s:addplugin('ycm-core/YouCompleteMe', "you_complete_me")
 
 " Multiple Languages Support:
 let s:vim_polyglot = {}
@@ -3876,7 +3759,7 @@ function! s:setup() dict
   augroup END
 endfunction
 let s:vim_polyglot.setup = funcref("s:setup")
-" call s:addplugin("vim_polyglot", s:vim_polyglot)
+" call s:addplugin(s:vim_polyglot, "vim_polyglot")
 
 " Code Completion
 " Remark:
@@ -3896,7 +3779,7 @@ function! s:setup() dict
   let g:deoplete#enable_at_startup = 1
 endfunction
 let s:deoplete.setup = funcref("s:setup")
-" call s:addplugin("deoplete", s:deoplete)
+" call s:addplugin(s:deoplete, "deoplete")
 
 " Python code completion
 let s:jedi_vim = {}
@@ -3921,7 +3804,7 @@ function! s:setup() dict
   " g:jedi#force_py_version = 3.9
 endfunction
 let s:jedi_vim.setup = funcref("s:setup")
-" call s:addplugin("jedi_vim", s:jedi_vim)
+" call s:addplugin(s:jedi_vim, "jedi_vim")
 
 
 " Semantic highlighting
@@ -3930,7 +3813,7 @@ let s:semshi.url = 'numirias/semshi'
 let s:semshi.dependencies = ['nvim-treesitter/nvim-treesitter']
 let s:semshi.options = { 'do': ':UpdateRemotePlugins' }
 if has('nvim')
-  " call s:addplugin("semshi", s:semshi)
+  " call s:addplugin(s:semshi, "semshi")
 endif
 
 
@@ -3942,7 +3825,7 @@ function! s:setup() dict
   lua require('hlargs').setup()
 endfunction
 let s:hlargs.setup = funcref("s:setup")
-" call s:addplugin("hlargs", s:hlargs)
+" call s:addplugin(s:hlargs, "hlargs")
 
 
 " 2.17. Code Formatting
@@ -3966,7 +3849,7 @@ function! s:setup() dict
 endfunction
 let s:vim_isort.setup = funcref("s:setup")
 if has('python3')
-  call s:addplugin("vim_isort", s:vim_isort)
+  call s:addplugin(s:vim_isort, "vim_isort")
 endif
 
 
@@ -3997,13 +3880,11 @@ function! s:setup() dict
   " let g:prettier#autoformat_config_present = 1
 endfunction
 let s:vim_prettier.setup = funcref("s:setup")
-" call s:addplugin("vim_prettier", s:vim_prettier)
+" call s:addplugin(s:vim_prettier, "vim_prettier")
 
 
 " Support for javascript react files
-let s:vim_jsx_pretty = {}
-let s:vim_jsx_pretty.url = 'MaxMEllon/vim-jsx-pretty'
-" call s:addplugin("vim_jsx_pretty", s:vim_jsx_pretty)
+" call s:addplugin('MaxMEllon/vim-jsx-pretty', "vim_jsx_pretty")
 
 
 let s:neoformat = {}
@@ -4013,7 +3894,7 @@ function! s:setup() dict
   let g:neoformat_enabled_cs = ['csharpier']
 endfunction
 let s:neoformat.setup = funcref("s:setup")
-" call s:addplugin("neoformat", s:neoformat)
+" call s:addplugin(s:neoformat, "neoformat")
 
 
 " 2.18. Linting
@@ -4086,7 +3967,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:ale.setup = funcref("s:setup")
-" call s:addplugin("ale", s:ale)
+" call s:addplugin(s:ale, "ale")
 
 
 let s:lightbulb = {}
@@ -4097,7 +3978,7 @@ function! s:setup() dict
   autocmd CursorHold,CursorHoldI * lua require('nvim-lightbulb').update_lightbulb()
 endfunction
 let s:lightbulb.setup = funcref("s:setup")
-" call s:addplugin("lightbulb", s:lightbulb)
+" call s:addplugin(s:lightbulb, "lightbulb")
 
 
 let s:treesitter = {}
@@ -4152,7 +4033,7 @@ EOF
 endfunction
 let s:treesitter.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("treesitter", s:treesitter)
+  call s:addplugin(s:treesitter, "treesitter")
   " Remark:
   " A TSUpdateSync call maybe necessary to update your language parser
   " A TSUpdate call maybe necessary to update your language parser
@@ -4187,20 +4068,16 @@ function! s:setup() dict
   let g:syntastic_style_warning_symbol =  '☂'
 endfunction
 let s:vim_syntastic.setup = funcref("s:setup")
-" call s:addplugin("vim_syntastic", s:vim_syntastic)
+" call s:addplugin(s:vim_syntastic, "vim_syntastic")
 
 
 " 2.19. Asynchronous Run
 " ----------------------
 
-let s:asyncrun = {}
-let s:asyncrun.url = 'skywind3000/asyncrun.vim'
-" call s:addplugin("asyncrun", s:asyncrun)
+" call s:addplugin('skywind3000/asyncrun.vim', "asyncrun")
 
 
-let s:vim_dispatch = {}
-let s:vim_dispatch.url = 'tpope/vim-dispatch'
-" call s:addplugin("vim_dispatch", s:vim_dispatch)
+" call s:addplugin('tpope/vim-dispatch', "vim_dispatch")
 
 
 " 2.20 QuickFix filtering
@@ -4212,12 +4089,10 @@ let s:cfilter.manager = 'packadd'
 function! s:setup() dict
 endfunction
 let s:cfilter.setup = funcref("s:setup")
-" call s:addplugin("cfilter", s:cfilter)
+" call s:addplugin(s:cfilter, "cfilter")
 
 
-let s:vim_editqf = {}
-let s:vim_editqf.url = 'jceb/vim-editqf'
-" call s:addplugin("vim_editqf", s:vim_editqf)
+" call s:addplugin('jceb/vim-editqf', "vim_editqf")
 
 
 " 2.20. Terminal
@@ -4232,13 +4107,11 @@ function! s:setup() dict
   let g:floaterm_keymap_toggle = '<M-ù>'
 endfunction
 let s:vim_floaterm.setup = funcref("s:setup")
-" call s:addplugin("vim_floaterm", s:vim_floaterm)
+" call s:addplugin(s:vim_floaterm, "vim_floaterm")
 
 
 " vim-clap support for floaterm
-let s:clap_floaterm = {}
-let s:clap_floaterm.url = 'voldikss/clap-floaterm'
-" call s:addplugin("clap_floaterm", s:clap_floaterm)
+" call s:addplugin('voldikss/clap-floaterm', "clap_floaterm")
 
 
 let s:toggleterm = {}
@@ -4249,7 +4122,7 @@ function! s:setup() dict
 endfunction
 let s:toggleterm.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("toggleterm", s:toggleterm)
+  call s:addplugin(s:toggleterm, "toggleterm")
 endif
 
 " Provide control on the terminal cursor shape:
@@ -4260,7 +4133,7 @@ function! s:setup() dict
   let g:TerminusInsertCursorShape = 1
 endfunction
 let s:terminus.setup = funcref("s:setup")
-" call s:addplugin("terminus", s:terminus)
+" call s:addplugin(s:terminus, "terminus")
 
 
 let s:jupyter_vim = {}
@@ -4290,7 +4163,7 @@ function! s:setup() dict
   command! JupyterConsole !start pyw C:\Softs\run_qtconsole.py
 endfunction
 let s:jupyter_vim.setup = funcref("s:setup")
-call s:addplugin("jupyter_vim", s:jupyter_vim)
+call s:addplugin(s:jupyter_vim, "jupyter_vim")
 
 
 let s:magma = {}
@@ -4313,7 +4186,7 @@ function! s:setup() dict
   autocmd FileType python call SetJupyterMapping()
 endfunction
 let s:magma.setup = funcref("s:setup")
-" call s:addplugin("magma", s:magma)
+" call s:addplugin(s:magma, "magma")
 
 
 " Terminal support
@@ -4325,7 +4198,7 @@ function! s:setup() dict
   tnoremap <C-q>  <C-\><C-n>:Ttoggle<CR>
 endfunction
 let s:neoterm.setup = funcref("s:setup")
-" call s:addplugin("neoterm", s:neoterm)
+" call s:addplugin(s:neoterm, "neoterm")
 
 
 " 2.21. Debugging
@@ -4391,7 +4264,7 @@ function! s:setup() dict
 endfunction
 let s:vimspector.setup = funcref("s:setup")
 if has('python3')
-  call s:addplugin("vimspector", s:vimspector)
+  call s:addplugin(s:vimspector, "vimspector")
 endif
 
 let s:nvim_dap = {}
@@ -4414,7 +4287,7 @@ function! s:setup() dict
 endfunction
 let s:nvim_dap.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin("nvim_dap", s:nvim_dap)
+  call s:addplugin(s:nvim_dap, "nvim_dap")
 endif
 
 " 2.22. File Types
@@ -4432,7 +4305,7 @@ function! s:setup() dict
   let g:scriptease_iskeyword = 0
 endfunction
 let s:vim_scriptease.setup = funcref("s:setup")
-call s:addplugin("vim_scriptease", s:vim_scriptease)
+call s:addplugin(s:vim_scriptease, "vim_scriptease")
 
 
 " Helper to debug vim scripts
@@ -4444,7 +4317,7 @@ function! s:setup() dict
   " command! WTF call lh#exception#say_what()
 endfunction
 let s:lh_vim_lib.setup = funcref("s:setup")
-" call s:addplugin("lh_vim_lib", s:lh_vim_lib)
+" call s:addplugin(s:lh_vim_lib, "lh_vim_lib")
 
 " Helper to analyze syntax
 " Remark:
@@ -4455,7 +4328,7 @@ function! s:setup() dict
   command! Synstax echo synstax#UnderCursor()
 endfunction
 let s:vim_synstax.setup = funcref("s:setup")
-call s:addplugin("vim_synstax", s:vim_synstax)
+call s:addplugin(s:vim_synstax, "vim_synstax")
 
 
 " 2.22.2. Markdown
@@ -4521,7 +4394,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vimwiki.setup = funcref("s:setup")
-call s:addplugin("vimwiki", s:vimwiki)
+call s:addplugin(s:vimwiki, "vimwiki")
 
 let s:neorg = {}
 let s:neorg.url = 'nvim-neorg/neorg'
@@ -4560,7 +4433,7 @@ EOF
 endfunction
 let s:neorg.setup = funcref("s:setup")
 if has('nvim')
-  " call s:addplugin("neorg", s:neorg)
+  " call s:addplugin(s:neorg, "neorg")
 endif
 
 " Markdown extra support
@@ -4574,7 +4447,7 @@ function! s:setup() dict
   let g:markdown_fenced_languages = ['html', 'python', 'vim']
 endfunction
 let s:vim_markdown.setup = funcref("s:setup")
-call s:addplugin("vim_markdown", s:vim_markdown)
+call s:addplugin(s:vim_markdown, "vim_markdown")
 
 
 " Markdown preview
@@ -4679,7 +4552,7 @@ function! s:setup() dict
   let g:mkdp_filetypes = ['markdown']
 endfunction
 let s:markdown_preview.setup = funcref("s:setup")
-call s:addplugin("markdown_preview", s:markdown_preview)
+call s:addplugin(s:markdown_preview, "markdown_preview")
 
 
 " 2.22.3. CSV
@@ -4700,7 +4573,7 @@ function! s:setup() dict
   " More information: :help ft-csv
 endfunction
 let s:csv.setup = funcref("s:setup")
-call s:addplugin("csv", s:csv)
+call s:addplugin(s:csv, "csv")
 
 let s:rainbow_csv = {}
 let s:rainbow_csv.url = 'mechatroner/rainbow_csv'
@@ -4725,36 +4598,28 @@ function! s:setup() dict
   " More information: :help rainbow_csv
 endfunction
 let s:rainbow_csv.setup = funcref("s:setup")
-" call s:addplugin("rainbow_csv", s:rainbow_csv)
+" call s:addplugin(s:rainbow_csv, "rainbow_csv")
 
 " 2.22.4. Rust
 " ------------
 
 " Rust support
-let s:rust_vim = {}
-let s:rust_vim.url = 'rust-lang/rust.vim'
-" call s:addplugin("rust_vim", s:rust_vim)
+" call s:addplugin('rust-lang/rust.vim', "rust_vim")
 
 
 " 2.23.5. Jinja
 " -------------
 
-let s:vim_jinja2_syntax = {}
-let s:vim_jinja2_syntax.url = 'Glench/Vim-Jinja2-Syntax'
-call s:addplugin("vim_jinja2_syntax", s:vim_jinja2_syntax)
+call s:addplugin('Glench/Vim-Jinja2-Syntax', "vim_jinja2_syntax")
 
 
 " 2.23.6. Logs
 " ------------
 
-let s:vim_log_highligthing = {}
-let s:vim_log_highligthing.url = 'mtdl9/vim-log-highlighting'
-call s:addplugin("vim_log_highligthing", s:vim_log_highligthing)
+call s:addplugin('mtdl9/vim-log-highlighting', "vim_log_highligthing")
 
 
-let s:ansiesc = {}
-let s:ansiesc.url = 'powerman/vim-plugin-AnsiEsc'
-" call s:addplugin("ansiesc", s:ansiesc)
+" call s:addplugin('powerman/vim-plugin-AnsiEsc', "ansiesc")
 
 
 " 2.23.7 TeX/LaTeX
@@ -4767,7 +4632,7 @@ function! s:setup() dict
   let g:vimtex_imaps_disabled = ['b', 'B', 'c', 'f', '/', '-']
 endfunction
 let s:vimtex.setup = funcref("s:setup")
-" call s:addplugin("vimtex", s:vimtex)
+" call s:addplugin(s:vimtex, "vimtex")
 
 
 let s:vim_latex = {}
@@ -4777,15 +4642,13 @@ function! s:setup() dict
   "set winaltkeys=no
 endfunction
 let s:vim_latex.setup = funcref("s:setup")
-" call s:addplugin("vim_latex", s:vim_latex)
+" call s:addplugin(s:vim_latex, "vim_latex")
 
 
 " 2.23.8 Vim Help
 " ---------------
 
-let s:helpful = {}
-let s:helpful.url = 'tweekmonster/helpful.vim'
-" call s:addplugin("helpful", s:helpful)
+" call s:addplugin('tweekmonster/helpful.vim', "helpful")
 
 let s:colorscheme_desired = 'nord'
 
