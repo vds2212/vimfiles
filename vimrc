@@ -901,21 +901,7 @@ function! s:selectplugins(locator)
   for l:plugin in s:plugin_list
     let s:plugin_set[l:plugin.name] = l:plugin
   endfor
-
-  " let l:values = values(s:plugin_set)
-  " let l:keys = keys(s:plugin_set)
-
-  " let l:plugin_set = {}
-  " for l:plugin in s:plugin_list
-  "   let l:index = index(l:values, l:plugin)
-  "   if l:index < 0
-  "     continue
-  "   endif
-  "   let l:name = l:keys[l:index]
-  "   let l:plugin_set[l:name] = l:plugin
-  " endfor
-  " let s:plugin_set = l:plugin_set
-  let g:plugin_set = s:plugin_set
+  " let g:plugin_set = s:plugin_set
 endfunction
 
 function s:installplugin(plugin)
