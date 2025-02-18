@@ -5294,7 +5294,6 @@ if 1
     call add(l:substitutions, ['\v^(h%[elp])>(.*)', 'Help\2'])
     if s:ispluginactive('vim_bbye')
       call add(l:substitutions, ['\v^(bd>)(.*)', 'Bd\2'])
-      call add(l:substitutions, ['\v^(bw>)(.*)', 'Bw\2'])
     endif
     let g:substitutions = l:substitutions
 
