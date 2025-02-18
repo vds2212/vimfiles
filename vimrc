@@ -809,19 +809,6 @@ endif
 
 let s:activate_plugins = 1
 
-function! s:activate(name)
-  " let s:[a:name] = a:value
-  if a:name ==# 'startuptime'
-    let s:[a:name . '_flag'] = 1
-    return
-  endif
-  if !s:activate_plugins
-    let s:[a:name. '_flag'] = 0
-  else
-    let s:[a:name. '_flag'] = 1
-  endif
-endfunction
-
 let s:plugin_set = {}
 let s:plugin_list = []
 
@@ -837,6 +824,10 @@ function! s:newplugin(plugin)
 
   if !has_key(l:plugin, 'name')
     let l:plugin.name = l:plugin.url
+  endif
+
+  if !has_key(l:plugin, 'active')
+    let l:plugin.active = 1
   endif
 
   if !has_key(l:plugin, 'manager')
@@ -868,10 +859,7 @@ endfunction
 
 function! s:ispluginactive(name)
   if has_key(s:plugin_set, a:name)
-    return 1
-  endif
-  if exists("s:" . a:name . '_flag')
-    return s:[a:name . '_flag']
+    return s:plugin_set[a:name].active
   endif
   return 0
 endfunction
@@ -894,7 +882,14 @@ function! s:getsubrange(l, locator)
 endfunction
 
 function! s:selectplugins(locator)
-  let s:plugin_list = s:getsubrange(s:plugin_list, a:locator)
+  if type(a:locator) == type('')
+    let s:plugin_list = s:getsubrange(s:plugin_list, a:locator)
+  elseif type(a:locator) == type([])
+    let s:plugin_list = filter(s:plugin_list, {_, val -> index(a:locator, val.name) >= 0})
+  endif
+  for l:plugin in s:plugin_list
+    let l:plugin.active = 1
+  endfor
 
   " Update s:plugin_set
   let s:plugin_set = {}
@@ -922,9 +917,9 @@ endfunction
 function! s:installplugins()
   call plug#begin()
   for plugin in s:plugin_list
-    " if plugin.url == ''
-    "   continue
-    " endif
+    if !plugin.active
+      continue
+    endif
     if plugin.manager ==# 'packadd'
       " packadd
       execute 'packadd' plugin.url
@@ -948,15 +943,18 @@ function! s:installplugins()
   call plug#end()
 
   for plugin in s:plugin_list
-    if  has_key(plugin, 'setup')
+    if !plugin.active
+      continue
+    endif
+    if has_key(plugin, 'setup')
       call plugin.setup()
     endif
   endfor
 endfunction
 
 function! GetInstalledPlugins()
-  return keys(s:plugin_set)
-  " return map(copy(s:plugin_list), {_, val -> val.url})
+  let l:plugin_list = filter(s:plugin_list, {_, val -> val.active})
+  return map(copy(l:plugin_list), {_, val -> val.name})
 endfunction
 
 let s:mappings = {}
@@ -1016,7 +1014,7 @@ if has('nvim')
 endif
 
 let s:vim_gruvbox = {'url' : 'morhetz/gruvbox'}
-" call s:addplugin(s:vim_gruvbox, "vim_gruvbox")
+call s:addplugin(s:vim_gruvbox, "vim_gruvbox")
 
 let s:vim_color_solarized = {'url' : 'altercation/vim-colors-solarized'}
 " call s:addplugin(s:vim_color_solarized, "vim_color_solarized")
@@ -1197,12 +1195,7 @@ function! s:setup() dict
           \}
   endif
 
-  " if s:ispluginactive('nord_vim') && index(s:schemes, 'nord') >= 0
-  " let g:lightline.colorscheme = g:colors_name
   let g:lightline.colorscheme = s:colorscheme_desired
-  " if s:ispluginactive('nord_vim')
-  "   let g:lightline.colorscheme = 'nord'
-  " endif
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
 call s:addplugin(s:vim_lightline, "vim_lightline")
@@ -1230,7 +1223,7 @@ call s:addplugin('tpope/vim-unimpaired', "vim_unimpaired")
 "   It seems wilder prevent digraph in the command line
 "   (because of the <C-k> mapping for previous completion menu)
 " More information: :help wilder.txt
-" call s:activate('wilder_simple')
+let s:wilder_simple = 0
 let s:wilder = {}
 let s:wilder.url = 'gelguy/wilder.nvim'
 if has('nvim')
@@ -1285,7 +1278,7 @@ function! s:setup() dict
     let g:which_key_map.t.x = [':call wilder#toggle()', 'Toggle Wilder']
   endif
 
-  if s:ispluginactive('wilder_simple')
+  if s:wilder_simple
     call wilder#set_option('pipeline', [
           \   wilder#branch(
           \     wilder#cmdline_pipeline(),
@@ -3179,6 +3172,10 @@ function! s:setup() dict
   autocmd ColorScheme nord hi TagbarVisibilityProtected guifg=#7b8b93 ctermfg=Grey
   autocmd ColorScheme nord hi TagbarVisibilityPrivate guifg=#7b8b93 ctermfg=Grey
 
+  autocmd ColorScheme gruvbox hi TagbarVisibilityPublic guifg=#B8BB26 ctermfg=Grey
+  autocmd ColorScheme gruvbox hi TagbarVisibilityProtected guifg=#B8BB26 ctermfg=Grey
+  autocmd ColorScheme gruvbox hi TagbarVisibilityPrivate guifg=#B8BB26 ctermfg=Grey
+
   " hi TagbarScope guifg=#7b8b93 ctermfg=Grey
 
   " nnoremap <F8> :TagbarToggle<CR>
@@ -3923,9 +3920,11 @@ function! s:setup() dict
   let g:ale_linters = {
         \ 'python': [
         \       'pylint',
-        \   ]
+        \  ],
+        \ 'html' : [
+        \       'djlint',
+        \  ]
         \}
-
   " I rely on flak8 and mypy to detect problems
   "         \       'flake8',
   "         \       'mypy',
@@ -3944,7 +3943,7 @@ function! s:setup() dict
   " \       'isort',
 
   " nmap <F10> :ALEFix<CR>
-  let g:ale_exclude_highlights =["E501: line too long.*", "line too long.*"]
+  let g:ale_exclude_highlights =['E501: line too long.*', 'line too long.*']
 
   " let g:ale_fix_on_save = 1
   nnoremap <leader>ta :ALEToggle <CR>
@@ -3952,8 +3951,9 @@ function! s:setup() dict
     let g:which_key_map.t.a = [':ALEToggle', 'Toggle ALE']
   endif
 endfunction
-let s:ale.setup = funcref("s:setup")
-" call s:addplugin(s:ale, "ale")
+let s:ale.setup = funcref('s:setup')
+let s:ale.active = 0
+call s:addplugin(s:ale, 'ale')
 
 
 let s:lightbulb = {}
@@ -4636,9 +4636,11 @@ let s:vim_latex.setup = funcref("s:setup")
 
 " call s:addplugin('tweekmonster/helpful.vim', "helpful")
 
-let s:colorscheme_desired = 'nord'
+let s:colorscheme_desired = 'gruvbox'
+" let s:colorscheme_desired = 'nord'
 
-" call s:selectplugins("1011")
+" call s:selectplugins('1011')
+" call s:selectplugins(['nord_vim', 'ale'])
 call s:installplugins()
 
 if s:ispluginactive('which_key')
@@ -4738,59 +4740,53 @@ if s:ispluginactive('which_key')
   let g:which_key_map_z.P = [':normal! zP', 'Paste Before No Trailer']
 endif
 
-" Set the colorscheme before customizing the plugins colors
-" function! GetColorSchemes()
-"   return uniq(sort(map(
-"         \  globpath(&runtimepath, "colors/*.vim", 0, 1),
-"         \  'fnamemodify(v:val, ":t:r")'
-"         \)))
-" endfunction
-
-" let s:schemes = GetColorSchemes()
-" if has('gui_running') || has('unix')
-"   if s:ispluginactive('tokyonight')
-"     colorscheme tokyonight
-"   endif
-
-"   if index(s:schemes, 'nord') >= 0
-"     colorscheme nord
-"   else
-"     colorscheme desert
-"   endif
-
-"   if s:ispluginactive('nord_vim')
-"     " Make the search background a bit less bright:
-"     autocmd ColorScheme nord hi Search guibg=#67909e guifg=#2e3440
-
-"     " Make the foreground color of the folded line more bright:
-"     autocmd ColorScheme nord hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
-"   endif
-" else
-"   " Seems that termguicolors and nord colorscheme work well on Windows console
-"   set termguicolors
-"   try
-"     colorscheme nord
-"   catch
-"     colorscheme desert
-"   endtry
-" endif
-
 if !(has('gui_running') || has('unix'))
   " Seems that termguicolors and nord colorscheme work well on Windows console
   set termguicolors
 endif
-if s:ispluginactive('nord_vim')
-  " Make the search background a bit less bright:
-  autocmd ColorScheme nord hi Search guibg=#67909e guifg=#2e3440
 
+function! FixNord()
+  " Make the search background a bit less bright:
+  highlight Search guibg=#67909e guifg=#2e3440
   " Make the foreground color of the folded line more bright:
-  autocmd ColorScheme nord hi Folded gui=None guibg=#3b4252 guifg=#d8dee9
-endif
+  highlight Folded gui=None guibg=#3b4252 guifg=#d8dee9
+endfunction
+autocmd ColorScheme nord call FixNord()
+
+function! FixGruvbox()
+  " Define terminal colors:
+  let g:terminal_ansi_colors = [
+        \ '#282828',
+        \ '#CC241D',
+        \ '#98971A',
+        \ '#D79921',
+        \ '#458588',
+        \ '#B16786',
+        \ '#699D6A',
+        \ '#A89984',
+        \ '#928374',
+        \ '#FB4934',
+        \ '#B8BB26',
+        \ '#FABD2F',
+        \ '#83A598',
+        \ '#D3869B',
+        \ '#8EC07C',
+        \ '#EBDBB2',
+        \ ]
+  highlight Terminal guibg='#282828'
+  highlight Terminal guifg='#EBDBB2'
+
+  " Make the cursor always visible:
+  highlight Cursor guifg=#ebdbb2 guibg=#282828
+endfunction
+autocmd ColorScheme gruvbox call FixGruvbox()
+
 try
   execute 'colorscheme' s:colorscheme_desired
 catch
   colorscheme desert
 endtry
+
 
 if s:ispluginactive('which_key')
   let g:which_key_map_g.x = ["<Plug>NetrwBrowseX", 'Open File']
@@ -5298,6 +5294,7 @@ if 1
     call add(l:substitutions, ['\v^(h%[elp])>(.*)', 'Help\2'])
     if s:ispluginactive('vim_bbye')
       call add(l:substitutions, ['\v^(bd>)(.*)', 'Bd\2'])
+      call add(l:substitutions, ['\v^(bw>)(.*)', 'Bw\2'])
     endif
     let g:substitutions = l:substitutions
 
@@ -5604,8 +5601,13 @@ if 1
   " command! Copen bot copen
 
   " Adapt the color of the inactive window:
-  hi DimNormal guibg=#1b212c
-  hi DimConsole guifg=#d8dee9 guibg=#1b212c
+  if g:colors_name == 'nord'
+    hi DimNormal guibg=#1b212c
+    hi DimConsole guifg=#d8dee9 guibg=#1b212c
+  elseif g:colors_name == 'gruvbox'
+    hi DimNormal guibg=#1b1b1b
+    hi DimConsole guifg=#D5C4A1 guibg=#1b1b1b
+  endif
   " hi DimNormal guibg=#3b4252
 
   if !has('nvim')
