@@ -1004,7 +1004,7 @@ endfunction
 let s:nord_vim = {}
 let s:nord_vim.url = 'nordtheme/vim'
 let s:nord_vim.options = {'as': 'nordtheme'}
-function! setup()
+function! s:setup()
   function! FixNord()
     " Make the search background a bit less bright:
     highlight Search guibg=#67909e guifg=#2e3440
@@ -3992,7 +3992,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:ale.setup = funcref('s:setup')
-let s:ale.active = 0
+let s:ale.active = 1
 call s:addplugin(s:ale, 'ale')
 
 
@@ -4880,6 +4880,12 @@ set grepformat=%f:%l:%c:%m
 " --------------------
 
 function! ToggleQuickFix()
+  if !empty(filter(getwininfo(), {_, val -> getbufinfo(val.bufnr)[0].command}))
+    " Command window
+    " echom 'Command Window'
+    call feedkeys("\<C-c>\<C-c>")
+    return
+  endif
   if empty(filter(getwininfo(), 'v:val.quickfix')) && ctrlsf#win#FindMainWindow() == -1
     if !exists('g:bottom_bar') || g:bottom_bar ==# 'quickfix'
       copen
