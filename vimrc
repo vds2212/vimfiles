@@ -1004,6 +1004,16 @@ endfunction
 let s:nord_vim = {}
 let s:nord_vim.url = 'nordtheme/vim'
 let s:nord_vim.options = {'as': 'nordtheme'}
+function! setup()
+  function! FixNord()
+    " Make the search background a bit less bright:
+    highlight Search guibg=#67909e guifg=#2e3440
+    " Make the foreground color of the folded line more bright:
+    highlight Folded gui=None guibg=#3b4252 guifg=#d8dee9
+  endfunction
+  autocmd ColorScheme nord call FixNord()
+endfunction
+let s:nord_vim.setup = funcref("s:setup")
 call s:addplugin(s:nord_vim, "nord_vim")
 
 let s:rose_pine = {}
@@ -1014,6 +1024,36 @@ if has('nvim')
 endif
 
 let s:vim_gruvbox = {'url' : 'morhetz/gruvbox'}
+function! s:setup() dict
+  function! FixGruvbox()
+    " Define terminal colors:
+    let g:terminal_ansi_colors = [
+          \ '#282828',
+          \ '#CC241D',
+          \ '#98971A',
+          \ '#D79921',
+          \ '#458588',
+          \ '#B16786',
+          \ '#699D6A',
+          \ '#A89984',
+          \ '#928374',
+          \ '#FB4934',
+          \ '#B8BB26',
+          \ '#FABD2F',
+          \ '#83A598',
+          \ '#D3869B',
+          \ '#8EC07C',
+          \ '#EBDBB2',
+          \ ]
+    highlight Terminal guibg='#282828'
+    highlight Terminal guifg='#EBDBB2'
+
+    " Make the cursor always visible:
+    highlight Cursor guifg=#ebdbb2 guibg=#282828
+  endfunction
+  autocmd ColorScheme gruvbox call FixGruvbox()
+endfunction
+let s:vim_gruvbox.setup = funcref("s:setup")
 call s:addplugin(s:vim_gruvbox, "vim_gruvbox")
 
 let s:vim_color_solarized = {'url' : 'altercation/vim-colors-solarized'}
@@ -4745,42 +4785,6 @@ if !(has('gui_running') || has('unix'))
   set termguicolors
 endif
 
-function! FixNord()
-  " Make the search background a bit less bright:
-  highlight Search guibg=#67909e guifg=#2e3440
-  " Make the foreground color of the folded line more bright:
-  highlight Folded gui=None guibg=#3b4252 guifg=#d8dee9
-endfunction
-autocmd ColorScheme nord call FixNord()
-
-function! FixGruvbox()
-  " Define terminal colors:
-  let g:terminal_ansi_colors = [
-        \ '#282828',
-        \ '#CC241D',
-        \ '#98971A',
-        \ '#D79921',
-        \ '#458588',
-        \ '#B16786',
-        \ '#699D6A',
-        \ '#A89984',
-        \ '#928374',
-        \ '#FB4934',
-        \ '#B8BB26',
-        \ '#FABD2F',
-        \ '#83A598',
-        \ '#D3869B',
-        \ '#8EC07C',
-        \ '#EBDBB2',
-        \ ]
-  highlight Terminal guibg='#282828'
-  highlight Terminal guifg='#EBDBB2'
-
-  " Make the cursor always visible:
-  highlight Cursor guifg=#ebdbb2 guibg=#282828
-endfunction
-autocmd ColorScheme gruvbox call FixGruvbox()
-
 try
   execute 'colorscheme' s:colorscheme_desired
 catch
@@ -5957,3 +5961,10 @@ if 1
 
   command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 endif
+
+function! FixTeXSyntax()
+  syn region texDocZone         matchgroup=texSection start='\\begin\s*{\s*document\s*}' end='\\end\s*{\s*document\s*}'                                         contains=@texFoldGroup,@texDocGroup,@Spell,TimeNoSpell
+  syn match TimeNoSpell '\<\d\dh\d\d\>' contains=@NoSpell contained
+endfunction
+
+autocmd FileType tex call FixTeXSyntax()
