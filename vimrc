@@ -1830,10 +1830,13 @@ call s:addplugin(s:matchit_legacy, "matchit_legacy")
 " Extend the matching '%' movement to matching keywords
 call s:addplugin('andymass/vim-matchup', "vim_matchup", 0)
 
-" Add alternatives to the f <char> motion and friends (f, F, t, T)
+" Add alternatives to the
+" - w, W, b, B
+" - f <char> motion and friends (f, F, t, T)
+" - ...
 " Remark:
-" - You get the \\f <char> motion and friends (f, F, t, T)
-call s:addplugin('easymotion/vim-easymotion', "vim_easymotion", 0)
+" - You get the <leader><leader>f <char> motion and friends (f, F, t, T)
+call s:addplugin('easymotion/vim-easymotion', "vim_easymotion", 1)
 
 let s:leap = {}
 let s:leap.url = 'ggandor/leap.nvim'
@@ -5689,23 +5692,23 @@ if 1
     " - The help
     " - The NERDTree side bar
     " - ...
-    let listed = getbufvar(a:buf_nr, '&buflisted')
     let buf_type = getbufvar(a:buf_nr, '&buftype')
-
-    if bufname(a:buf_nr) == ''
-      " the [No Name] buffer
-      return 0
-    endif
-
-    if !listed
-      return 1
-    endif
 
     if buf_type ==# 'terminal'
       return 1
     endif
 
     if buf_type ==# 'quickfix'
+      return 1
+    endif
+
+    if bufname(a:buf_nr) == ''
+      " the [No Name] buffer
+      return 0
+    endif
+
+    let listed = getbufvar(a:buf_nr, '&buflisted')
+    if !listed
       return 1
     endif
 
