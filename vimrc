@@ -1241,7 +1241,7 @@ function! s:setup() dict
   endif
 
   let g:lightline.colorscheme = s:colorscheme_desired
-  autocmd ColorScheme nord let g:lightline.colorscheme = g:colors_name | call lightline#toggle() | call lightline#toggle()
+  autocmd ColorScheme * let g:lightline.colorscheme = g:colors_name | call lightline#toggle() | call lightline#toggle()
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
 call s:addplugin(s:vim_lightline, "vim_lightline")
