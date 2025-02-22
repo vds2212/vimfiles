@@ -885,21 +885,29 @@ function! s:getsubrange(l, locator)
 endfunction
 
 function! s:selectplugins(locator)
+  " Deactivate all the plugins that don't belong to a subset determined by the locator.
+  " The locator can buffer:
+  " - A list of plugin names
+  " - A string formed of '0' and '1' that corresponds to a subset of the list:
+  "   '0' first Half
+  "   '1' second Half
+  "   '00' first Quarter
+  "   '01' second Quarter
+  "   '10' third Quarter
+  "   ...
   if type(a:locator) == type('')
-    let s:plugin_list = s:getsubrange(s:plugin_list, a:locator)
+    let l:plugin_list = s:getsubrange(range(len(s:plugin_list)), a:locator)
   elseif type(a:locator) == type([])
-    let s:plugin_list = filter(s:plugin_list, {_, val -> index(a:locator, val.name) >= 0})
+    let l:plugin_list = copy(s:plugin_list)
+    call map(l:plugin_list, {key, val -> index(a:locator, val.name) >= 0 ? key : -1})
+    call filter(l:plugin_list, {_, val -> val >= 0})
   endif
-  for l:plugin in s:plugin_list
-    let l:plugin.active = 1
-  endfor
 
-  " Update s:plugin_set
-  let s:plugin_set = {}
-  for l:plugin in s:plugin_list
-    let s:plugin_set[l:plugin.name] = l:plugin
+  for i in range(len(s:plugin_list))
+    if index(l:plugin_list, i) < 0
+      let s:plugin_list[i].active = 0
+    endif
   endfor
-  " let g:plugin_set = s:plugin_set
 endfunction
 
 function! s:activateplugins(names)
@@ -1194,6 +1202,16 @@ function! s:setup() dict
 
   " Replace the relative buffer name by the absolute buffer path
   " let g:lightline.component.filename="%{fnamemodify(bufname(), ':p')}"
+
+  let g:lightline = {
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ],
+        \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
+        \  'right': [ [ 'lineinfo' ],
+        \             [ 'percent' ],
+        \             [ 'fileformat', 'fileencoding', 'filetype' ], ]
+        \ },
+        \}
   if s:ispluginactive('vim_fugitive')
     function! MyFugitiveHead()
       let head = FugitiveHead()
@@ -1203,54 +1221,27 @@ function! s:setup() dict
       return head
     endfunction
 
-    " function! MyHour()
-    "   return strftime("%H:%M")
-    " endfunction
+    call insert(g:lightline.active.left[1], 'gitbranch', 0)
+    if !has_key(g:lightline, 'component_function')
+      let g:lightline['component_function'] = {}
+    endif
+    let g:lightline.component_function['gitbranch'] = 'MyFugitiveHead'
+  endif
 
-    let g:lightline = {
-          \ 'active': {
-          \   'left': [ [ 'mode', 'paste' ],
-          \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
-          \  'right': [ [ 'lineinfo' ],
-          \             [ 'percent' ],
-          \             [ 'fileformat', 'fileencoding', 'filetype' ], ]
-          \ },
-          \ 'component_function': {
-          \   'gitbranch': 'MyFugitiveHead',
-          \ },
-          \}
-
-  elseif s:ispluginactive('vimcaps')
+  if s:ispluginactive('vimcaps')
     function! MyVimCaps()
       return vimcaps#statusline(7)
     endfunction
 
-    let g:lightline = {
-          \ 'active': {
-          \   'left': [ [ 'mode', 'paste' ],
-          \             [ 'readonly', 'relativepath', 'modified' ] ],
-          \  'right': [ [ 'lineinfo' ],
-          \             [ 'percent' ],
-          \             [ 'fileformat', 'fileencoding', 'filetype' ],
-          \             [ 'vimcaps' ] ]
-          \ },
-          \ 'component_function': {
-          \   'vimcaps': 'MyVimCaps'
-          \ },
-          \}
-  else
-    let g:lightline = {
-          \ 'active': {
-          \   'left': [ [ 'mode', 'paste' ],
-          \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
-          \  'right': [ [ 'lineinfo' ],
-          \             [ 'percent' ],
-          \             [ 'fileformat', 'fileencoding', 'filetype' ], ]
-          \ },
-          \}
+    call add(g:lightline.active.right, ['vimcaps'])
+    if !has_key(g:lightline, 'component_function')
+      let g:lightline['component_function'] = {}
+    endif
+    let g:lightline.component_function['vimcaps'] = 'MyVimCaps'
   endif
 
   let g:lightline.colorscheme = s:colorscheme_desired
+  autocmd ColorScheme nord let g:lightline.colorscheme = g:colors_name | call lightline#toggle() | call lightline#toggle()
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
 call s:addplugin(s:vim_lightline, "vim_lightline")
@@ -2139,7 +2130,7 @@ call s:addplugin(s:sudoedit_vim, "sudoedit_vim", 0)
 
 call s:addplugin('romainl/vim-cool', "vim_cool", 0)
 
-call s:addplugin('suxpert/vimcaps', "vimcaps", 0)
+call s:addplugin('suxpert/vimcaps', "vimcaps", 1)
 
 " Highlight briefly the cursor when it jump from split to split
 let s:beacon = {}
@@ -2321,7 +2312,7 @@ function! s:setup() dict
   " More information with: :help clap
 endfunction
 let s:vim_clap.setup = funcref("s:setup")
-call s:addplugin(s:vim_clap, "vim_clap")
+call s:addplugin(s:vim_clap, "vim_clap", 1)
 
 " Remark:
 "   Only available for NeoVim
@@ -4307,7 +4298,7 @@ function! s:setup() dict
 endfunction
 let s:vimspector.setup = funcref("s:setup")
 if has('python3')
-  call s:addplugin(s:vimspector, "vimspector")
+  call s:addplugin(s:vimspector, "vimspector", 1)
 endif
 
 let s:nvim_dap = {}
@@ -4696,11 +4687,19 @@ call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
 let s:colorscheme_desired = 'gruvbox'
 " let s:colorscheme_desired = 'nord'
 
-" call s:selectplugins('1011')
-" call s:selectplugins(['nord_vim', 'ale'])
+" call s:selectplugins('11110001')
+
+" Problem with b:undo_ftpplugin (the four plugins should be present together)
+" call s:selectplugins(['vim_easymotion', 'markdown_preview', 'csv', 'vim_remotions'])
+" call s:deactivateplugins(['csv']) " important
+" call s:deactivateplugins(['vim_remotions']) " important
+" call s:deactivateplugins(['vim_easymotion']) " important
+" call s:deactivateplugins(['markdown_preview']) " optional
 
 " call s:activateplugins(['ale'])
-" call s:deactivateplugins(['coc_nvim'])
+" call s:activateplugins(['vim_gruvbox', 'vim_easymotion', 'vim_remotions'])
+" call s:deactivateplugins(['vim_easymotion'])
+" call s:activateplugins(['vim_gruvbox'])
 
 call s:installplugins()
 
@@ -4811,7 +4810,6 @@ try
 catch
   colorscheme desert
 endtry
-
 
 if s:ispluginactive('which_key')
   let g:which_key_map_g.x = ["<Plug>NetrwBrowseX", 'Open File']
@@ -5989,9 +5987,11 @@ if 1
   command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 endif
 
-function! FixTeXSyntax()
-  syn region texDocZone         matchgroup=texSection start='\\begin\s*{\s*document\s*}' end='\\end\s*{\s*document\s*}'                                         contains=@texFoldGroup,@texDocGroup,@Spell,TimeNoSpell
-  syn match TimeNoSpell '\<\d\dh\d\d\>' contains=@NoSpell contained
-endfunction
+" function! FixTeXSyntax()
+"   syn cluster texSpell contains=texAbstract,texBoldItalStyle,texBoldStyle,texChapterZone,texCommentGroup,texDocZone,texEmphStyle,texItalBoldStyle,texItalStyle,texMatchGroup,texMatchNMGroup,texMathText,texParaZone,texParen,texPartZone,texSectionZone,texStyleGroup,texSubParaZone,texSubSectionZone,texSubSubSectionZone,texTitle,texZone
 
-autocmd FileType tex call FixTeXSyntax()
+"   syn match TimeNoSpell '\<\d\dh\d\d\>' contains=@NoSpell containedin=@texSpell
+"   syn match YourNoSpellGroup 'grr' contains=@NoSpell containedin=@texSpell
+" endfunction
+
+" autocmd FileType tex call FixTeXSyntax()
