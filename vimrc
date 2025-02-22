@@ -1,5 +1,5 @@
 " 0. Vim Default
-" ==============
+" ============== {{{
 
 " From: "$VIMRUNTIME/defaults.vim"
 
@@ -184,9 +184,10 @@ if has('langmap') && exists('+langremap')
   " compatible).
   set nolangremap
 endif
+" }}}
 
 " 1. Standard Vim Settings
-" ========================
+" ======================== {{{
 
 scriptencoding utf-8
 
@@ -699,78 +700,10 @@ let g:netrw_fastbrowse = 0
 if !has('nvim')
   nnoremap <C-$> <C-]>
 endif
+" }}}
 
 " 2. Plugins
-" ==========
-
-" Table of Content
-" 2.1. Look & Feel
-"     2.1.1. Color Scheme
-"     2.1.2. Devicon
-"     2.1.3. Status Line
-" 2.2.  Ergonomic
-"     2.2.1. Unimpaired
-"     2.2.2. Wilder
-"     2.2.3. Repeat
-"     2.2.4. Text Objects
-"     2.2.5. Dashboard
-"     2.2.6. Windows
-"     2.2.7. Clipboard
-"     2.2.8. Search
-"     2.2.9. Moves
-"     2.2.10. Unicode
-"     2.2.11. Multiple Cursors
-"     2.2.12. CSS Colors
-"     2.2.13. Miscellaneous
-" 2.3.  File Browsing
-"     2.3.1. Rooter
-"     2.3.2. Fuzzy searching
-"     2.3.3. File searching
-"     2.3.4. File browsing
-" 2.4.  Sessions
-" 2.5.  Bookmark
-" 2.6.  Undo Tree
-" 2.7.  Difference
-"     2.7.1. Diff Char
-"     2.7.2. Diff Command
-" 2.8.  Git
-"     2.8.1. Git Operation
-"     2.8.2. Git Signs
-"     2.8.3. Git Helper
-" 2.9.  Indentation
-"     2.9.1. Indentation lines
-"     2.9.2. EditorConfig
-"     2.9.3. Sleuth
-" 2.10. Align
-" 2.11. Folding
-"     2.11.1. Fold Creation
-"     2.11.2. Fold Handling
-" 2.12. Commenting
-" 2.13. Parenthesis
-"     2.13.1. Surround
-"     2.13.2. Auto-Pair
-" 2.14. Snippet
-" 2.15. Tags
-"     2.15.1. Tag Generation
-"     2.15.2. Tag Browsing
-" 2.16. Code Completion
-" 2.17. Code Formatting
-"     2.17.1. ISort
-"     2.17.2. Prettier
-" 2.18. Linting
-"     2.18.1. Linting Engine
-"     2.18.2. Linting Mark
-" 2.19. Asynchronous Run
-" 2.20. QuickFix filtering
-" 2.21. Terminal
-" 2.22. Debugging
-" 2.23. File Types
-"     2.23.1. VimScript
-"     2.23.2. Markdown
-"     2.23.3. CSV
-"     2.23.4. Rust
-"     2.23.5. Jinja
-"     2.23.6. Logs
+" ========== {{{
 
 function! IsPlugInstalled()
   if has('nvim')
@@ -3753,7 +3686,7 @@ let s:r_nvim = {}
 let s:r_nvim.url = 'R-nvim/R.nvim'
 let s:r_nvim.dependencies = ['R-nvim/cmp-r']
 function! s:setup() dict
-  lua require("cmp").setup({ sources = {{ name = "cmp_r" }}})
+  lua require("cmp").setup({ sources = {{ name = "cmp_r" }} })
   lua require("cmp_r").setup()
 endfunction
 let s:r_nvim.setup = funcref("s:setup")
@@ -5063,9 +4996,10 @@ if 0
     let g:which_key_map.t.t = [':TlistToggle', 'Toggle Tags']
   endif
 endif
+" }}}
 
 " 3. Miscellaneous
-" ================
+" ================ {{{
 
 " Restore cursor position
 " -----------------------
@@ -5986,4 +5920,6 @@ if 1
 
   command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 endif
+" }}}
 
+" vim:foldmethod=marker:
