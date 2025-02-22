@@ -680,7 +680,7 @@ augroup END
 set virtualedit=block
 
 " Netrw settings:
-" ---------------
+" --------------- {{{
 
 " Allow the gx command that open a file with the associated viewer/editor
 " Allow directory navigation
@@ -694,6 +694,7 @@ let g:netrw_banner = 0
 " Make it is possible to close the netrw buffer
 " autocmd FileType netrw setl bufhidden=wipe
 let g:netrw_fastbrowse = 0
+" }}}
 
 " Workaround to make the Ctrl-] working on a Belgian keyboard with Vim 9.0
 " Remark: The <C-]> is used to navigate through the help system
@@ -704,6 +705,9 @@ endif
 
 " 2. Plugins
 " ========== {{{
+
+" 2.0. Plugin Infrastructure
+" ------------------------ {{{
 
 function! IsPlugInstalled()
   if has('nvim')
@@ -947,15 +951,13 @@ function! s:mapkeys(mode, keys, action, options, description)
     execute mode . remap . 'map ' . mapping_options . keys . ' ' . action
   endif
 endfunction
+" }}}
 
-" Plugin Selection
-
-" Selection of the plugins/features you want to keep:
 " 2.1. Look & Feel
-" ---------------
+" --------------- {{{
 
 " 2.1.1. Color Scheme
-" ------------------
+" ------------------ {{{
 
 let s:nord_vim = {}
 let s:nord_vim.url = 'nordtheme/vim'
@@ -1039,9 +1041,10 @@ call s:addplugin(s:kanagawa, "kanagawa", 0)
 
 let s:afterglow = {'url' : 'danilo-augusto/vim-afterglow'}
 call s:addplugin(s:afterglow, "afterglow", 0)
+" }}}
 
 " 2.1.2. Devicon
-" -------------
+" ------------- {{{
 
 " Add Language specific icons to NerdTree, AirLine, LightLine, ...
 " Depend on full font to be download at: https://github.com/ryanoasis/nerd-fonts/
@@ -1049,9 +1052,10 @@ call s:addplugin(s:afterglow, "afterglow", 0)
 let s:vim_devicons = {}
 let s:vim_devicons.url = 'ryanoasis/vim-devicons'
 call s:addplugin(s:vim_devicons, "vim_devicons")
+" }}}
 
 " 2.1.3. Status Line
-" -----------------
+" ----------------- {{{
 
 " Status line enrichment
 " Content:
@@ -1178,19 +1182,21 @@ function! s:setup() dict
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
 call s:addplugin(s:vim_lightline, "vim_lightline")
-
+" }}}
+" }}}
 
 " 2.2. Ergonomic
-" -------------
+" ------------- {{{
 
 " 2.2.1. Unimpaired
-" ----------------
+" ----------------- {{{
 
 " Add a number of [x ]x mapping
 call s:addplugin('tpope/vim-unimpaired', "vim_unimpaired")
+" }}}
 
 " 2.2.2. Wilder
-" ------------
+" ------------- {{{
 
 " Command line helper (completion, proposition)
 " Fuzzy command line
@@ -1339,9 +1345,10 @@ function! s:setup() dict
 endfunction
 let s:wilder.setup = funcref("s:setup")
 call s:addplugin(s:wilder, "wilder")
+" }}}
 
 " 2.2.3. Repeat
-" ------------
+" ------------- {{{
 
 " Make the '.' repeat action working with:
 " - vim-unimpaired
@@ -1453,9 +1460,10 @@ function! s:setup() dict
 endfunction
 let s:vim_remotions.setup = funcref("s:setup")
 call s:addplugin(s:vim_remotions, "vim_remotions")
+" }}}
 
 " 2.2.4. Text Objects
-" -------------------
+" ------------------- {{{
 
 " Improved Text Objects
 " - Multiple line strings
@@ -1487,9 +1495,10 @@ function! s:setup() dict
 endfunction
 let s:vim_sentence.setup = funcref("s:setup")
 call s:addplugin(s:vim_sentence, "vim_sentence", 0)
+" }}}
 
 " 2.2.5. Dashboard
-" ---------------
+" ----------------  {{{
 
 let s:vim_startify = {}
 let s:vim_startify.url = 'mhinz/vim-startify'
@@ -1557,9 +1566,10 @@ let s:dashboard_vim.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin(s:dashboard_vim, "dashboard_vim", 0)
 endif
+" }}}
 
 " 2.2.6. Windows
-" --------------
+" -------------- {{{
 
 " Allows you to close buffer without closing the corresponding window
 " Introducing the :Bd command
@@ -1596,9 +1606,10 @@ call s:addplugin(s:vim_maximizer, "vim_maximizer")
 " Requires pywin32:
 "   C:\Python312_x64\Scripts\pip install pywin32
 call s:addplugin('ruedigerha/vim-fullscreen', "vim_fullscreen", 0)
+" }}}
 
 " 2.2.7. Clipboard
-" ----------------
+" ---------------- {{{
 
 " Highlight the yanked text:
 let s:vim_highlightedyank = {}
@@ -1672,9 +1683,10 @@ function! s:setup() dict
 endfunction
 let s:vim_yoink.setup = funcref("s:setup")
 call s:addplugin(s:vim_yoink, "vim_yoink", 0)
+" }}}
 
 " 2.2.8. Search
-" -------------
+" ------------- {{{
 
 " Visual Selection Search (using '*' and '#')
 call s:addplugin('nelstrom/vim-visual-star-search', "vim_visual_star_search")
@@ -1735,9 +1747,10 @@ function! s:setup() dict
 endfunction
 let s:local_search.setup = funcref("s:setup")
 call s:addplugin(s:local_search, "local_search", 0)
+" }}}
 
 " 2.2.9. Moves
-" -------------
+" ------------- {{{
 
 " Extend the matching '%' movement to matching keywords
 let s:matchit_legacy = {}
@@ -1816,18 +1829,20 @@ call s:addplugin(s:unicode_helper, "unicode_helper", 0)
 
 " Help to understand Unicode characters
 call s:addplugin('tpope/vim-characterize', "vim_characterize", 0)
+" }}}
 
 " 2.2.11. Multiple Cursors
-" -----------------------
+" ----------------------- {{{
 
 " Multiple cursors
 call s:addplugin('mg979/vim-visual-multi', "vim_visual_multi", 0)
 
 " Multiple cursors for parallel modifications
 call s:addplugin('terryma/vim-multiple-cursors', "vim_multiple_cursors", 0)
+" }}}
 
 " 2.2.12. CSS Colors
-" -----------------
+" ----------------- {{{
 
 " Highlight color codes
 let s:vim_css_color = {}
@@ -1915,9 +1930,10 @@ function! s:setup() dict
 endfunction
 let s:colorizer.setup = funcref("s:setup")
 call s:addplugin(s:colorizer, "colorizer", 0)
+" }}}
 
 " 2.2.13. Miscellaneous
-" ---------------------
+" --------------------- {{{
 
 " Make C-x C-f completion relative to the file and not to the current working directory
 let s:vim_relatively_complete = {}
@@ -2108,12 +2124,14 @@ call s:addplugin('tridactyl/vim-tridactyl', "vim_tridactyl", 0)
 call s:addplugin('vds2212/vim-orpheus', "vim_orpheus", 0)
 
 call s:addplugin('ThePrimeagen/vim-be-good', "vim_be_good", 0)
+" }}}
+" }}}
 
 " 2.3. File Browsing
-" ------------------
+" ------------------ {{{
 
 " 2.3.1. Rooter
-" -------------
+" ------------- {{{
 
 " Adapt automatically the working directory
 let s:vim_rooter = {}
@@ -2137,9 +2155,10 @@ function! s:setup() dict
 endfunction
 let s:vim_rooter.setup = funcref("s:setup")
 call s:addplugin(s:vim_rooter, "vim_rooter")
+" }}}
 
 " 2.3.2. Fuzzy Searching
-" ---------------------
+" --------------------- {{{
 
 " FzF (File Fuzzy Finder)
 " Remark:
@@ -2294,10 +2313,13 @@ let s:bufexplorer.setup = funcref("s:setup")
 call s:addplugin(s:bufexplorer, "bufexplorer")
 
 call s:addplugin('troydm/easybuffer.vim', "easybuffer", 0)
+" }}}
 
 " 2.3.3. File searching
-" --------------------
+" -------------------- {{{
 
+" Ack
+" --- {{{
 " Remark:
 " - Seems not to support asynchronous mode on Windows
 let s:ack_vim = {}
@@ -2335,7 +2357,10 @@ function! s:setup() dict
 endfunction
 let s:ack_vim.setup = funcref("s:setup")
 call s:addplugin(s:ack_vim, "ack_vim", 0)
+" }}}
 
+" CtrlSF
+" ------ {{{
 " Remark:
 " - Seems to work in asynchronous mode on Windows
 let s:ctrlsf = {}
@@ -2442,7 +2467,10 @@ function! s:setup() dict
 endfunction
 let s:ctrlsf.setup = funcref("s:setup")
 call s:addplugin(s:ctrlsf, "ctrlsf")
+" }}}
 
+" Ferret
+" ------ {{{
 let s:ferret = {}
 let s:ferret.url = 'wincent/ferret'
 function! s:setup() dict
@@ -2466,10 +2494,11 @@ function! s:setup() dict
 endfunction
 let s:ferret.setup = funcref("s:setup")
 call s:addplugin(s:ferret, "ferret", 0)
-
+" }}}
+" }}}
 
 " 2.3.4. File browsing
-" -------------------
+" ------------------- {{{
 
 let s:nerdtree = {}
 let s:nerdtree.url = 'scrooloose/nerdtree'
@@ -2607,9 +2636,11 @@ call s:addplugin(s:fern, "fern", 0)
 
 " File browser netrw helper
 call s:addplugin('tpope/vim-vinegar', "vim_vinegar", 0)
+" }}}
+" }}}
 
 " 2.4. Sessions
-" -------------
+" ------------- {{{
 
 " Session management made easy
 let s:vim_obsession = {}
@@ -2648,10 +2679,10 @@ call s:addplugin(s:vim_obsession, "vim_obsession", 0)
 
 " Addition to Obsession
 call s:addplugin('dhruvasagar/vim-prosession', "vim_prosession", 0)
-
+" }}}
 
 " 2.5. Bookmark
-" -------------
+" ------------- {{{
 
 " Bookmarks made easy
 " - Add mark in the margin
@@ -2687,9 +2718,10 @@ function! s:setup() dict
 endfunction
 let s:vim_bookmarks.setup = funcref("s:setup")
 call s:addplugin(s:vim_bookmarks, "vim_bookmarks", 0)
+" }}}
 
 " 2.6. Undo Tree
-" --------------
+" -------------- {{{
 
 " Visualize and Navigate the undo tree:
 let s:undotree = {}
@@ -2717,12 +2749,13 @@ call s:addplugin('sjl/gundo.vim', "gundo", 0)
 
 " Visualize and Navigate the undo tree:
 call s:addplugin('simnalamburt/vim-mundo', "vim_mundo", 0)
+" }}}
 
 " 2.7. Difference
-" ---------------
+" --------------- {{{
 
 " 2.7.1. Diff Char
-" ---------------
+" --------------- {{{
 
 " Diff at char level
 let s:diffchar = {}
@@ -2734,16 +2767,18 @@ function! s:setup() dict
 endfunction
 let s:diffchar.setup = funcref("s:setup")
 call s:addplugin(s:diffchar, "diffchar", 0)
+" }}}
 
 " 2.7.2. Diff Command
-" ------------------
+" ------------------ {{{
 
 " Introduces the DiffOrig command that compare the current file with the
 " saved version
 call s:addplugin('lifecrisis/vim-difforig', "difforig", 0)
+" }}}
 
 " 2.7.3 Spot Diff
-" ---------------
+" --------------- {{{
 
 " Introduces the Diffthis command that let you compare range of buffers
 let s:spotdiff = {}
@@ -2762,13 +2797,14 @@ function! s:setup() dict
 endfunction
 let s:spotdiff.setup = funcref("s:setup")
 call s:addplugin(s:spotdiff, "spotdiff", 0)
-
+" }}}
+" }}}
 
 " 2.8. Git
-" --------
+" -------- {{{
 
 " 2.8.1. Git Operation
-" -------------------
+" -------------------- {{{
 
 " Git integration
 let s:vim_fugitive = {}
@@ -2778,10 +2814,10 @@ let s:vim_fugitive.url = 'tpope/vim-fugitive'
 " endfunction
 " let s:vim_fugitive.setup = funcref("s:setup")
 call s:addplugin(s:vim_fugitive, "vim_fugitive")
-
+" }}}
 
 " 2.8.2. Git Signs
-" ---------------
+" --------------- {{{
 
 let s:vim_signify = {}
 let s:vim_signify.url = 'mhinz/vim-signify'
@@ -2837,18 +2873,20 @@ endfunction
 let s:vim_gitgutter.setup = funcref("s:setup")
 call s:addplugin(s:vim_gitgutter, "vim_gitgutter")
 
+" }}}
 
 " 2.8.3. Git Helper
-" ----------------
+" ---------------- {{{
 
 call s:addplugin('itchyny/vim-gitbranch', "vim_gitbranch", 0)
-
+" }}}
+" }}}
 
 " 2.9. Indentation
-" ----------------
+" ---------------- {{{
 
 " 2.9.1. Indentation lines
-" -----------------------
+" ----------------------- {{{
 
 " Visualize indentation vertical lines
 let s:indentline = {}
@@ -2886,9 +2924,10 @@ endfunction
 let s:vim_indent_guides.setup = funcref("s:setup")
 call s:addplugin(s:vim_indent_guides, "vim_indent_guides", 0)
 
+" }}}
 
 " 2.9.2. EditorConfig
-" ------------------
+" ------------------ {{{
 
 " Let each project have its own setting regarding:
 " - Indentation
@@ -2904,14 +2943,17 @@ let s:editorconfig.setup = funcref("s:setup")
 if !has('nvim')
   call s:addplugin(s:editorconfig, "editorconfig")
 endif
+" }}}
 
 " 2.9.3. Sleuth
-" ------------
+" ------------ {{{
 
 call s:addplugin('tpope/vim-sleuth', "vim_sleuth", 0)
+" }}}
+" }}}
 
 " 2.10. Align
-" -----------
+" ----------- {{{
 
 " Alignment made easy
 let s:vim_easy_align = {}
@@ -2946,12 +2988,13 @@ call s:addplugin(s:vim_easy_align, "vim_easy_align")
 
 " Alignment made easy
 call s:addplugin('godlygeek/tabular', "tabular", 0)
+" }}}
 
 " 2.11. Folding
-" -------------
+" ------------- {{{
 
 " 2.11.1. Fold Creation
-" --------------------
+" -------------------- {{{
 
 " Fold based on indentation
 let s:any_fold = {}
@@ -2991,9 +3034,10 @@ call s:addplugin(s:any_fold, "any_fold")
 " Remarks:
 "   any_fold seems to give better results
 call s:addplugin('tmhedberg/SimpylFold', "simpylfold", 0)
+" }}}
 
 " 2.11.2. Fold Handling
-" --------------------
+" -------------------- {{{
 
 " Folding level control using [ret] and [bs]
 call s:addplugin('arecarn/vim-fold-cycle', "cycle_fold", 0)
@@ -3009,9 +3053,11 @@ function! s:setup() dict
 endfunction
 let s:fast_fold.setup = funcref("s:setup")
 call s:addplugin(s:fast_fold, "fast_fold", 0)
+" }}}
+" }}}
 
 " 2.12. Commenting
-" ----------------
+" ---------------- {{{
 
 let s:vim_commentary = {}
 let s:vim_commentary.url = 'tpope/vim-commentary'
@@ -3032,20 +3078,22 @@ function! s:setup() dict
 endfunction
 let s:nerdcommenter.setup = funcref("s:setup")
 call s:addplugin(s:nerdcommenter, "nerdcommenter", 0)
+" }}}
 
 " 2.13. Parenthesis
-" -----------------
+" ----------------- {{{
 
 " 2.13.1. Surround
-" ---------------
+" --------------- {{{
 
 " Add additional commands to manage pairs
 call s:addplugin('tpope/vim-surround', "vim_surround")
 
 call s:addplugin('machakann/vim-sandwich', "vim_sandwich", 0)
+" }}}
 
 " 2.13.2. Auto-Pair
-" ----------------
+" ---------------- {{{
 
 " Automatically introduce the pairing character
 " (e.g. ", ', (, [, etc. )
@@ -3063,12 +3111,17 @@ call s:addplugin('tpenguinltg/vim-closing-brackets', "vim_closing_brackets", 0)
 " Remark:
 " - Seems not to support the dot command
 call s:addplugin('vim-scripts/auto-pairs-gentle', "auto_pairs_gentle", 0)
+" }}}
+" }}}
 
 " 2.14. Snippet
-" -------------
+" ------------- {{{
 
 " Remark: for coc user a coc-snippets is available suggesting snippets
 " - :CocInstall coc-snippets
+
+" UltiSnips
+" --------- {{{
 
 let s:ultisnips = {}
 let s:ultisnips.url = 'SirVer/ultisnips'
@@ -3103,7 +3156,10 @@ let s:ultisnips.setup = funcref("s:setup")
 if has('python3')
   call s:addplugin(s:ultisnips, "ultisnips")
 endif
+" }}}
 
+" Emmet
+" ----- {{{
 let s:emmet_vim = {}
 let s:emmet_vim.url = 'mattn/emmet-vim'
 function! s:setup() dict
@@ -3118,12 +3174,14 @@ function! s:setup() dict
 endfunction
 let s:emmet_vim.setup = funcref("s:setup")
 call s:addplugin(s:emmet_vim, "emmet_vim", 0)
+" }}}
+" }}}
 
 " 2.15. Tags
-" ----------
+" ---------- {{{
 
 " 2.15.1. Tag Generation
-" ---------------------
+" --------------------- {{{
 
 " Automatic tag generation
 let s:vim_gutentags = {}
@@ -3138,9 +3196,10 @@ function! s:setup() dict
 endfunction
 let s:vim_gutentags.setup = funcref("s:setup")
 call s:addplugin(s:vim_gutentags, "vim_gutentags")
+" }}}
 
 " 2.15.2. Tag Browsing
-" -------------------
+" ------------------- {{{
 
 " Remarks:
 " - Telescope requires traditional tags
@@ -3335,9 +3394,11 @@ function! s:setup() dict
 endfunction
 let s:vista_vim.setup = funcref("s:setup")
 call s:addplugin(s:vista_vim, "vista_vim", 0)
+" }}}
+" }}}
 
 " 2.16. Code Completion
-" ---------------------
+" --------------------- {{{
 
 " Remark:
 " - Depend on Node.js
@@ -3792,12 +3853,13 @@ endfunction
 let s:hlargs.setup = funcref("s:setup")
 call s:addplugin(s:hlargs, "hlargs", 0)
 
+" }}}
 
 " 2.17. Code Formatting
-" ---------------------
+" --------------------- {{{
 
 " 2.17.1. ISort
-" ------------
+" ------------ {{{
 
 " Sort Python imports
 let s:vim_isort = {}
@@ -3816,10 +3878,10 @@ let s:vim_isort.setup = funcref("s:setup")
 if has('python3')
   call s:addplugin(s:vim_isort, "vim_isort")
 endif
-
+" }}}
 
 " 2.17.2. Prettier
-" ---------------
+" --------------- {{{
 
 " Format Web files (.html, .css, .ts, ...)
 let s:vim_prettier = {}
@@ -3860,13 +3922,14 @@ function! s:setup() dict
 endfunction
 let s:neoformat.setup = funcref("s:setup")
 call s:addplugin(s:neoformat, "neoformat", 0)
-
+" }}}
+" }}}
 
 " 2.18. Linting
-" -------------
+" ------------- {{{
 
 " 2.18.1. Linting Engine
-" ----------------------
+" ---------------------- {{{
 
 let s:ale = {}
 let s:ale.url = 'dense-analysis/ale'
@@ -4005,9 +4068,10 @@ if has('nvim')
   " A TSUpdateSync call maybe necessary to update your language parser
   " A TSUpdate call maybe necessary to update your language parser
 endif
+" }}}
 
 " 2.18.2. Linting Mark
-" -------------------
+" ------------------- {{{
 
 let s:vim_syntastic = {}
 let s:vim_syntastic.url = 'vim-syntastic/syntastic'
@@ -4036,19 +4100,19 @@ function! s:setup() dict
 endfunction
 let s:vim_syntastic.setup = funcref("s:setup")
 call s:addplugin(s:vim_syntastic, "vim_syntastic", 0)
-
+" }}}
+" }}}
 
 " 2.19. Asynchronous Run
-" ----------------------
+" ---------------------- {{{
 
 call s:addplugin('skywind3000/asyncrun.vim', "asyncrun", 0)
 
-
 call s:addplugin('tpope/vim-dispatch', "vim_dispatch", 0)
-
+" }}}
 
 " 2.20 QuickFix filtering
-" -----------------------
+" ----------------------- {{{
 
 let s:cfilter = {}
 let s:cfilter.url = 'cfilter'
@@ -4060,10 +4124,10 @@ call s:addplugin(s:cfilter, "cfilter", 0)
 
 
 call s:addplugin('jceb/vim-editqf', "vim_editqf", 0)
+" }}}
 
-
-" 2.20. Terminal
-" --------------
+" 2.21. Terminal
+" -------------- {{{
 
 let s:vim_floaterm = {}
 let s:vim_floaterm.url = 'voldikss/vim-floaterm'
@@ -4166,10 +4230,10 @@ function! s:setup() dict
 endfunction
 let s:neoterm.setup = funcref("s:setup")
 call s:addplugin(s:neoterm, "neoterm", 0)
+" }}}
 
-
-" 2.21. Debugging
-" ---------------
+" 2.22. Debugging
+" --------------- {{{
 
 let s:vimspector = {}
 let s:vimspector.url = 'puremourning/vimspector'
@@ -4256,12 +4320,13 @@ let s:nvim_dap.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin(s:nvim_dap, "nvim_dap")
 endif
+" }}}
 
-" 2.22. File Types
-" ----------------
+" 2.23. File Types
+" ---------------- {{{
 
-" 2.22.1. VimScript
-" -----------------
+" 2.23.1. VimScript
+" ----------------- {{{
 
 " Helper to analyze vim scripts
 let s:vim_scriptease = {}
@@ -4296,10 +4361,10 @@ function! s:setup() dict
 endfunction
 let s:vim_synstax.setup = funcref("s:setup")
 call s:addplugin(s:vim_synstax, "vim_synstax")
+" }}}
 
-
-" 2.22.2. Markdown
-" ----------------
+" 2.23.2. Markdown
+" ---------------- {{{
 
 " Add vim wiki
 " Remark:
@@ -4520,10 +4585,10 @@ function! s:setup() dict
 endfunction
 let s:markdown_preview.setup = funcref("s:setup")
 call s:addplugin(s:markdown_preview, "markdown_preview")
+" }}}
 
-
-" 2.22.3. CSV
-" -----------
+" 2.23.3. CSV
+" ----------- {{{
 
 let s:csv = {}
 let s:csv.url = 'chrisbra/csv.vim'
@@ -4566,31 +4631,31 @@ function! s:setup() dict
 endfunction
 let s:rainbow_csv.setup = funcref("s:setup")
 call s:addplugin(s:rainbow_csv, "rainbow_csv", 0)
+" }}}
 
-" 2.22.4. Rust
-" ------------
+" 2.23.4. Rust
+" ------------ {{{
 
 " Rust support
 call s:addplugin('rust-lang/rust.vim', "rust_vim", 0)
+" }}}
 
-
-" 2.23.5. Jinja
-" -------------
+" 2.24.5. Jinja
+" ------------- {{{
 
 call s:addplugin('Glench/Vim-Jinja2-Syntax', "vim_jinja2_syntax")
+" }}}
 
-
-" 2.23.6. Logs
-" ------------
+" 2.24.6. Logs
+" ------------ {{{
 
 call s:addplugin('mtdl9/vim-log-highlighting', "vim_log_highligthing")
 
-
 call s:addplugin('powerman/vim-plugin-AnsiEsc', "ansiesc", 0)
+" }}}
 
-
-" 2.23.7 TeX/LaTeX
-" ----------------
+" 2.24.7 TeX/LaTeX
+" ---------------- {{{
 
 let s:vimtex = {}
 let s:vimtex.url = 'lervag/vimtex'
@@ -4610,10 +4675,10 @@ function! s:setup() dict
 endfunction
 let s:vim_latex.setup = funcref("s:setup")
 call s:addplugin(s:vim_latex, "vim_latex", 0)
+" }}}
 
-
-" 2.23.8 Vim Help
-" ---------------
+" 2.24.8 Vim Help
+" --------------- {{{
 
 call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
 
@@ -4750,9 +4815,10 @@ endif
 
 " Dark background
 set background=dark
+" }}}
 
 " Grammalected plugin settings:
-" -----------------------------
+" ----------------------------- {{{
 
 " Remark: currently not used
 
@@ -4760,9 +4826,10 @@ if 0
   let g:grammalecte_python = "py.exe"
   let g:grammalecte_cli_py = "C:\\Python36_x64\\Scripts\\grammalecte-cli.py"
 endif
+" }}}
 
 " vim-Riv plugin settings:
-" ------------------------
+" ------------------------ {{{
 
 " ReStructuredText preview
 " Prefer Markdown preview instead (vim-markdown, markdown-preview)
@@ -4776,10 +4843,10 @@ if 0
 
   let g:riv_global_leader = ""
 endif
-
+" }}}
 
 " InstantRst plugin settings:
-" ---------------------------
+" --------------------------- {{{
 
 " ReStructuredText preview
 " Prefer Markdown preview instead (vim-markdown, markdown-preview)
@@ -4789,10 +4856,10 @@ if 0
   let g:instant_rst_bind_scroll = 0
   " let g:instant_rst_localhost_only = 1
 endif
-
+" }}}
 
 " python-mode plugin settings:
-" ----------------------------
+" ---------------------------- {{{
 
 " Remark: currently not used
 if 0
@@ -4816,20 +4883,26 @@ if 0
   " "E402", " Module level import not at top of file
   " "E128", " Continuation line under-indented for visual indent
 endif
+" }}}
+" }}}
+" }}}
+
+" 3. Miscellaneous
+" ================ {{{
 
 
-" 2.3. File Browsing
-" ------------------
+" 3.1. File Browsing
+" ------------------ {{{
 
-" 2.3.2. Fuzzy searching
-" ---------------------
+" 3.1.1. Fuzzy searching
+" ---------------------- {{{
 
 set grepprg=rp\ --vimgrep
 set grepformat=%f:%l:%c:%m
+" }}}
 
-
-" 2.3.3. File searching
-" --------------------
+" 3.1.2. File searching
+" --------------------- {{{
 
 function! ToggleQuickFix()
   if !empty(filter(getwininfo(), {_, val -> getbufinfo(val.bufnr)[0].command}))
@@ -4863,9 +4936,11 @@ function! ToggleQuickFix()
     endif
   endif
 endfunction
+" }}}
+" }}}
 
-" 2.4. Sessions
-" -------------
+" 3.2. Sessions
+" ------------- {{{
 
 let g:sessions_dir = GetVimDataFolder() .. 'session'
 
@@ -4941,9 +5016,10 @@ if s:ispluginactive('reload_session_at_start')
   " autocmd SessionLoadPost * wincmd =
   " autocmd SessionLoadPost * windo filetype detect
 endif
+" }}}
 
-" 2.14. Snippet
-" -------------
+" 3.3. Snippet
+" ------------- {{{
 
 " Emmet plugin settings:
 " ----------------------
@@ -4969,10 +5045,10 @@ endf
 if s:ispluginactive('ultisnips') && s:ispluginactive('emmet_vim')
   imap <expr> <C-s> IsEmmet(&filetype) ? "\<C-S-F12>" : "\<C-F12>"
 endif
+" }}}
 
-
-" 2.15. Tags
-" ----------
+" 3.4. Tags
+" ---------- {{{
 
 " TagList plugin settings:
 " ------------------------
@@ -4997,9 +5073,6 @@ if 0
   endif
 endif
 " }}}
-
-" 3. Miscellaneous
-" ================ {{{
 
 " Restore cursor position
 " -----------------------
