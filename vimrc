@@ -3201,6 +3201,8 @@ call s:addplugin(s:vim_gutentags, "vim_gutentags")
 " 2.15.2. Tag Browsing
 " ------------------- {{{
 
+" TagBar
+" ------ {{{
 " Remarks:
 " - Telescope requires traditional tags
 let s:tagbar = {}
@@ -3321,7 +3323,10 @@ function! s:setup() dict
 endfunction
 let s:tagbar.setup = funcref("s:setup")
 call s:addplugin(s:tagbar, "tagbar")
+" }}}
 
+" Vista
+" ----- {{{
 let s:vista_vim = {}
 let s:vista_vim.url = 'liuchengxu/vista.vim'
 let s:vista_vim.options = {}
@@ -3394,6 +3399,30 @@ function! s:setup() dict
 endfunction
 let s:vista_vim.setup = funcref("s:setup")
 call s:addplugin(s:vista_vim, "vista_vim", 0)
+" }}}
+
+" Taglist
+" ------- {{{
+" Remark: currently not used
+if 0
+  " Position the tag list split to the right side
+  let Tlist_Use_Right_Window  = 1
+  " Set the width of the tag list split to 40 char
+  let Tlist_WinWidth = 40
+  " Present tags only of the current file
+  let Tlist_Show_One_File = 1
+  " Switch focus to tag list of toggle on
+  " let Tlist_GainFocus_On_ToggleOpen = 1
+  " Quit vim if the only spit open is the tag list
+  let Tlist_Exit_OnlyWindow = 1
+
+  " nnoremap <F8> :TlistToggle<CR>
+  nnoremap <leader>tt :TlistToggle<CR>
+  if s:ispluginactive('which_key')
+    let g:which_key_map.t.t = [':TlistToggle', 'Toggle Tags']
+  endif
+endif
+" }}}
 " }}}
 " }}}
 
@@ -4890,7 +4919,6 @@ endif
 " 3. Miscellaneous
 " ================ {{{
 
-
 " 3.1. File Browsing
 " ------------------ {{{
 
@@ -5044,33 +5072,6 @@ endf
 
 if s:ispluginactive('ultisnips') && s:ispluginactive('emmet_vim')
   imap <expr> <C-s> IsEmmet(&filetype) ? "\<C-S-F12>" : "\<C-F12>"
-endif
-" }}}
-
-" 3.4. Tags
-" ---------- {{{
-
-" TagList plugin settings:
-" ------------------------
-
-" Remark: currently not used
-if 0
-  " Position the tag list split to the right side
-  let Tlist_Use_Right_Window  = 1
-  " Set the width of the tag list split to 40 char
-  let Tlist_WinWidth = 40
-  " Present tags only of the current file
-  let Tlist_Show_One_File = 1
-  " Switch focus to tag list of toggle on
-  " let Tlist_GainFocus_On_ToggleOpen = 1
-  " Quit vim if the only spit open is the tag list
-  let Tlist_Exit_OnlyWindow = 1
-
-  " nnoremap <F8> :TlistToggle<CR>
-  nnoremap <leader>tt :TlistToggle<CR>
-  if s:ispluginactive('which_key')
-    let g:which_key_map.t.t = [':TlistToggle', 'Toggle Tags']
-  endif
 endif
 " }}}
 
