@@ -2130,7 +2130,7 @@ call s:addplugin(s:sudoedit_vim, "sudoedit_vim", 0)
 
 call s:addplugin('romainl/vim-cool', "vim_cool", 0)
 
-call s:addplugin('suxpert/vimcaps', "vimcaps", 1)
+call s:addplugin('suxpert/vimcaps', "vimcaps", 0)
 
 " Highlight briefly the cursor when it jump from split to split
 let s:beacon = {}
@@ -5987,11 +5987,3 @@ if 1
   command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 endif
 
-" function! FixTeXSyntax()
-"   syn cluster texSpell contains=texAbstract,texBoldItalStyle,texBoldStyle,texChapterZone,texCommentGroup,texDocZone,texEmphStyle,texItalBoldStyle,texItalStyle,texMatchGroup,texMatchNMGroup,texMathText,texParaZone,texParen,texPartZone,texSectionZone,texStyleGroup,texSubParaZone,texSubSectionZone,texSubSubSectionZone,texTitle,texZone
-
-"   syn match TimeNoSpell '\<\d\dh\d\d\>' contains=@NoSpell containedin=@texSpell
-"   syn match YourNoSpellGroup 'grr' contains=@NoSpell containedin=@texSpell
-" endfunction
-
-" autocmd FileType tex call FixTeXSyntax()
