@@ -2243,7 +2243,7 @@ endfunction
 let s:ctrlp.setup = funcref("s:setup")
 call s:addplugin(s:ctrlp, "ctrlp", 0)
 
-if v:version >= 801
+if v:version >= 801 && has('patch-8.1.2114')
 " In order to make tag generation working install maple:
 " Downloading from GitHub:
 "   :call clap#installer#download_binary()
@@ -3478,7 +3478,7 @@ endif
 "     - pip install jedi-language-server
 " - Depends on pip install jedi-language-server
 
-if v:version >= 900
+if v:version >= 900 && has('patch-9.0.438')
 let coc_nvim = {}
 let coc_nvim.url = 'neoclide/coc.nvim'
 let coc_nvim.options = {'branch': 'release'}
@@ -4288,9 +4288,9 @@ call s:addplugin(s:magma, "magma", 0)
 let s:neoterm = {}
 let s:neoterm.url = 'kassio/neoterm'
 function! s:setup() dict
-  if v:version >= 801
     nnoremap <C-q> :Ttoggle<CR>
     inoremap <C-q> <Esc>:Ttoggle<CR>
+  if v:version >= 801
     tnoremap <C-q>  <C-\><C-n>:Ttoggle<CR>
   endif
 endfunction
@@ -4989,6 +4989,72 @@ endif
 " 3. Miscellaneous
 " ================ {{{
 
+if has('nvim')
+  " On Belgian keyboard make <C-[> be <Esc>
+  inoremap <C-¨> <Esc>
+  cnoremap <C-¨> <Esc>
+endif
+
+" On Belgian keyboard <C-^> is nearly impossible to get
+nnoremap <C-§> <C-^>
+
+" Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column
+" It make the selection in block mode more intuitive.
+" It is a Neovim default
+set nostartofline
+
+" Align the $ motion in Normal and Visual mode
+" Don't make the mapping for Visual blockwise since $ has a very special
+" meaning in that context
+vnoremap <expr> $ (mode() ==# 'v') ? '$h' : '$'
+
+" Ignore compiled files
+set wildignore=*.o,*.obj,*~,*.pyc,*.pyd
+if has("win16") || has("win32")
+  set wildignore+=.git\*,.hg\*,.svn\*
+else
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
+set wildignore+=Tests/**
+
+" Define config_files to fasten the use of the :vim command
+abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
+
+" Improved Ctrl-l
+" --------------- {{{
+
+nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
+if s:ispluginactive('which_key')
+  let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
+endif
+" }}}
+
+" Spelling correction <leader>z
+" ----------------------------- {{{
+nnoremap <Leader>z ea<C-x>s
+if s:ispluginactive('which_key')
+  let g:which_key_map.z = [':normal! eas', 'Spelling Suggestion']
+endif
+" }}}
+
+" Make Ctrl-n and Ctrl-p on the command line work like Down and Up
+" ---------------------------------------------------------------- {{{
+
+" Searching for a next/previous command in the history
+" instead of going for the next/previous command
+cnoremap <expr> <C-n> wildmenumode() ? "\<C-n>" : "\<down>"
+cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
+" }}}
+
+" Select the pasted text with gp
+" ------------------------------ {{{
+" (inspired from gv that select the text that has been just selected)
+nnoremap gp `[v`]
+if s:ispluginactive('which_key')
+  let g:which_key_map_g.p = ['`[v`]', 'Select Pasted']
+endif
+" }}}
+
 " 3.1. File Browsing
 " ------------------ {{{
 
@@ -5159,7 +5225,6 @@ if !s:ispluginactive('tagbar')
 endif
 " }}}
 
-
 " Create the file under the cursor if not existing:
 " ------------------------------------------------- {{{
 
@@ -5169,7 +5234,6 @@ if s:ispluginactive('which_key')
   let g:which_key_map.gf =  [':e %:h/<cfile>', 'Go to New File']
 endif
 " }}}
-
 
 " Search in the direction of the document:
 " ---------------------------------------- {{{
@@ -5314,7 +5378,7 @@ nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 
 " }}}
 
 " Which Key plugin settings:
-" --------------------------
+" -------------------------- {{{
 
 if s:ispluginactive('which_key')
   set timeoutlen=1000
@@ -5333,42 +5397,7 @@ if s:ispluginactive('which_key')
   nnoremap <silent> z :<C-u>WhichKey 'z'<CR>
   autocmd User vim-which-key call which_key#register('z', 'g:which_key_map_z')
 endif
-
-" inoremap jk <Esc>
-if has('nvim')
-  " On Belgian keyboard make <C-[> be <Esc>
-  inoremap <C-¨> <Esc>
-  cnoremap <C-¨> <Esc>
-endif
-
-" On Belgian keyboard <C-^> is nearly impossible to get
-nnoremap <C-§> <C-^>
-
-" Faster scrolling (by 3 lines)
-" nnoremap <C-e> 3<C-e>
-" nnoremap <C-y> 3<C-y>
-
-" Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column
-" It make the selection in block mode more intuitive.
-" It is a Neovim default
-set nostartofline
-
-" Align the $ motion in Normal and Visual mode
-" Don't make the mapping for Visual blockwise since $ has a very special
-" meaning in that context
-vnoremap <expr> $ (mode() ==# 'v') ? '$h' : '$'
-
-" Define config_files to fasten the use of the :vim command
-abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
-
-" Ignore compiled files
-set wildignore=*.o,*.obj,*~,*.pyc,*.pyd
-if has("win16") || has("win32")
-  set wildignore+=.git\*,.hg\*,.svn\*
-else
-  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-endif
-set wildignore+=Tests/**
+" }}}
 
 " Add a Diff command to compare with the disk buffer
 " -------------------------------------------------- {{{
@@ -5479,11 +5508,6 @@ command! -count=1 FontIncrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\
 command! -count=1 FontDecrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)-<count>', '')
 command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '<args>', '')
 " }}}
-
-" Maximize the current window without deleting the other windows:
-if !s:ispluginactive('vim_maximizer')
-  " nnoremap <C-w>m <cmd>500wincmd ><bar>500wincmd +<cr>
-endif
 
 " Terminal
 " -------- {{{
@@ -5680,47 +5704,6 @@ if s:ispluginactive('which_key')
   let g:which_key_map.t.b = [":call ToggleTerm(expand('%:p:h'))", 'Toggle Term']
 endif
 " }}}
-
-" Make the \z trigger the spell check context menu (floating window)
-nnoremap <Leader>z ea<C-x>s
-if s:ispluginactive('which_key')
-  let g:which_key_map.z = [':normal! eas', 'Spelling Suggestion']
-endif
-
-" nnoremap <leader>z :call search('\w\>', 'c')<CR>a<C-x>s
-" Make <CR> validate the spell entry selected
-" inoremap <expr> <CR> pumvisible() ? "\<C-y><Esc>" : "\<CR>"
-
-" Here are some trick from Vim-Galore
-
-" Make Ctrl-n and Ctrl-p on the command line work like Down and Up
-" Searching for a next/previous command in the history instead of going for the next/previous command
-cnoremap <expr> <C-n> wildmenumode() ? "\<C-n>" : "\<down>"
-cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
-
-" Make <leader>l disable highlighting temporarily (:nohlsearch)
-" A kind of improved Ctrl-l
-nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
-if s:ispluginactive('which_key')
-  let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
-endif
-
-" Select the text that has just been pasted
-" (inspired from gv that select the text that has been just selected)
-nnoremap gp `[v`]
-if s:ispluginactive('which_key')
-  let g:which_key_map_g.p = ['`[v`]', 'Select Pasted']
-endif
-
-" set lazyredraw
-
-" Keep selection when indenting
-" xnoremap <  <gv
-" xnoremap >  >gv
-
-" Make sure the QuickFix and LocationList open at the bottom of the screen
-" command! Cw bot cw
-" command! Copen bot copen
 
 " Active Window Focus
 " ------------------- {{{
@@ -5935,15 +5918,19 @@ endfunction
 command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
 " }}}
 
-" Add the WipeReg command that wipe out the content of all registers
+" WipeReg 
+" ------- {{{
+
+" Wipe out the content of all registers
 command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
+" }}}
 
-" Force the detection of the file types to get the correct colorization:
-" command! Detect filetype detect
+" UnloadNonProjectFiles
+" --------------------- {{{
 
-" Add a UnloadNonProjectFiles to close all the buffers
-" that are not child's of the current working directory
+" Close all the buffers that are not child's of the current working directory
 command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
+" }}}
 
 " CreateDefinition
 " ---------------- {{{
