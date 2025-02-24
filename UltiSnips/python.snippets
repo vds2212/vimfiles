@@ -7,6 +7,133 @@ import os
 
 
 def ${1:run}(args):
+	pass
+
+
+def main():
+	logger = logging.getLogger()
+	logger.setLevel(logging.INFO)
+
+	handler = logging.StreamHandler()
+	handler.setLevel(logging.DEBUG)
+
+	formatter = logging.Formatter(
+		# "%(asctime)s:"
+		# "%(name)s:"
+		"%(levelname)s:"
+		"%(message)s",
+		datefmt="%Y/%m/%d %H:%M:%S",
+	)
+
+	handler.setFormatter(formatter)
+	logger.addHandler(handler)
+
+	filename = os.path.splitext(__file__)[0] + ".log"
+	handler = logging.FileHandler(filename, mode="a")
+
+	formatter = logging.Formatter(
+		"%(asctime)s:"
+		# "%(name)s:"
+		"%(levelname)s:" "%(message)s",
+		datefmt="%Y/%m/%d %H:%M:%S",
+	)
+
+	handler.setFormatter(formatter)
+	logger.addHandler(handler)
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-v", "--version", action="store_true", help="Show version number and exit")
+
+	parser.add_argument("--verbose", action="store_true", help="Set logging to the most verbose", default=False)
+
+	parser.add_argument("--quiet", action="store_true", help="Reduce logging to the bare minimum", default=False)
+
+	parser.add_argument("--debug", action="store_true", help="Make sure the exception are raised", default=False)
+
+	parser.add_argument(
+		"--today", action="store", help="today in %%Y/%%m/%%d %%H/%%M/%%S format", default="", type=convert_to_datetime
+	)
+
+	parser.add_argument("-t", action="store_true", help="Output timing information", default=False)
+
+	# parser.add_argument("--input", action="store", help="Input", default="")
+
+	# parser.add_argument("args", action="append", help="Arguments", default=[])
+	# parser.add_argument("arg", nargs="?", help="Argument", default="")
+
+	try:
+		args = parser.parse_args()
+
+	except Exception as e:
+		logging.error(str(e))
+		return
+
+	if args.version:
+		print_version()
+		return
+
+	if args.verbose:
+		logging.getLogger().setLevel(logging.DEBUG)
+
+	if args.quiet:
+		logging.getLogger().setLevel(logging.CRITICAL)
+
+	# body:
+	logging.info("$1: >>")
+	try:
+		start = datetime.datetime.now()
+
+		$1(args)
+
+		end = datetime.datetime.now()
+		if args.t:
+			print("Duration: %s" % str(end - start))
+
+	except Exception as e:
+		logging.error(str(e))
+
+		if args.debug:
+			raise
+	logging.info("$1: <<")
+
+
+def convert_to_datetime(date):
+	if date == "today" or date == "":
+		return datetime.datetime.now()
+
+	try:
+		if len(date) == len("YYYY/MM/DD"):
+			ret = datetime.datetime.strptime(date, "%Y/%m/%d")
+			return ret
+
+		if len(date) == len("YYYY/MM/DD HH:MM:SS"):
+			ret = datetime.datetime.strptime(date, "%Y/%m/%d %H:%M:%S")
+			return ret
+
+		logging.warning("Fail to parse date '%s'" % date)
+
+	except ValueError as e:
+		logging.warning("Fail to parse date '%s' %s" % (date, str(e)))
+		return datetime.datetime.now()
+
+
+def print_version():
+	print("1.0")
+
+
+if __name__ == "__main__":
+	main()
+endsnippet
+
+snippet mainfull "Python default script"
+# import sys
+import argparse
+import datetime
+import logging
+import os
+
+
+def ${1:run}(args):
     pass
 
 
