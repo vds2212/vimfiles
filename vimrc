@@ -58,7 +58,7 @@ set display=truncate
 " Make sure at least tree context lines are available while scrolling
 " Show a few lines of context around the cursor.  Note that this makes the
 " text scroll if you mouse-click near the start or end of the window.
-" set scrolloff=3
+set scrolloff=3
 
 " Make sure at least five context columns are available while scrolling
 " set sidescrolloff=5
@@ -144,17 +144,17 @@ if 1
           \ | endif
   augroup END
 
-  " Quite a few people accidentally type "q:" instead of ":q" and get confused
-  " by the command line window.  Give a hint about how to get out.
-  " If you don't like this you can put this in your vimrc:
-  " ":augroup vimHints | exe 'au!' | augroup END"
-  "  augroup vimHints
-  "    au!
-  "    autocmd CmdwinEnter *
-  "	  \ echohl Todo |
-  "	  \ echo 'You discovered the command-line window! You can close it with ":q".' |
-  "	  \ echohl None
-  "  augroup END
+ " Quite a few people accidentally type "q:" instead of ":q" and get confused
+ " by the command line window.  Give a hint about how to get out.
+ " If you don't like this you can put this in your vimrc:
+ " ":augroup vimHints | exe 'au!' | augroup END"
+ "  augroup vimHints
+ "    au!
+ "    autocmd CmdwinEnter *
+ "	  \ echohl Todo |
+ "	  \ echo 'You discovered the command-line window! You can close it with ":q".' |
+ "	  \ echohl None
+ "  augroup END
 endif
 
 " Switch syntax highlighting on when the terminal has colors or when using the
@@ -212,17 +212,17 @@ let s:gui_running = has('gui_running') || has('nvim')
 
 function! GetVimDataFolder()
   if has('nvim')
-    let l:vim_data_folder = stdpath('data') .. '/'
+    let l:vim_data_folder = stdpath('data') . '/'
   else
     if has('win32')
       if $HOME != ''
-        let l:vim_data_folder = $HOME .. '/vimfiles/'
+        let l:vim_data_folder = $HOME . '/vimfiles/'
       else
         let l:vim_data_folder= ' ~/vimfiles/'
       endif
     else
       if $HOME != ''
-        let l:vim_data_folder = $HOME .. '/.vim/'
+        let l:vim_data_folder = $HOME . '/.vim/'
       else
         let l:vim_data_folder= '~/.vim/'
       endif
@@ -386,7 +386,9 @@ set formatoptions+=r
 set formatoptions+=j
 
 " Make that C/C++ inline comments (//) are not continued
-set formatoptions+=/
+if v:version >= 801
+  set formatoptions+=/
+endif
 
 " Get rid of the introduction message when starting Vim
 " set shortmess=+I
@@ -425,10 +427,10 @@ set undofile
 " Save undo files in the .undo sub-folder (if it exists)
 " Otherwise in the ~/vimfiles/undo folder (if it exists)
 " It avoid to pollute your local folder
-if !isdirectory(GetVimDataFolder() .. 'undo')
-  call mkdir(GetVimDataFolder() .. 'undo')
+if !isdirectory(GetVimDataFolder() . 'undo')
+  call mkdir(GetVimDataFolder() . 'undo')
 endif
-exe 'set undodir=' .. '.undo/,' .. GetVimDataFolder() .. 'undo/'
+exe 'set undodir=' . '.undo/,' . GetVimDataFolder() . 'undo/'
 
 " number of undo saved
 set undolevels=10000
@@ -440,26 +442,26 @@ set undolevels=10000
 " Otherwise in the ~/vimfiles/swap folder (if it exists)
 " (instead of next to the real file)
 " It avoid to pollute your local folder
-if !isdirectory(GetVimDataFolder() .. 'swap')
-  call mkdir(GetVimDataFolder() .. 'swap')
+if !isdirectory(GetVimDataFolder() . 'swap')
+  call mkdir(GetVimDataFolder() . 'swap')
 endif
-exe 'set directory=.swap/,' .. GetVimDataFolder() ..'swap/'
+exe 'set directory=.swap/,' . GetVimDataFolder() . 'swap/'
 
 " Define/Create the view folder to store information from :mkview
-if !isdirectory(GetVimDataFolder() .. 'view')
-  call mkdir(GetVimDataFolder() .. 'view')
+if !isdirectory(GetVimDataFolder() . 'view')
+  call mkdir(GetVimDataFolder() . 'view')
 endif
-exe 'set viewdir=' .. GetVimDataFolder() ..'view/'
+exe 'set viewdir=' . GetVimDataFolder() .'view/'
 
 " Disable backup files (the myfile.myext~ files)
 " It seems to be the default
 set nobackup
 set nowritebackup
-if !isdirectory(GetVimDataFolder() .. 'backup')
-  call mkdir(GetVimDataFolder() .. 'backup')
+if !isdirectory(GetVimDataFolder() . 'backup')
+  call mkdir(GetVimDataFolder() . 'backup')
 endif
-" exe 'set backupdir=.backup//,' .. GetVimDataFolder() ..'backup//'
-" exe 'set backupdir=.backup/,' .. GetVimDataFolder() ..'backup/'
+" exe 'set backupdir=.backup//,' . GetVimDataFolder() . 'backup//'
+" exe 'set backupdir=.backup/,' . GetVimDataFolder() . 'backup/'
 
 " Mapping between non printable characters (e.g.: eol or tab) and Unicode char.
 set listchars=eol:¶,tab:→\ ,space:.,trail:~,extends:>,precedes:<,nbsp:-
@@ -590,7 +592,7 @@ if s:gui_running
     if has('amiga')
       return "s:.vimsize"
     else
-      return l:vim_data_folder .. '_vimsize'
+      return l:vim_data_folder . '_vimsize'
     endif
   endfunction
 
@@ -618,13 +620,13 @@ if s:gui_running
     let gui_running = has('gui_running')
     if gui_running && g:screen_size_restore_pos
       let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
-      let data = vim_instance .. ' ' .. &columns .. ' ' .. &lines .. ' ' ..
-            \ (getwinposx()<0?0:getwinposx()) .. ' ' ..
+      let data = vim_instance . ' ' . &columns . ' ' . &lines . ' ' .
+            \ (getwinposx()<0?0:getwinposx()) . ' ' .
             \ (getwinposy()<0?0:getwinposy())
       let f = ScreenFilename()
       if filereadable(f)
         let lines = readfile(f)
-        call filter(lines, "v:val !~ '^" .. vim_instance .. "\\>'")
+        call filter(lines, "v:val !~ '^" . vim_instance . "\\>'")
         call add(lines, data)
       else
         let lines = [data]
@@ -711,9 +713,9 @@ endif
 
 function! IsPlugInstalled()
   if has('nvim')
-    let plug_file = GetVimDataFolder() .. 'site/autoload/plug.vim'
+    let plug_file = GetVimDataFolder() . 'site/autoload/plug.vim'
   else
-    let plug_file = GetVimDataFolder() .. 'autoload/plug.vim'
+    let plug_file = GetVimDataFolder() . 'autoload/plug.vim'
   endif
   if empty(glob(plug_file))
     return 0
@@ -726,15 +728,15 @@ function! InstallPlug()
   let l:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   if has('win32')
     if has('nvim')
-      let cmd = 'silent !powershell -Command "&{iwr -useb ' .. l:plug_url .. ' | ni ' .. GetVimDataFolder() .. 'site/autoload/plug.vim -Force}"'
+      let cmd = 'silent !powershell -Command "&{iwr -useb ' . l:plug_url . ' | ni ' . GetVimDataFolder() . 'site/autoload/plug.vim -Force}"'
     else
-      let cmd = 'silent !powershell -Command "&{iwr -useb ' .. l:plug_url .. ' | ni ' .. GetVimDataFolder() .. 'autoload/plug.vim -Force}"'
+      let cmd = 'silent !powershell -Command "&{iwr -useb ' . l:plug_url . ' | ni ' . GetVimDataFolder() . 'autoload/plug.vim -Force}"'
     endif
   else
     if has('nvim')
-      let cmd = 'silent !curl -fLo ' .. GetVimDataFolder() .. 'site/autoload/plug.vim --create-dirs ' .. l:plug_url
+      let cmd = 'silent !curl -fLo ' . GetVimDataFolder() . 'site/autoload/plug.vim --create-dirs ' . l:plug_url
     else
-      let cmd = 'silent !curl -fLo ' ..GetVimDataFolder() .. 'autoload/plug.vim --create-dirs ' .. l:plug_url
+      let cmd = 'silent !curl -fLo ' .GetVimDataFolder() . 'autoload/plug.vim --create-dirs ' . l:plug_url
     endif
   endif
   execute cmd
@@ -907,7 +909,11 @@ function! s:installplugins()
       continue
     endif
     if has_key(plugin, 'setup')
-      call plugin.setup()
+      try
+        call plugin.setup()
+      catch
+        echom 'Fail to setup:' . plugin.name
+      endtry
     endif
   endfor
 endfunction
@@ -947,9 +953,9 @@ function! s:mapkeys(mode, keys, action, options, description)
   if len(mapping_options):
     let mapping_options = ' ' . mapping_options . ' '
 
-  if !has_key(a:options, 'builtin')
-    execute mode . remap . 'map ' . mapping_options . keys . ' ' . action
-  endif
+    if !has_key(a:options, 'builtin')
+      execute mode . remap . 'map ' . mapping_options . keys . ' ' . action
+    endif
 endfunction
 " }}}
 
@@ -1008,6 +1014,8 @@ function! s:setup() dict
 
     " Make the cursor always visible:
     highlight Cursor guifg=#ebdbb2 guibg=#282828
+    " Make Visual selection transparent
+    highlight Visual guifg=NONE guibg=#665C54 ctermbg=NONE term=NONE cterm=NONE gui=NONE
   endfunction
   autocmd ColorScheme gruvbox call FixGruvbox()
 endfunction
@@ -1153,7 +1161,7 @@ function! s:setup() dict
     function! MyFugitiveHead()
       let head = FugitiveHead()
       if head != ""
-        let head = "\uf126 " .. head
+        let head = "\uf126 " . head
       endif
       return head
     endfunction
@@ -1178,7 +1186,19 @@ function! s:setup() dict
   endif
 
   let g:lightline.colorscheme = s:colorscheme_desired
-  autocmd ColorScheme * let g:lightline.colorscheme = g:colors_name | call lightline#toggle() | call lightline#toggle()
+
+  function! UpdateLightline()
+    if !exists('g:loaded_lightline')
+      return
+    endif
+    if !g:loaded_lightline
+      return
+    endif
+    let g:lightline.colorscheme = g:colors_name
+    call lightline#toggle()
+    call lightline#toggle()
+  endfunction
+  autocmd ColorScheme * call UpdateLightline()
 endfunction
 let s:vim_lightline.setup = funcref("s:setup")
 call s:addplugin(s:vim_lightline, "vim_lightline")
@@ -1208,6 +1228,7 @@ call s:addplugin('tpope/vim-unimpaired', "vim_unimpaired")
 "   It seems wilder prevent digraph in the command line
 "   (because of the <C-k> mapping for previous completion menu)
 " More information: :help wilder.txt
+if v:version >= 801
 let s:wilder_simple = 0
 let s:wilder = {}
 let s:wilder.url = 'gelguy/wilder.nvim'
@@ -1345,6 +1366,7 @@ function! s:setup() dict
 endfunction
 let s:wilder.setup = funcref("s:setup")
 call s:addplugin(s:wilder, "wilder")
+endif
 " }}}
 
 " 2.2.3. Repeat
@@ -1377,7 +1399,7 @@ endfunction
 let s:repmo.setup = funcref("s:setup")
 call s:addplugin(s:repmo, "repmo", 0)
 
-let s:repeatable_motion = #{ url:'repeatable-motions', manager: 'packadd'}
+let s:repeatable_motion = { 'url': 'repeatable-motions', 'manager': 'packadd'}
 " let s:repeatable_motion.url = 'repeatable-motions'
 " let s:repeatable_motion.manager = "packadd"
 function! s:setup() dict
@@ -1387,6 +1409,7 @@ let s:repeatable_motion.setup = funcref("s:setup")
 call s:addplugin(s:repeatable_motion, "repeatable_motion", 0)
 
 " Make the ';', ',' repeat motion working for more motions:
+if v:version >= 801
 let s:vim_remotions = {}
 let s:vim_remotions.url = 'vds2212/vim-remotions'
 " let s:vim_remotions.url = 'vim-remotions'
@@ -1460,6 +1483,7 @@ function! s:setup() dict
 endfunction
 let s:vim_remotions.setup = funcref("s:setup")
 call s:addplugin(s:vim_remotions, "vim_remotions")
+endif
 " }}}
 
 " 2.2.4. Text Objects
@@ -1483,7 +1507,7 @@ call s:addplugin('jeetsukumaran/vim-pythonsense', "vim_pythonsense", 0)
 " ]= next sibling indentation
 call s:addplugin('jeetsukumaran/vim-indentwise', "vim_indentwise", 0)
 
-let s:vim_sentence = #{url: 'preservim/vim-textobj-sentence'}
+let s:vim_sentence = {'url': 'preservim/vim-textobj-sentence'}
 let s:vim_sentence.dependencies = ['kana/vim-textobj-user']
 function! s:setup() dict
   augroup textobj_sentence
@@ -2044,7 +2068,7 @@ let s:treejs.url = 'Wansmer/treesj'
 let s:treejs.dependencies = ['nvim-treesitter/nvim-treesitter']
 function! s:setup() dict
 lua << EOF
-require("treejs").setup({})
+  require("treejs").setup({})
 EOF
 endfunction
 let s:treejs.setup = funcref("s:setup")
@@ -2219,6 +2243,7 @@ endfunction
 let s:ctrlp.setup = funcref("s:setup")
 call s:addplugin(s:ctrlp, "ctrlp", 0)
 
+if v:version >= 801
 " In order to make tag generation working install maple:
 " Downloading from GitHub:
 "   :call clap#installer#download_binary()
@@ -2265,6 +2290,7 @@ function! s:setup() dict
 endfunction
 let s:vim_clap.setup = funcref("s:setup")
 call s:addplugin(s:vim_clap, "vim_clap", 1)
+endif
 
 " Remark:
 "   Only available for NeoVim
@@ -2649,11 +2675,11 @@ function! s:setup() dict
   " Ease the management of the sessions (Jay Sitter tips from dockyard.com)
 
   " Save session tracking with \ss
-  " exec 'nnoremap <Leader>ss :mks! ' .. g:sessions_dir .. '\*.vim<C-D><BS><BS><BS><BS><BS>'
-  " exec 'nnoremap <Leader>ss :Obsession ' .. g:sessions_dir .. '\*.vim<C-D><BS><BS><BS><BS><BS>'
+  " exec 'nnoremap <Leader>ss :mks! '.  g:sessions_dir . '\*.vim<C-D><BS><BS><BS><BS><BS>'
+  " exec 'nnoremap <Leader>ss :Obsession ' . g:sessions_dir . '\*.vim<C-D><BS><BS><BS><BS><BS>'
 
   " Read session with \sr
-  " exec 'nnoremap <Leader>sr :so ' .. g:sessions_dir. '\*.vim<C-D><BS><BS><BS><BS><BS>'
+  " exec 'nnoremap <Leader>sr :so '  g:sessions_dir. '\*.vim<C-D><BS><BS><BS><BS><BS>'
 
   if s:ispluginactive('which_key')
     let g:which_key_map.s = { 'name' : '+Session' }
@@ -2933,6 +2959,7 @@ call s:addplugin(s:vim_indent_guides, "vim_indent_guides", 0)
 " - Indentation
 " - Trailing Whitespaces
 " - ...
+if v:version >= 901
 let s:editorconfig = {}
 let s:editorconfig.url = 'editorconfig'
 let s:editorconfig.manager = "packadd"
@@ -2942,6 +2969,7 @@ endfunction
 let s:editorconfig.setup = funcref("s:setup")
 if !has('nvim')
   call s:addplugin(s:editorconfig, "editorconfig")
+endif
 endif
 " }}}
 
@@ -3450,14 +3478,15 @@ endif
 "     - pip install jedi-language-server
 " - Depends on pip install jedi-language-server
 
+if v:version >= 900
 let coc_nvim = {}
 let coc_nvim.url = 'neoclide/coc.nvim'
 let coc_nvim.options = {'branch': 'release'}
 function! s:setup() dict
   if !has('nvim')
-    let $XDG_CONFIG_HOME=$HOME .. '\vimfiles'
-    let $XDG_DATA_HOME=$HOME .. '\vimfiles'
-    let $XDG_STATE_HOME=$HOME .. '\vimfiles'
+    let $XDG_CONFIG_HOME=$HOME . '\vimfiles'
+    let $XDG_DATA_HOME=$HOME . '\vimfiles'
+    let $XDG_STATE_HOME=$HOME . '\vimfiles'
   endif
 
   " Some servers have issues with backup files, see #649.
@@ -3673,6 +3702,7 @@ function! s:setup() dict
 endfunction
 let coc_nvim.setup = funcref("s:setup")
 call s:addplugin(coc_nvim, "coc_nvim")
+endif
 
 " Remark: Install additional lsp modules with:
 " - MasonInstall pyright
@@ -3741,29 +3771,29 @@ let s:blink_cmp.url = 'Saghen/blink.cmp'
 function! s:setup() dict
   " local configuration:
 lua << EOF
-require("blink.cmp").setup({
-    -- 'default' for mappings similar to built-in completion
-    -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
-    -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
-    -- See the full "keymap" documentation for information on defining your own keymap.
-    keymap = { preset = 'enter' },
+  require("blink.cmp").setup({
+      -- 'default' for mappings similar to built-in completion
+      -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
+      -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+      -- See the full "keymap" documentation for information on defining your own keymap.
+      keymap = { preset = 'enter' },
 
-    appearance = {
-      -- Sets the fallback highlight groups to nvim-cmp's highlight groups
-      -- Useful for when your theme doesn't support blink.cmp
-      -- Will be removed in a future release
-      use_nvim_cmp_as_default = true,
-      -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-      -- Adjusts spacing to ensure icons are aligned
-      nerd_font_variant = 'mono'
-    },
+      appearance = {
+          -- Sets the fallback highlight groups to nvim-cmp's highlight groups
+          -- Useful for when your theme doesn't support blink.cmp
+          -- Will be removed in a future release
+          use_nvim_cmp_as_default = true,
+          -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+          -- Adjusts spacing to ensure icons are aligned
+          nerd_font_variant = 'mono'
+      },
 
-    -- Default list of enabled providers defined so that you can extend it
-    -- elsewhere in your config, without redefining it, due to `opts_extend`
-    sources = {
-      default = { 'lsp', 'path', 'snippets', 'buffer' },
-    },
-})
+      -- Default list of enabled providers defined so that you can extend it
+      -- elsewhere in your config, without redefining it, due to `opts_extend`
+      sources = {
+          default = { 'lsp', 'path', 'snippets', 'buffer' },
+      },
+  })
 EOF
 endfunction
 let s:blink_cmp.setup = funcref("s:setup")
@@ -3915,12 +3945,12 @@ endif
 " Format Web files (.html, .css, .ts, ...)
 let s:vim_prettier = {}
 let s:vim_prettier.url = 'prettier/vim-prettier'
-  let s:vim_prettier.options = {
-        \   'do': 'yarn add --dev --exact prettier',
-        \   'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json',
-        \     'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html', 'sql'
-        \   ]
-        \ }
+let s:vim_prettier.options = {
+      \   'do': 'yarn add --dev --exact prettier',
+      \   'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json',
+      \     'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html', 'sql'
+      \   ]
+      \ }
 function! s:setup() dict
   " Change the mapping to run from the default of <Leader>p
   nmap <Leader>fp <Plug>(Prettier)
@@ -4026,7 +4056,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:ale.setup = funcref('s:setup')
-call s:addplugin(s:ale, 'ale', 0)
+call s:addplugin(s:ale, 'ale', 1)
 
 
 let s:lightbulb = {}
@@ -4045,49 +4075,49 @@ let s:treesitter.url = 'nvim-treesitter/nvim-treesitter'
 let s:treesitter.options = {'do': ':TSUpdate'}
 function! s:setup() dict
 lua << EOF
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
+  require'nvim-treesitter.configs'.setup {
+      -- A list of parser names, or "all" (the five listed parsers should always be installed)
+      ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
 
-  -- Install parsers synchronously (only applied to `ensure_installed`)
-  sync_install = false,
+      -- Install parsers synchronously (only applied to `ensure_installed`)
+      sync_install = false,
 
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
+      -- Automatically install missing parsers when entering buffer
+      -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+      auto_install = true,
 
-  -- List of parsers to ignore installing (or "all")
-  ignore_install = { "javascript" },
+      -- List of parsers to ignore installing (or "all")
+      ignore_install = { "javascript" },
 
-  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+      ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+      -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
 
-  indent = {enable = true},
+      indent = {enable = true},
 
-  highlight = {
-    enable = true,
+      highlight = {
+          enable = true,
 
-    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-    -- the name of the parser)
-    -- list of language that will be disabled
-    disable = { "c", "rust" },
-    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-    disable = function(lang, buf)
-    local max_filesize = 100 * 1024 -- 100 KB
-    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-    if ok and stats and stats.size > max_filesize then
-    return true
-    end
-    end,
+          -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+          -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+          -- the name of the parser)
+          -- list of language that will be disabled
+          disable = { "c", "rust" },
+          -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+          disable = function(lang, buf)
+          local max_filesize = 100 * 1024 -- 100 KB
+          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          if ok and stats and stats.size > max_filesize then
+          return true
+          end
+          end,
 
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-}
+          -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+          -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+          -- Using this option may slow down your editor, and you may see some duplicate highlights.
+          -- Instead of true it can also be a list of languages
+          additional_vim_regex_highlighting = false,
+      },
+  }
 EOF
 endfunction
 let s:treesitter.setup = funcref("s:setup")
@@ -4132,6 +4162,14 @@ call s:addplugin(s:vim_syntastic, "vim_syntastic", 0)
 " }}}
 " }}}
 
+" 2.18. Testing
+" ------------- {{{
+
+let s:vader = {}
+let s:vader.url = 'junegunn/vader.vim'
+call s:addplugin(s:vader, "vader")
+" }}}
+
 " 2.19. Asynchronous Run
 " ---------------------- {{{
 
@@ -4146,9 +4184,6 @@ call s:addplugin('tpope/vim-dispatch', "vim_dispatch", 0)
 let s:cfilter = {}
 let s:cfilter.url = 'cfilter'
 let s:cfilter.manager = 'packadd'
-function! s:setup() dict
-endfunction
-let s:cfilter.setup = funcref("s:setup")
 call s:addplugin(s:cfilter, "cfilter", 0)
 
 
@@ -4253,9 +4288,11 @@ call s:addplugin(s:magma, "magma", 0)
 let s:neoterm = {}
 let s:neoterm.url = 'kassio/neoterm'
 function! s:setup() dict
-  nnoremap <C-q> :Ttoggle<CR>
-  inoremap <C-q> <Esc>:Ttoggle<CR>
-  tnoremap <C-q>  <C-\><C-n>:Ttoggle<CR>
+  if v:version >= 801
+    nnoremap <C-q> :Ttoggle<CR>
+    inoremap <C-q> <Esc>:Ttoggle<CR>
+    tnoremap <C-q>  <C-\><C-n>:Ttoggle<CR>
+  endif
 endfunction
 let s:neoterm.setup = funcref("s:setup")
 call s:addplugin(s:neoterm, "neoterm", 0)
@@ -4283,8 +4320,8 @@ function! s:setup() dict
   nmap <C-S-F10> <Plug>VimspectorGoToCurrentLine
 
   nnoremap <leader>vr <Cmd>VimspectorReset<CR>
-  nnoremap <leader>va <Cmd>call vimspector#ReadSessionFile(expand("%:h") .. "/debuggingsession.json")<CR>
-  nnoremap <leader>vz <Cmd>call vimspector#WriteSessionFile(expand("%:h") .. "/debuggingsession.json")<CR>
+  nnoremap <leader>va <Cmd>call vimspector#ReadSessionFile(expand("%:h") . "/debuggingsession.json")<CR>
+  nnoremap <leader>vz <Cmd>call vimspector#WriteSessionFile(expand("%:h") . "/debuggingsession.json")<CR>
 
   nnoremap <leader>vc <Cmd>call win_gotoid(g:vimspector_session_windows.code)<CR>
   nnoremap <leader>vw <Cmd>call win_gotoid(g:vimspector_session_windows.watches)<CR>
@@ -4308,8 +4345,8 @@ function! s:setup() dict
   if s:ispluginactive('which_key')
     let g:which_key_map.v = { 'name' : '+VimSpector' }
     let g:which_key_map.v.r = [':VimspectorReset', 'Reset']
-    let g:which_key_map.v.a = ['call vimspector#ReadSessionFile(expand("%:h") .. "/debuggingsession.json")', 'Load Session']
-    let g:which_key_map.v.z = [':call vimspector#WriteSessionFile(expand("%:h") .. "/debuggingsession.json")', 'Save Session']
+    let g:which_key_map.v.a = ['call vimspector#ReadSessionFile(expand("%:h") . "/debuggingsession.json")', 'Load Session']
+    let g:which_key_map.v.z = [':call vimspector#WriteSessionFile(expand("%:h") . "/debuggingsession.json")', 'Save Session']
     let g:which_key_map.v.c = [':call win_gotoid(g:vimspector_session_windows.code)', 'Code']
     let g:which_key_map.v.w = [':call win_gotoid(g:vimspector_session_windows.watches)', 'Watches']
     let g:which_key_map.v.v = [':call win_gotoid(g:vimspector_session_windows.variables)', 'Variables']
@@ -4395,7 +4432,9 @@ call s:addplugin(s:vim_synstax, "vim_synstax")
 " 2.23.2. Markdown
 " ---------------- {{{
 
-" Add vim wiki
+" VimWiki
+" ------- {{{
+
 " Remark:
 " - On some files it prevent to insert a carriage return
 let s:vimwiki = {}
@@ -4462,34 +4501,34 @@ let s:neorg.url = 'nvim-neorg/neorg'
 let s:neorg.dependencies = ['nvim-treesitter/nvim-treesitter']
 function! s:setup() dict
 lua << EOF
-require('neorg').setup {
-  load = {
-    -- Loads default behaviour
-    ["core.defaults"] = {},
+  require('neorg').setup {
+      load = {
+          -- Loads default behaviour
+          ["core.defaults"] = {},
 
-    -- Adds pretty icons to your documents
-    ["core.concealer"] = {},
+          -- Adds pretty icons to your documents
+          ["core.concealer"] = {},
 
-    -- Manages Neorg workspaces
-    ["core.dirman"] = {
-      config = {
-        workspaces = {
-            notes = "~/notes",
-            neorg = "~/neorg",
-        },
-        default_workspace = "notes"
-      },
-    },
+          -- Manages Neorg workspaces
+          ["core.dirman"] = {
+              config = {
+                  workspaces = {
+                      notes = "~/notes",
+                      neorg = "~/neorg",
+                  },
+                  default_workspace = "notes"
+              },
+          },
 
-    -- ["core.pivot"] = {},
+          -- ["core.pivot"] = {},
 
-    -- ["core.keybinds"] = {
-    --   config = {
-    --     default_keybinds = true,
-    --   }
-    -- }
+          -- ["core.keybinds"] = {
+              --   config = {
+                  --     default_keybinds = true,
+                  --   }
+              -- }
+      }
   }
-}
 EOF
 endfunction
 let s:neorg.setup = funcref("s:setup")
@@ -4509,9 +4548,11 @@ function! s:setup() dict
 endfunction
 let s:vim_markdown.setup = funcref("s:setup")
 call s:addplugin(s:vim_markdown, "vim_markdown")
+" }}}
 
+" Markdown Preview
+" ---------------- {{{
 
-" Markdown preview
 let s:markdown_preview = {}
 let s:markdown_preview.url = 'iamcco/markdown-preview.nvim'
 let s:markdown_preview.options = { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -4595,7 +4636,7 @@ function! s:setup() dict
 
   " use a custom markdown style must be absolute path
   " like '/Users/username/markdown.css' or expand('~/markdown.css')
-  let g:mkdp_markdown_css = GetVimDataFolder() .. 'markdownpreview/markdown.css'
+  let g:mkdp_markdown_css = GetVimDataFolder() . 'markdownpreview/markdown.css'
 
   " use a custom highlight style must absolute path
   " like '/Users/username/highlight.css' or expand('~/highlight.css')
@@ -4614,6 +4655,61 @@ function! s:setup() dict
 endfunction
 let s:markdown_preview.setup = funcref("s:setup")
 call s:addplugin(s:markdown_preview, "markdown_preview")
+" }}}
+
+" Grammalecte
+" ----------- {{{
+
+" Remark: currently not used
+
+let s:grammalecte = {}
+let s:grammalecte.url = 'dpelle/vim-Grammalecte'
+function! s:setup() dict
+  let g:grammalecte_python = "py.exe"
+  let g:grammalecte_cli_py = "C:\\Python36_x64\\Scripts\\grammalecte-cli.py"
+endfunction
+let s:grammalecte.setup = funcref("s:setup")
+call s:addplugin(s:grammalecte, "grammalecte", 0)
+" }}}
+" }}}
+
+" 2.23.3 RST
+" ---------- {{{
+
+" Riv
+" --- {{{
+
+let s:riv = {}
+let s:riv.url = 'gu-fan/riv.vim'
+" Prefer Markdown preview instead (vim-markdown, markdown-preview)
+function! s:setup() dict
+  " Bad solution because it 'hide' the scrolling shortcut
+  " let g:riv_global_leader = "<C-e>"
+
+  " Bad solution since it make \ clumsy to insert in insert mode
+  " let g:riv_global_leader = "<leader>e"
+
+  let g:riv_global_leader = ""
+endfunction
+let s:riv.setup = funcref("s:setup")
+call s:addplugin(s:riv, "riv", 0)
+" }}}
+
+" InstantRst
+" ---------- {{{
+
+" ReStructuredText preview
+" Prefer Markdown preview instead (vim-markdown, markdown-preview)
+let s:instant_rst = {}
+let s:instant_rst.url = 'gu-fan/InstantRst'
+function! s:setup() dict
+  " let g:instant_rst_slow = 1
+  let g:instant_rst_bind_scroll = 0
+  " let g:instant_rst_localhost_only = 1
+endfunction
+let s:instant_rst.setup = funcref("s:setup")
+call s:addplugin(s:instant_rst, "instant_rst", 0)
+" }}}
 " }}}
 
 " 2.23.3. CSV
@@ -4660,6 +4756,37 @@ function! s:setup() dict
 endfunction
 let s:rainbow_csv.setup = funcref("s:setup")
 call s:addplugin(s:rainbow_csv, "rainbow_csv", 0)
+" }}}
+
+" 2.23.5. Python Mode
+" ------------------ {{{
+
+let s:python_mode = {}
+let s:python_mode.url = 'python-mode/python-mode'
+let s:python_mode.options = { 'for': 'python', 'branch': 'develop'}
+function! s:setup()
+  let g:pymode_folding = 1
+
+  let g:pymode_breakpoint_bind = "<leader><s-b>"
+
+  let g:pymode_rope = 1
+  let g:pymode_rope_complete_on_dot = 0
+
+  let g:pymode_lint_ignore=[
+        \ "E501",
+        \ "E203",
+        \ "E265",
+        \ "E402",
+        \ "E128",
+        \ ]
+  " "E501", " Line too long
+  " "E203", " White-space before '?'
+  " "E265", " Block comment should start with '# '
+  " "E402", " Module level import not at top of file
+  " "E128", " Continuation line under-indented for visual indent
+endfunction
+let s:python_mode.setup = funcref("s:setup")
+call s:addplugin(s:python_mode, "python_mode", 0)
 " }}}
 
 " 2.23.4. Rust
@@ -4710,6 +4837,19 @@ call s:addplugin(s:vim_latex, "vim_latex", 0)
 " --------------- {{{
 
 call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
+" }}}
+" }}}
+
+" Select Plugins
+" -------------- {{{
+
+" Dark background
+set background=dark
+
+if !(has('gui_running') || has('unix'))
+  " Seems that termguicolors and nord colorscheme work well on Windows console
+  set termguicolors
+endif
 
 let s:colorscheme_desired = 'gruvbox'
 " let s:colorscheme_desired = 'nord'
@@ -4729,6 +4869,19 @@ let s:colorscheme_desired = 'gruvbox'
 " call s:activateplugins(['vim_gruvbox'])
 
 call s:installplugins()
+
+try
+  execute 'colorscheme' s:colorscheme_desired
+catch
+  colorscheme desert
+endtry
+" }}}
+
+" Plugin Settings
+" --------------- {{{
+
+" Which-Key Settings
+" ------------------ {{{
 
 if s:ispluginactive('which_key')
   let g:which_key_map =  {}
@@ -4826,91 +4979,8 @@ if s:ispluginactive('which_key')
   let g:which_key_map_z.p = [':normal! zp', 'Paste After No Trailer']
   let g:which_key_map_z.P = [':normal! zP', 'Paste Before No Trailer']
 endif
-
-if !(has('gui_running') || has('unix'))
-  " Seems that termguicolors and nord colorscheme work well on Windows console
-  set termguicolors
-endif
-
-try
-  execute 'colorscheme' s:colorscheme_desired
-catch
-  colorscheme desert
-endtry
-
 if s:ispluginactive('which_key')
   let g:which_key_map_g.x = ["<Plug>NetrwBrowseX", 'Open File']
-endif
-
-" Dark background
-set background=dark
-" }}}
-
-" Grammalected plugin settings:
-" ----------------------------- {{{
-
-" Remark: currently not used
-
-if 0
-  let g:grammalecte_python = "py.exe"
-  let g:grammalecte_cli_py = "C:\\Python36_x64\\Scripts\\grammalecte-cli.py"
-endif
-" }}}
-
-" vim-Riv plugin settings:
-" ------------------------ {{{
-
-" ReStructuredText preview
-" Prefer Markdown preview instead (vim-markdown, markdown-preview)
-
-if 0
-  " Bad solution because it 'hide' the scrolling shortcut
-  " let g:riv_global_leader = "<C-e>"
-
-  " Bad solution since it make \ clumsy to insert in insert mode
-  " let g:riv_global_leader = "<leader>e"
-
-  let g:riv_global_leader = ""
-endif
-" }}}
-
-" InstantRst plugin settings:
-" --------------------------- {{{
-
-" ReStructuredText preview
-" Prefer Markdown preview instead (vim-markdown, markdown-preview)
-
-if 0
-  " let g:instant_rst_slow = 1
-  let g:instant_rst_bind_scroll = 0
-  " let g:instant_rst_localhost_only = 1
-endif
-" }}}
-
-" python-mode plugin settings:
-" ---------------------------- {{{
-
-" Remark: currently not used
-if 0
-  let g:pymode_folding = 1
-
-  let g:pymode_breakpoint_bind = "<leader><s-b>"
-
-  let g:pymode_rope = 1
-  let g:pymode_rope_complete_on_dot = 0
-
-  let g:pymode_lint_ignore=[
-        \ "E501",
-        \ "E203",
-        \ "E265",
-        \ "E402",
-        \ "E128",
-        \ ]
-  " "E501", " Line too long
-  " "E203", " White-space before '?'
-  " "E265", " Block comment should start with '# '
-  " "E402", " Module level import not at top of file
-  " "E128", " Continuation line under-indented for visual indent
 endif
 " }}}
 " }}}
@@ -4970,7 +5040,7 @@ endfunction
 " 3.2. Sessions
 " ------------- {{{
 
-let g:sessions_dir = GetVimDataFolder() .. 'session'
+let g:sessions_dir = GetVimDataFolder() . 'session'
 
 " Sessions settings:
 " ------------------
@@ -4988,11 +5058,11 @@ if s:ispluginactive('session')
   " Make sure the commands: SSave and SLoad are defined
   if s:ispluginactive('vim_startify')
   elseif s:ispluginactive('vim_obsession') || s:ispluginactive('vim_prosession')
-    command! -nargs=1 SSave exec 'Obsession ' .. g:sessions_dir .. '/<args>'
-    command! -nargs=1 SLoad exec 'so' .. g:sessions_dir .. '/<args>'
+    command! -nargs=1 SSave exec 'Obsession ' . g:sessions_dir . '/<args>'
+    command! -nargs=1 SLoad exec 'so' . g:sessions_dir . '/<args>'
   else
-    command! -nargs=1 SSave exec 'mks! ' .. g:sessions_dir .. '/<args>'
-    command! -nargs=1 SLoad exec 'so ' .. g:sessions_dir .. '/<args>'
+    command! -nargs=1 SSave exec 'mks! ' . g:sessions_dir . '/<args>'
+    command! -nargs=1 SLoad exec 'so ' . g:sessions_dir . '/<args>'
   endif
 endif
 
@@ -5046,11 +5116,8 @@ if s:ispluginactive('reload_session_at_start')
 endif
 " }}}
 
-" 3.3. Snippet
-" ------------- {{{
-
-" Emmet plugin settings:
-" ----------------------
+" 3.3. Snippet Trigger
+" -------------------- {{{
 
 function! IsEmmet(filetype)
   echom a:filetype
@@ -5076,7 +5143,7 @@ endif
 " }}}
 
 " Restore cursor position
-" -----------------------
+" ----------------------- {{{
 
 " Make sure the position of the cursor is restored
 " when you switch between buffers
@@ -5084,32 +5151,35 @@ endif
 " - It is incompatible with tagbar jump to tag
 " - The default.vim comes with a better solution for the purpose
 if !s:ispluginactive('tagbar')
-    augroup saveview
-        au!
-        au BufLeave * let b:winview = winsaveview()
-        au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
-    augroup END
+  augroup saveview
+    au!
+    au BufLeave * let b:winview = winsaveview()
+    au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
+  augroup END
 endif
+" }}}
 
 
 " Create the file under the cursor if not existing:
-" -------------------------------------------------
+" ------------------------------------------------- {{{
 
 :noremap <leader>gf :e %:h/<cfile><CR>
 if s:ispluginactive('which_key')
-    let g:which_key_map.g = ['', 'which_key_ignore']
-    let g:which_key_map.gf =  [':e %:h/<cfile>', 'Go to New File']
+  let g:which_key_map.g = ['', 'which_key_ignore']
+  let g:which_key_map.gf =  [':e %:h/<cfile>', 'Go to New File']
 endif
+" }}}
 
 
 " Search in the direction of the document:
-" ----------------------------------------
+" ---------------------------------------- {{{
 
 nnoremap <expr> n (v:searchforward ? 'n' : 'N')
 nnoremap <expr> N (v:searchforward ? 'N' : 'n')
+" }}}
 
 " Move divider logic instead of adapting window size logic:
-" ---------------------------------------------------------
+" --------------------------------------------------------- {{{
 
 " function! s:right_ids(layout)
 "   let type = a:layout[0]
@@ -5177,59 +5247,59 @@ nnoremap <expr> N (v:searchforward ? 'N' : 'n')
 " nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout()), win_getid()) >= 0 ? "<C-w>-" : "<C-w>+"
 
 function! s:right_ids(layout, right)
-    let type = a:layout[0]
-    if type ==# 'leaf'
-        if a:right
-            return [a:layout[1]]
-        else
-            return []
-        endif
-    elseif type ==# 'col'
-        let ret = []
-        for sublayout in a:layout[1]
-            let ret = ret + s:right_ids(sublayout, a:right)
-        endfor
-        return ret
-    elseif type ==# 'row'
-        let ret = []
-        for index in range(len(a:layout[1]))
-            let sublayout = a:layout[1][index]
-            let right = 0
-            if index == len(a:layout[1]) - 1
-                let right = 1
-            endif
-            let ret = ret + s:right_ids(sublayout, right)
-        endfor
-        return ret
+  let type = a:layout[0]
+  if type ==# 'leaf'
+    if a:right
+      return [a:layout[1]]
+    else
+      return []
     endif
+  elseif type ==# 'col'
+    let ret = []
+    for sublayout in a:layout[1]
+      let ret = ret + s:right_ids(sublayout, a:right)
+    endfor
+    return ret
+  elseif type ==# 'row'
+    let ret = []
+    for index in range(len(a:layout[1]))
+      let sublayout = a:layout[1][index]
+      let right = 0
+      if index == len(a:layout[1]) - 1
+        let right = 1
+      endif
+      let ret = ret + s:right_ids(sublayout, right)
+    endfor
+    return ret
+  endif
 endfunction
 
 function! s:bottom_ids(layout, bottom)
-    let type = a:layout[0]
-    if type ==# 'leaf'
-        if a:bottom
-            return [a:layout[1]]
-        else
-            return []
-        endif
-    elseif type ==# 'row'
-        let ret = []
-        for sublayout in a:layout[1]
-            let ret = ret + s:bottom_ids(sublayout, a:bottom)
-        endfor
-        return ret
-    elseif type ==# 'col'
-        let ret = []
-        for index in range(len(a:layout[1]))
-            let sublayout = a:layout[1][index]
-            let bottom = 0
-            if index == len(a:layout[1]) - 1
-                let bottom = 1
-            endif
-            let ret = ret + s:bottom_ids(sublayout, bottom)
-        endfor
-        return ret
+  let type = a:layout[0]
+  if type ==# 'leaf'
+    if a:bottom
+      return [a:layout[1]]
+    else
+      return []
     endif
+  elseif type ==# 'row'
+    let ret = []
+    for sublayout in a:layout[1]
+      let ret = ret + s:bottom_ids(sublayout, a:bottom)
+    endfor
+    return ret
+  elseif type ==# 'col'
+    let ret = []
+    for index in range(len(a:layout[1]))
+      let sublayout = a:layout[1][index]
+      let bottom = 0
+      if index == len(a:layout[1]) - 1
+        let bottom = 1
+      endif
+      let ret = ret + s:bottom_ids(sublayout, bottom)
+    endfor
+    return ret
+  endif
 endfunction
 
 nnoremap <expr> <C-w>< index(<SID>right_ids(winlayout(), 0), win_getid()) >= 0 ? "<C-w>>" : "<C-w><lt>"
@@ -5241,759 +5311,788 @@ nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 
 " nnoremap <expr><C-W>> printf("\<cmd>vert %dresize%+d\r", winnr('h'), v:count1)
 " nnoremap <expr><C-W>- printf("\<cmd>%dresize%+d\r", winnr('k'), -v:count1)
 " nnoremap <expr><C-W>+ printf("\<cmd>%dresize%+d\r", winnr('k'), v:count1)
+" }}}
 
 " Which Key plugin settings:
 " --------------------------
 
 if s:ispluginactive('which_key')
-    set timeoutlen=1000
-    let g:which_key_timeout=300
+  set timeoutlen=1000
+  let g:which_key_timeout=300
 
-    " let g:which_key_ignore_outside_mappings = 1
+  " let g:which_key_ignore_outside_mappings = 1
 
-    autocmd! User vim-which-key
-    nnoremap <silent> <leader> :<C-u>WhichKey '<leader>'<CR>
-    autocmd User vim-which-key call which_key#register(g:mapleader, 'g:which_key_map')
+  autocmd! User vim-which-key
+  nnoremap <silent> <leader> :<C-u>WhichKey '<leader>'<CR>
+  autocmd User vim-which-key call which_key#register(g:mapleader, 'g:which_key_map')
 
-    nnoremap <silent> g :<C-u>WhichKey 'g'<CR>
-    autocmd User vim-which-key call which_key#register('g', 'g:which_key_map_g')
+  nnoremap <silent> g :<C-u>WhichKey 'g'<CR>
+  autocmd User vim-which-key call which_key#register('g', 'g:which_key_map_g')
 
-    " :help *z*
-    nnoremap <silent> z :<C-u>WhichKey 'z'<CR>
-    autocmd User vim-which-key call which_key#register('z', 'g:which_key_map_z')
+  " :help *z*
+  nnoremap <silent> z :<C-u>WhichKey 'z'<CR>
+  autocmd User vim-which-key call which_key#register('z', 'g:which_key_map_z')
 endif
 
-if 1
-  " inoremap jk <Esc>
-  if has('nvim')
-    " On Belgian keyboard make <C-[> be <Esc>
-    inoremap <C-¨> <Esc>
-    cnoremap <C-¨> <Esc>
+" inoremap jk <Esc>
+if has('nvim')
+  " On Belgian keyboard make <C-[> be <Esc>
+  inoremap <C-¨> <Esc>
+  cnoremap <C-¨> <Esc>
+endif
+
+" On Belgian keyboard <C-^> is nearly impossible to get
+nnoremap <C-§> <C-^>
+
+" Faster scrolling (by 3 lines)
+" nnoremap <C-e> 3<C-e>
+" nnoremap <C-y> 3<C-y>
+
+" Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column
+" It make the selection in block mode more intuitive.
+" It is a Neovim default
+set nostartofline
+
+" Align the $ motion in Normal and Visual mode
+" Don't make the mapping for Visual blockwise since $ has a very special
+" meaning in that context
+vnoremap <expr> $ (mode() ==# 'v') ? '$h' : '$'
+
+" Define config_files to fasten the use of the :vim command
+abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
+
+" Ignore compiled files
+set wildignore=*.o,*.obj,*~,*.pyc,*.pyd
+if has("win16") || has("win32")
+  set wildignore+=.git\*,.hg\*,.svn\*
+else
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
+set wildignore+=Tests/**
+
+" Add a Diff command to compare with the disk buffer
+" -------------------------------------------------- {{{
+
+function! DiffOrig(spec)
+  let cft=&filetype
+  vertical new
+  let &filetype=cft
+  setlocal bufhidden=wipe buftype=nofile nobuflisted noswapfile
+  let cmd = "++edit #"
+  if len(a:spec)
+    let cmd = "!git -C " . shellescape(fnamemodify(finddir('.git', '.;'), ':p:h:h')) . " show " . a:spec . ":#"
   endif
+  execute "read " . cmd
+  silent 0d_
+  diffthis
+  wincmd p
+  diffthis
+endfunction
 
-  " On Belgian keyboard <C-^> is nearly impossible to get
-  nnoremap <C-§> <C-^>
+command! -nargs=? DiffOrig call DiffOrig(<q-args>)
+" }}}
 
-  " Faster scrolling (by 3 lines)
-  " nnoremap <C-e> 3<C-e>
-  " nnoremap <C-y> 3<C-y>
+" Correct Commands
+" ---------------- {{{
 
-  " Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column
-  " It make the selection in block mode more intuitive.
-  " It is a Neovim default
-  set nostartofline
+" Define the Help command to display help in a vertical split:
+command! -nargs=? Help vert help <args>
 
-  " Align the $ motion in Normal and Visual mode
-  " Don't make the mapping for Visual blockwise since $ has a very special
-  " meaning in that context
-  vnoremap <expr> $ (mode() ==# 'v') ? '$h' : '$'
-
-  " Define config_files to fasten the use of the :vim command
-  abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
-
-  " Ignore compiled files
-  set wildignore=*.o,*.obj,*~,*.pyc,*.pyd
-  if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
-  else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-  endif
-  set wildignore+=Tests/**
-
-  " Add a Diff command to compare with the disk buffer
-  function! DiffOrig(spec)
-    let cft=&filetype
-    vertical new
-    let &filetype=cft
-    setlocal bufhidden=wipe buftype=nofile nobuflisted noswapfile
-    let cmd = "++edit #"
-    if len(a:spec)
-      let cmd = "!git -C " .. shellescape(fnamemodify(finddir('.git', '.;'), ':p:h:h')) .. " show " .. a:spec .. ":#"
-    endif
-    execute "read " .. cmd
-    silent 0d_
-    diffthis
-    wincmd p
-    diffthis
-  endfunction
-
-  command! -nargs=? DiffOrig call DiffOrig(<q-args>)
-
-  " Define the Help command to display help in a vertical split:
-  command! -nargs=? Help vert help <args>
-
-  function! CorrectCommand()
-    if getcmdtype() != ':'
-      return "\<CR>"
-    endif
-
-    let l:substitutions = []
-    call add(l:substitutions, ['\v^(h%[elp])>(.*)', 'Help\2'])
-    if s:ispluginactive('vim_bbye')
-      call add(l:substitutions, ['\v^(bd>)(.*)', 'Bd\2'])
-    endif
-    let g:substitutions = l:substitutions
-
-    let l:command = getcmdline()
-    for l:substitution in l:substitutions
-      if matchstr(l:command, l:substitution[0]) != ''
-        let l:command = substitute(l:command, l:substitution[0], l:substitution[1], '')
-        return "\<End>\<C-u>" . l:command . "\<CR>"
-      endif
-    endfor
-
+function! CorrectCommand()
+  if getcmdtype() != ':'
     return "\<CR>"
-  endfunction
-
-  cnoremap <expr> <CR> CorrectCommand()
-
-  " Add two command to increase and decrease the font size:
-  function! ChangeFontSize()
-    " let g:columns=&columns
-    " let g:lines=&lines
-    if !exists("g:columns")
-      let g:columns = &columns
-    endif
-    if !exists("g:lines")
-      let g:lines = &lines
-    endif
-
-    let old_size = substitute(v:option_old, '^.*:h\(\d\+\).*$', '\=submatch(1)', '')
-    let new_size = substitute(v:option_new, '^.*:h\(\d\+\).*$', '\=submatch(1)', '')
-
-    let width_factor = str2float(new_size) / str2float(old_size)
-    " echom "width_factor: " . width_factor
-
-    let height_factor = str2float(new_size) / str2float(old_size)
-    let size2pixel = 36.0/20.0
-    " Theoretical approximation:
-    " (line height = 1.5 font height, 1pt = 1/72 inch, 1 px = 1/96 inch)
-    let size2pixel = 1.5 * 16.0/12.0
-    " let height_factor = str2float(new_size * size2pixel + &linespace) / str2float(old_size * size2pixel + &linespace)
-    " echom "height_factor: " . height_factor
-
-    " echom "columns: " . g:columns
-    let &columns = float2nr(round(g:columns / width_factor))
-    let g:columns=&columns
-    " echom "columns: " . &columns
-
-    " echom "lines: " . g:lines
-    " echom "old_size: " . &lines * (old_size * size2pixel + &linespace)
-    let &lines = float2nr(round(g:lines / height_factor))
-    " echom "new_size: " . &lines * (new_size * size2pixel + &linespace)
-    let g:lines=&lines
-    " echom "lines: " . &lines
-  endfunction
-
-  function! GetScreenSize(timer)
-    let g:columns=&columns
-    let g:lines=&lines
-  endfunction
-
-  " autocmd VimEnter * let g:columns=&columns|let g:lines=&lines|echom "Lines(S): " . &lines
-  " autocmd VimResized * let g:columns=&columns|let g:lines=&lines|echom "Lines(R): " . &lines
-  autocmd VimEnter * call timer_start(200, 'GetScreenSize', {'repeat' : 1})
-  autocmd VimResized * call timer_start(200, 'GetScreenSize', {'repeat' : 1})
-  autocmd OptionSet guifont call ChangeFontSize()
-
-  command! -count=1 FontIncrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)+<count>', '')
-  command! -count=1 FontDecrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)-<count>', '')
-  command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '<args>', '')
-
-  " Maximize the current window without deleting the other windows:
-  if !s:ispluginactive('vim_maximizer')
-    " nnoremap <C-w>m <cmd>500wincmd ><bar>500wincmd +<cr>
   endif
 
-  " Leave terminal with Ctrl-q
+  let l:substitutions = []
+  call add(l:substitutions, ['\v^(h%[elp])>(.*)', 'Help\2'])
+  if s:ispluginactive('vim_bbye')
+    call add(l:substitutions, ['\v^(bd>)(.*)', 'Bd\2'])
+  endif
+  let g:substitutions = l:substitutions
+
+  let l:command = getcmdline()
+  for l:substitution in l:substitutions
+    if matchstr(l:command, l:substitution[0]) != ''
+      let l:command = substitute(l:command, l:substitution[0], l:substitution[1], '')
+      return "\<End>\<C-u>" . l:command . "\<CR>"
+    endif
+  endfor
+
+  return "\<CR>"
+endfunction
+
+cnoremap <expr> <CR> CorrectCommand()
+" }}}
+
+" Change Font Size
+" ---------------- {{{
+
+function! ChangeFontSize()
+  " let g:columns=&columns
+  " let g:lines=&lines
+  if !exists("g:columns")
+    let g:columns = &columns
+  endif
+  if !exists("g:lines")
+    let g:lines = &lines
+  endif
+
+  let old_size = substitute(v:option_old, '^.*:h\(\d\+\).*$', '\=submatch(1)', '')
+  let new_size = substitute(v:option_new, '^.*:h\(\d\+\).*$', '\=submatch(1)', '')
+
+  let width_factor = str2float(new_size) / str2float(old_size)
+  " echom "width_factor: " . width_factor
+
+  let height_factor = str2float(new_size) / str2float(old_size)
+  let size2pixel = 36.0/20.0
+  " Theoretical approximation:
+  " (line height = 1.5 font height, 1pt = 1/72 inch, 1 px = 1/96 inch)
+  let size2pixel = 1.5 * 16.0/12.0
+  " let height_factor = str2float(new_size * size2pixel + &linespace) / str2float(old_size * size2pixel + &linespace)
+  " echom "height_factor: " . height_factor
+
+  " echom "columns: " . g:columns
+  let &columns = float2nr(round(g:columns / width_factor))
+  let g:columns=&columns
+  " echom "columns: " . &columns
+
+  " echom "lines: " . g:lines
+  " echom "old_size: " . &lines * (old_size * size2pixel + &linespace)
+  let &lines = float2nr(round(g:lines / height_factor))
+  " echom "new_size: " . &lines * (new_size * size2pixel + &linespace)
+  let g:lines=&lines
+  " echom "lines: " . &lines
+endfunction
+
+function! GetScreenSize(timer)
+  let g:columns=&columns
+  let g:lines=&lines
+endfunction
+
+" autocmd VimEnter * let g:columns=&columns|let g:lines=&lines|echom "Lines(S): " . &lines
+" autocmd VimResized * let g:columns=&columns|let g:lines=&lines|echom "Lines(R): " . &lines
+autocmd VimEnter * call timer_start(200, 'GetScreenSize', {'repeat' : 1})
+autocmd VimResized * call timer_start(200, 'GetScreenSize', {'repeat' : 1})
+autocmd OptionSet guifont call ChangeFontSize()
+
+command! -count=1 FontIncrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)+<count>', '')
+command! -count=1 FontDecrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '\=submatch(1)-<count>', '')
+command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '<args>', '')
+" }}}
+
+" Maximize the current window without deleting the other windows:
+if !s:ispluginactive('vim_maximizer')
+  " nnoremap <C-w>m <cmd>500wincmd ><bar>500wincmd +<cr>
+endif
+
+" Terminal
+" -------- {{{
+
+" Leave terminal with Ctrl-q
+if v:version >= 801
   tnoremap <C-q>  <C-\><C-n>
 
-  " Make Neovim supporting the Ctrl-w mapping like Vim does
-  if has('nvim')
-    " tnoremap <C-w> <C-w>
-    tnoremap <C-w><C-w> <cmd>wincmd w<CR>
-    tnoremap <C-w>w <cmd>wincmd w<CR>
-    tnoremap <C-w>h <cmd>wincmd h<CR>
-    tnoremap <C-w>l <cmd>wincmd l<CR>
-    tnoremap <C-w>j <cmd>wincmd j<CR>
-    tnoremap <C-w>k <cmd>wincmd k<CR>
-    tnoremap <C-w>p <cmd>wincmd p<CR>
+" Make Neovim supporting the Ctrl-w mapping like Vim does
+if has('nvim')
+  " tnoremap <C-w> <C-w>
+  tnoremap <C-w><C-w> <cmd>wincmd w<CR>
+  tnoremap <C-w>w <cmd>wincmd w<CR>
+  tnoremap <C-w>h <cmd>wincmd h<CR>
+  tnoremap <C-w>l <cmd>wincmd l<CR>
+  tnoremap <C-w>j <cmd>wincmd j<CR>
+  tnoremap <C-w>k <cmd>wincmd k<CR>
+  tnoremap <C-w>p <cmd>wincmd p<CR>
+endif
+
+" Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
+tnoremap <expr> <C-v> getreg('*')
+
+" make <kbd>Ctrl-Enter</kbd> passed correctly into the terminal
+tnoremap <expr> <C-Cr> SendToTerm("\<Esc>\<Cr>")
+endif
+
+function! SendToTerm(what)
+  call term_sendkeys('', a:what)
+  return ''
+endfunc
+
+function! SwitchToTerminal(...) abort
+  let l:bufindex = 0
+  if a:0 == 0
+    " If no name is given use the working directory:
+    " let l:name = fnamemodify(getcwd(), ':p')
+    " If no name is given use the current file directory:
+    let l:name = fnamemodify(expand('%:p:h'), ':p')
+  else
+    if a:1 =~ '^\d\+'
+      let l:bufindex = str2nr(a:1)
+      let l:name = ''
+    else
+      let l:name = expand(a:1)
+      if !isdirectory(l:name)
+        " If the name given is the name of a file
+        " use the parent folder
+        " End with '/'
+        let l:name = fnamemodify(fnamemodify(l:name, ':p:h'), ':p')
+      else
+        " End with '/'
+        let l:name = fnamemodify(l:name, ':p')
+      endif
+    endif
   endif
 
-  " Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
-  tnoremap <expr> <C-v> getreg('*')
+  let win_infos = filter(getwininfo(), "v:val.terminal")
+  if len(win_infos)
+    let winnr = win_infos[-1].winnr
 
-  " make <kbd>Ctrl-Enter</kbd> passed correctly into the terminal
-  tnoremap <expr> <C-Cr> SendToTerm("\<Esc>\<Cr>")
-
-  function! SendToTerm(what)
-    call term_sendkeys('', a:what)
-    return ''
-  endfunc
-
-  function! SwitchToTerminal(...) abort
-    let l:bufindex = 0
-    if a:0 == 0
-      " If no name is given use the working directory:
-      " let l:name = fnamemodify(getcwd(), ':p')
-      " If no name is given use the current file directory:
-      let l:name = fnamemodify(expand('%:p:h'), ':p')
-    else
-      if a:1 =~ '^\d\+'
-        let l:bufindex = str2nr(a:1)
-        let l:name = ''
-      else
-        let l:name = expand(a:1)
-        if !isdirectory(l:name)
-          " If the name given is the name of a file
-          " use the parent folder
-          " End with '/'
-          let l:name = fnamemodify(fnamemodify(l:name, ':p:h'), ':p')
-        else
-          " End with '/'
-          let l:name = fnamemodify(l:name, ':p')
-        endif
-      endif
-    endif
-
-    let win_infos = filter(getwininfo(), "v:val.terminal")
-    if len(win_infos)
-      let winnr = win_infos[-1].winnr
-
-      " If a terminal window exist with the right name/index switch to it:
-      if l:bufindex == 0
-        let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
-      else
-        let win_info = filter(win_infos, "v:val.bufnr ==" . l:bufindex)
-      endif
-      if len(win_info) > 0
-        let winnr = win_info[0].winnr
-        execute winnr . 'wincmd w'
-        return
-      endif
-
-      " Otherwise if a terminal window exist reuse it:
-      execute winnr . 'wincmd w'
-    else
-      " If no terminal window create a vertical window at the right side:
-      wincmd s
-      wincmd L
-      100wincmd |
-      let winnr = winnr()
-    endif
-
-    " Search among existing terminal buffer:
+    " If a terminal window exist with the right name/index switch to it:
     if l:bufindex == 0
-      let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+      let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
     else
-      let buf_infos = filter(getbufinfo(), "v:val.bufnr ==" . l:bufindex)
+      let win_info = filter(win_infos, "v:val.bufnr ==" . l:bufindex)
+    endif
+    if len(win_info) > 0
+      let winnr = win_info[0].winnr
+      execute winnr . 'wincmd w'
+      return
+    endif
+
+    " Otherwise if a terminal window exist reuse it:
+    execute winnr . 'wincmd w'
+  else
+    " If no terminal window create a vertical window at the right side:
+    wincmd s
+    wincmd L
+    100wincmd |
+    let winnr = winnr()
+  endif
+
+  " Search among existing terminal buffer:
+  if l:bufindex == 0
+    let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+  else
+    let buf_infos = filter(getbufinfo(), "v:val.bufnr ==" . l:bufindex)
+  endif
+  if len(buf_infos)
+    if l:bufindex == 0
+      let buf_infos = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
     endif
     if len(buf_infos)
-      if l:bufindex == 0
-        let buf_infos = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
-      endif
-      if len(buf_infos)
-        " If a hidden terminal with the right name exist use it:
-        execute 'buffer ' . buf_infos[0].bufnr
-        return
-      endif
-    endif
-
-    if l:bufindex != 0
-      echom 'Fail to find buffer:' . l:bufindex
+      " If a hidden terminal with the right name exist use it:
+      execute 'buffer ' . buf_infos[0].bufnr
       return
     endif
+  endif
 
-    let l:workingdir = getcwd()
-    if l:name != l:workingdir
-      " Change the working directory temporarily
-      " In order to create the terminal with the correct working directory
-      execute 'cd' l:name
+  if l:bufindex != 0
+    echom 'Fail to find buffer:' . l:bufindex
+    return
+  endif
 
-      let l:restore_rooter = 0
-      if exists('g:rooter_manual_only') && !g:rooter_manual_only
-        " Disable vim-rooter temporarily
-        RooterToggle
-        let l:restore_rooter = 1
+  let l:workingdir = getcwd()
+  if l:name != l:workingdir
+    " Change the working directory temporarily
+    " In order to create the terminal with the correct working directory
+    execute 'cd' l:name
+
+    let l:restore_rooter = 0
+    if exists('g:rooter_manual_only') && !g:rooter_manual_only
+      " Disable vim-rooter temporarily
+      RooterToggle
+      let l:restore_rooter = 1
+    endif
+  endif
+
+  " Load a new terminal into the window:
+  if has('nvim')
+    " The redirection to >nul hide the output of the console
+    terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject
+    " Switch to console mode:
+    norma a
+  else
+    " 96 = 100 - &numberwidth
+    " &signcolumn == yes -> 2 columns
+    " &numberwidth -> max(&numberwidth, ceil(log(line('$'))/log(10)) + 1)
+    terminal ++curwin ++cols=96 ++close ++kill=kill cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
+  endif
+
+  setlocal nobuflisted
+  let b:terminal_name = l:name
+  " Set a name for the terminal buffer:
+  execute 'file' 'Term ' . bufnr()
+
+  if l:name != l:workingdir
+    execute 'cd' l:workingdir
+    if l:restore_rooter
+      RooterToggle
+    endif
+  endif
+endfunction
+
+function! TermList()
+  let ret = []
+  let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
+
+  let cwd = getcwd()
+  let cwd = fnamemodify(cwd, ':p')
+
+  for buf_info in buf_infos
+    if !has_key(buf_info.variables, 'terminal_name')
+      continue
+    endif
+    let terminal_name  = buf_info.variables.terminal_name
+    if terminal_name[0:len(cwd)-1] ==# cwd
+      let terminal_name = terminal_name[len(cwd):]
+      if terminal_name == ''
+        let terminal_name = '.'
       endif
     endif
+    call add(ret, [buf_info.bufnr, terminal_name])
+  endfor
+  return ret
+endfunction
 
-    " Load a new terminal into the window:
-    if has('nvim')
-      " The redirection to >nul hide the output of the console
-      terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject
-      " Switch to console mode:
-      norma a
-    else
-      " 96 = 100 - &numberwidth
-      " &signcolumn == yes -> 2 columns
-      " &numberwidth -> max(&numberwidth, ceil(log(line('$'))/log(10)) + 1)
-      terminal ++curwin ++cols=96 ++close ++kill=kill cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
-    endif
+function! CompleteTerm(arg_lead, cmd_line, position)
+  let ret = map(TermList(), {_, val -> val[1]})
+  return join(ret, "\n")
+endfunction
 
-    setlocal nobuflisted
-    let b:terminal_name = l:name
-    " Set a name for the terminal buffer:
-    execute 'file' 'Term ' . bufnr()
+" command! -nargs=? Term call SwitchToTerminal(<f-args>)
+command! -complete=custom,CompleteTerm -nargs=? Term call SwitchToTerminal(<f-args>)
 
-    if l:name != l:workingdir
-      execute 'cd' l:workingdir
-      if l:restore_rooter
-        RooterToggle
-      endif
-    endif
-  endfunction
+command TermList echo join(map(TermList(), {_, val -> printf("%3d %s", val[0], val[1])}), "\n")
 
-  function! TermList()
-    let ret = []
-    let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
-
-    let cwd = getcwd()
-    let cwd = fnamemodify(cwd, ':p')
-
-    for buf_info in buf_infos
-      if !has_key(buf_info.variables, 'terminal_name')
-        continue
-      endif
-      let terminal_name  = buf_info.variables.terminal_name
-      if terminal_name[0:len(cwd)-1] ==# cwd
-        let terminal_name = terminal_name[len(cwd):]
-        if terminal_name == ''
-          let terminal_name = '.'
-        endif
-      endif
-      call add(ret, [buf_info.bufnr, terminal_name])
+function! ToggleTerm(name)
+  let win_infos = filter(getwininfo(), "v:val.terminal")
+  if len(win_infos)
+    " If a terminal window exist go to the terminal:
+    for i in range(len(win_infos)-1, 0, -1)
+      execute win_infos[i].winnr . 'wincmd c'
     endfor
-    return ret
-  endfunction
+    return
+  else
+    call SwitchToTerminal(a:name)
+  endif
+endfunction
 
-  function! CompleteTerm(arg_lead, cmd_line, position)
-    let ret = map(TermList(), {_, val -> val[1]})
-    return join(ret, "\n")
-  endfunction
+nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p:h'))<CR>
+if s:ispluginactive('which_key')
+  let g:which_key_map.t.b = [":call ToggleTerm(expand('%:p:h'))", 'Toggle Term']
+endif
+" }}}
 
-  " command! -nargs=? Term call SwitchToTerminal(<f-args>)
-  command! -complete=custom,CompleteTerm -nargs=? Term call SwitchToTerminal(<f-args>)
+" Make the \z trigger the spell check context menu (floating window)
+nnoremap <Leader>z ea<C-x>s
+if s:ispluginactive('which_key')
+  let g:which_key_map.z = [':normal! eas', 'Spelling Suggestion']
+endif
 
-  command TermList echo join(map(TermList(), {_, val -> printf("%3d %s", val[0], val[1])}), "\n")
+" nnoremap <leader>z :call search('\w\>', 'c')<CR>a<C-x>s
+" Make <CR> validate the spell entry selected
+" inoremap <expr> <CR> pumvisible() ? "\<C-y><Esc>" : "\<CR>"
 
-  function! ToggleTerm(name)
-    let win_infos = filter(getwininfo(), "v:val.terminal")
-    if len(win_infos)
-      " If a terminal window exist go to the terminal:
-      for i in range(len(win_infos)-1, 0, -1)
-        execute win_infos[i].winnr . 'wincmd c'
-      endfor
+" Here are some trick from Vim-Galore
+
+" Make Ctrl-n and Ctrl-p on the command line work like Down and Up
+" Searching for a next/previous command in the history instead of going for the next/previous command
+cnoremap <expr> <C-n> wildmenumode() ? "\<C-n>" : "\<down>"
+cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
+
+" Make <leader>l disable highlighting temporarily (:nohlsearch)
+" A kind of improved Ctrl-l
+nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
+if s:ispluginactive('which_key')
+  let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
+endif
+
+" Select the text that has just been pasted
+" (inspired from gv that select the text that has been just selected)
+nnoremap gp `[v`]
+if s:ispluginactive('which_key')
+  let g:which_key_map_g.p = ['`[v`]', 'Select Pasted']
+endif
+
+" set lazyredraw
+
+" Keep selection when indenting
+" xnoremap <  <gv
+" xnoremap >  >gv
+
+" Make sure the QuickFix and LocationList open at the bottom of the screen
+" command! Cw bot cw
+" command! Copen bot copen
+
+" Active Window Focus
+" ------------------- {{{
+
+" Adapt the color of the inactive window:
+if v:version >= 801
+if g:colors_name == 'nord'
+  hi DimNormal guibg=#1b212c
+  hi DimConsole guifg=#d8dee9 guibg=#1b212c
+elseif g:colors_name == 'gruvbox'
+  hi DimNormal guibg=#1b1b1b
+  hi DimConsole guifg=#D5C4A1 guibg=#1b1b1b
+endif
+" hi DimNormal guibg=#3b4252
+
+if !has('nvim')
+  function! DimWindow()
+    if getwinvar(winnr(), '&diff')==1
       return
+    endif
+    if getwininfo(win_getid())[0].terminal==1
+      setlocal wincolor=DimConsole
     else
-      call SwitchToTerminal(a:name)
+      setlocal wincolor=DimNormal
     endif
   endfunction
 
-  nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p:h'))<CR>
-  if s:ispluginactive('which_key')
-    let g:which_key_map.t.b = [":call ToggleTerm(expand('%:p:h'))", 'Toggle Term']
-  endif
-
-  " Make the \z trigger the spell check context menu (floating window)
-  nnoremap <Leader>z ea<C-x>s
-  if s:ispluginactive('which_key')
-    let g:which_key_map.z = [':normal! eas', 'Spelling Suggestion']
-  endif
-
-  " nnoremap <leader>z :call search('\w\>', 'c')<CR>a<C-x>s
-  " Make <CR> validate the spell entry selected
-  " inoremap <expr> <CR> pumvisible() ? "\<C-y><Esc>" : "\<CR>"
-
-  " Here are some trick from Vim-Galore
-
-  " Make Ctrl-n and Ctrl-p on the command line work like Down and Up
-  " Searching for a next/previous command in the history instead of going for the next/previous command
-  cnoremap <expr> <C-n> wildmenumode() ? "\<C-n>" : "\<down>"
-  cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
-
-  " Make <leader>l disable highlighting temporarily (:nohlsearch)
-  " A kind of improved Ctrl-l
-  nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
-  if s:ispluginactive('which_key')
-    let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
-  endif
-
-  " Select the text that has just been pasted
-  " (inspired from gv that select the text that has been just selected)
-  nnoremap gp `[v`]
-  if s:ispluginactive('which_key')
-    let g:which_key_map_g.p = ['`[v`]', 'Select Pasted']
-  endif
-
-  " set lazyredraw
-
-  " Keep selection when indenting
-  " xnoremap <  <gv
-  " xnoremap >  >gv
-
-  " Make sure the QuickFix and LocationList open at the bottom of the screen
-  " command! Cw bot cw
-  " command! Copen bot copen
-
-  " Adapt the color of the inactive window:
-  if g:colors_name == 'nord'
-    hi DimNormal guibg=#1b212c
-    hi DimConsole guifg=#d8dee9 guibg=#1b212c
-  elseif g:colors_name == 'gruvbox'
-    hi DimNormal guibg=#1b1b1b
-    hi DimConsole guifg=#D5C4A1 guibg=#1b1b1b
-  endif
-  " hi DimNormal guibg=#3b4252
-
-  if !has('nvim')
-    function! DimWindow()
-      if getwinvar(winnr(), '&diff')==1
-        return
-      endif
-      if getwininfo(win_getid())[0].terminal==1
-        setlocal wincolor=DimConsole
-      else
-        setlocal wincolor=DimNormal
-      endif
-    endfunction
-
-    augroup ActiveWin | au!
-      au WinEnter,BufEnter,BufWinEnter * setlocal wincolor=
-      au WinLeave,BufLeave * call DimWindow()
-    augroup END
-  endif
-
-  " Hide the cursor line for the non active window:
-  augroup CursorLine
-    au!
-    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-    au WinLeave * setlocal nocursorline
+  augroup ActiveWin | au!
+    au WinEnter,BufEnter,BufWinEnter * setlocal wincolor=
+    au WinLeave,BufLeave * call DimWindow()
   augroup END
+endif
 
-  " Add the search clipboard shortcut
-  function! SearchClipboard()
-    let pattern='\V' . @*
-    let pattern = pattern->substitute('/', '\/', 'g')
+" Hide the cursor line for the non active window:
+augroup CursorLine
+  au!
+  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  au WinLeave * setlocal nocursorline
+augroup END
+endif
+" }}}
 
-    " Trim last carriage return to easy searching Excel cell copy
-    if pattern[-1:] == "\n"
-      let pattern = pattern[:-2]
-    endif
+" SearchClipboard
+" --------------- {{{
 
-    let @/=pattern
+" Add the search clipboard shortcut
+function! SearchClipboard()
+  let pattern='\V' . @*
+  let pattern = pattern->substitute('/', '\/', 'g')
 
-    call search(pattern)
-  endfunction
-
-  nnoremap <leader>* :call SearchClipboard()<CR>
-  if s:ispluginactive('which_key')
-    let g:which_key_map['*'] = [':call SearchClipboard()', 'Search Clipboard']
+  " Trim last carriage return to easy searching Excel cell copy
+  if pattern[-1:] == "\n"
+    let pattern = pattern[:-2]
   endif
 
-  function! IsSideBar(buf_nr)
-    " Return 1 if the buffer correspond to a side bar:
-    " - A terminal window
-    " - The quickfix window
-    " - The help
-    " - The NERDTree side bar
-    " - ...
-    let buf_type = getbufvar(a:buf_nr, '&buftype')
+  let @/=pattern
 
-    if buf_type ==# 'terminal'
-      return 1
-    endif
+  call search(pattern)
+endfunction
 
-    if buf_type ==# 'quickfix'
-      return 1
-    endif
+nnoremap <leader>* :call SearchClipboard()<CR>
+if s:ispluginactive('which_key')
+  let g:which_key_map['*'] = [':call SearchClipboard()', 'Search Clipboard']
+endif
+" }}}
 
-    if bufname(a:buf_nr) == ''
-      " the [No Name] buffer
-      return 0
-    endif
+" Barmade
+" ------- {{{
 
-    let listed = getbufvar(a:buf_nr, '&buflisted')
-    if !listed
-      return 1
-    endif
+function! IsSideBar(buf_nr)
+  " Return 1 if the buffer correspond to a side bar:
+  " - A terminal window
+  " - The quickfix window
+  " - The help
+  " - The NERDTree side bar
+  " - ...
+  let buf_type = getbufvar(a:buf_nr, '&buftype')
 
+  if buf_type ==# 'terminal'
+    return 1
+  endif
+
+  if buf_type ==# 'quickfix'
+    return 1
+  endif
+
+  if bufname(a:buf_nr) == ''
+    " the [No Name] buffer
     return 0
-  endfunction
-
-  function! LeaveSideBar()
-    " Go to a non side bar window
-    let win_infos = getwininfo()
-    let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
-    let winindex = winnr() - 1
-    for i in range(len(win_infos))
-      let index = (winindex + i) % len(win_infos)
-      if IsSideBar(win_infos[index].bufnr)
-        continue
-      endif
-      execute (index + 1) . 'wincmd w'
-      return
-    endfor
-  endfunction
-
-  command! LeaveSideBar call LeaveSideBar()
-
-  function! GetNumNonSideBarWindows()
-    let num_windows = 0
-    " echom "winnr('$'):" . winnr('$')
-
-    for win_nr in range(1, winnr('$'))
-      let buf_nr = winbufnr(win_nr)
-      if IsSideBar(buf_nr)
-        continue
-      endif
-      let num_windows = num_windows + 1
-    endfor
-
-    return num_windows
-  endfunction
-
-  function! IsAutoClose(buf_nr)
-    " Return 1 if the side bar should already auto close
-    let buf_type = getbufvar(a:buf_nr, '&filetype')
-
-    " let term_buffers = term_list()
-
-    if buf_type ==# 'tagbar'
-      " Not Read Only
-      return 1
-    else
-      return 0
-    endif
-  endfunction
-
-  function! KillSideBars()
-    let num_windows = GetNumNonSideBarWindows()
-    " echom "Num windows: " . num_windows
-    if num_windows > 0
-      " If there are non side bar windows do nothing
-      return
-    endif
-
-    " Delete the terminal buffers that don't correspond to a window
-    let wininfos = getwininfo()
-    let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
-    if has('nvim')
-      let term_buffers = map(filter(win_infos, 'v:val.terminal'), 'v:val.winnr')
-    else
-      let term_buffers = term_list()
-    endif
-    for buf_nr in term_buffers
-      " echom "what about terminal: " . buf_nr
-      if len(win_findbuf(buf_nr)) == 0
-        " echom "delete terminal: " . buf_nr
-        execute 'bd! ' . buf_nr
-      endif
-    endfor
-
-    let wininfos = getwininfo()
-    let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
-    if has('nvim')
-      let term_buffers = map(filter(wininfos, 'v:val.terminal'), 'v:val.winnr')
-    else
-      let term_buffers = term_list()
-    endif
-    let buf_nr = bufnr('%')
-    " echom "buffer: " . buf_nr
-    if index(term_buffers, buf_nr) >= 0
-      " Kill the terminal buffer and quit
-      " echom "terminal buffer"
-      call feedkeys("\<C-w>:bd!\<CR>:quit\<CR>:\<BS>")
-    elseif !IsAutoClose(buf_nr)
-      " Kill the side bar window
-      " echom "side bar"
-      call feedkeys(":quit\<CR>:\<BS>")
-    endif
-  endfunction
-
-  " Close Vim if the last buffer is side bar:
-  autocmd BufEnter * call KillSideBars()
-
-  " Toggle terminal window
-  " Conflict with the go-back action in help buffer
-  " nnoremap <C-t> :call ChooseTerm("term-slider", 1)<CR>
-
-  function! ChooseTerm(termname, slider)
-    let pane = bufwinnr(a:termname)
-    let buf = bufexists(a:termname)
-    if pane > 0
-      " pane is visible
-      if a:slider > 0
-        :exe pane .. "wincmd c"
-      else
-        :exe "e #"
-      endif
-    elseif buf > 0
-      " buffer is not in pane
-      if a:slider
-        :exe "topleft split"
-      endif
-      :exe "buffer " .. a:termname
-    else
-      " buffer is not loaded, create
-      if a:slider
-        :exe "topleft split"
-      endif
-      :terminal
-      :exe "f " a:termname
-    endif
-  endfunction
-
-
-  " Add the trim white spaces function
-  " (that trim the trailing white spaces ;-) )
-  function! TrimWhitespaces() range
-    let cmd = a:firstline . ',' . a:lastline . 's/\s\+$//e'
-    mark Z
-    " echom cmd
-    execute cmd
-    " if line("'Z") != line(".")
-    "   echo "Some white spaces trimmed"
-    " endif
-    normal `Z
-    delmarks Z
-  endfunction
-
-  " Add the TrimWhitespaces command
-  command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
-
-  " Add the WipeReg command that wipe out the content of all registers
-  command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
-
-  " Force the detection of the file types to get the correct colorization:
-  " command! Detect filetype detect
-
-  " Add a UnloadNonProjectFiles to close all the buffers
-  " that are not child's of the current working directory
-  command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
-
-  function! CreateDefinition()
-    let state=winsaveview()
-    y
-    normal [{?class\s\+\zs\h\+"cyiw
-    call winrestview(state)
-    e %:p:r.cpp
-    $
-    normal ]p
-    $
-    substitute /\~\?\h\+(/\=@c . '::' . submatch(0)/
-    substitute /;/\r{\r}\r/
-  endfunction
-
-  " Enable all Python syntax highlighting features
-  " let python_highlight_all = 1
-
-  let g:python_recommended_style = 1
-  let g:pyindent_open_paren = shiftwidth()
-
-  " Seems to be a Neovim parameters used by some plugins
-  if has('win32')
-    if has('nvim')
-      " let g:python3_host_prog='C:\Python27_Win32\python.exe'
-      " let g:python3_host_prog='C:\Python36_x64\python.exe'
-      let g:python3_host_prog='C:\Python39_x64\python.exe'
-    " let g:python3_host_prog='C:\Python312_x64\python.exe'
-    else
-      " let g:python3_host_prog='C:\Python39_x64\python.exe'
-      let g:python3_host_prog='C:\Python310_x64\python.exe'
-      " set pyxversion=0
-      " set pythonthreedll=python39.dll
-      " set pythonthreehome=C:\Python39_x64
-    endif
   endif
 
-  " autocmd BufRead *.py set makeprg=C:\\python27\\python.exe\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
+  let listed = getbufvar(a:buf_nr, '&buflisted')
+  if !listed
+    return 1
+  endif
+
+  return 0
+endfunction
+
+function! LeaveSideBar()
+  " Go to a non side bar window
+  let win_infos = getwininfo()
+  let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
+  let winindex = winnr() - 1
+  for i in range(len(win_infos))
+    let index = (winindex + i) % len(win_infos)
+    if IsSideBar(win_infos[index].bufnr)
+      continue
+    endif
+    execute (index + 1) . 'wincmd w'
+    return
+  endfor
+endfunction
+
+command! LeaveSideBar call LeaveSideBar()
+
+function! GetNumNonSideBarWindows()
+  let num_windows = 0
+  " echom "winnr('$'):" . winnr('$')
+
+  for win_nr in range(1, winnr('$'))
+    let buf_nr = winbufnr(win_nr)
+    if IsSideBar(buf_nr)
+      continue
+    endif
+    let num_windows = num_windows + 1
+  endfor
+
+  return num_windows
+endfunction
+
+function! IsAutoClose(buf_nr)
+  " Return 1 if the side bar should already auto close
+  let buf_type = getbufvar(a:buf_nr, '&filetype')
+
+  " let term_buffers = term_list()
+
+  if buf_type ==# 'tagbar'
+    " Not Read Only
+    return 1
+  else
+    return 0
+  endif
+endfunction
+
+function! KillSideBars()
+  let num_windows = GetNumNonSideBarWindows()
+  " echom "Num windows: " . num_windows
+  if num_windows > 0
+    " If there are non side bar windows do nothing
+    return
+  endif
+
+  " Delete the terminal buffers that don't correspond to a window
+  let wininfos = getwininfo()
+  let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
+  if has('nvim')
+    let term_buffers = map(filter(win_infos, 'v:val.terminal'), 'v:val.winnr')
+  else
+    let term_buffers = term_list()
+  endif
+  for buf_nr in term_buffers
+    " echom "what about terminal: " . buf_nr
+    if len(win_findbuf(buf_nr)) == 0
+      " echom "delete terminal: " . buf_nr
+      execute 'bd! ' . buf_nr
+    endif
+  endfor
+
+  let wininfos = getwininfo()
+  let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
+  if has('nvim')
+    let term_buffers = map(filter(wininfos, 'v:val.terminal'), 'v:val.winnr')
+  else
+    let term_buffers = term_list()
+  endif
+  let buf_nr = bufnr('%')
+  " echom "buffer: " . buf_nr
+  if index(term_buffers, buf_nr) >= 0
+    " Kill the terminal buffer and quit
+    " echom "terminal buffer"
+    call feedkeys("\<C-w>:bd!\<CR>:quit\<CR>:\<BS>")
+  elseif !IsAutoClose(buf_nr)
+    " Kill the side bar window
+    " echom "side bar"
+    call feedkeys(":quit\<CR>:\<BS>")
+  endif
+endfunction
+
+" Close Vim if the last buffer is side bar:
+autocmd BufEnter * call KillSideBars()
+" }}}
+
+" TrimWhitespaces
+" --------------- {{{
+
+" Add the trim white spaces function
+" (that trim the trailing white spaces ;-) )
+function! TrimWhitespaces() range
+  let cmd = a:firstline . ',' . a:lastline . 's/\s\+$//e'
+  mark Z
+  " echom cmd
+  execute cmd
+  " if line("'Z") != line(".")
+  "   echo "Some white spaces trimmed"
+  " endif
+  normal `Z
+  delmarks Z
+endfunction
+
+" Add the TrimWhitespaces command
+command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
+" }}}
+
+" Add the WipeReg command that wipe out the content of all registers
+command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
+
+" Force the detection of the file types to get the correct colorization:
+" command! Detect filetype detect
+
+" Add a UnloadNonProjectFiles to close all the buffers
+" that are not child's of the current working directory
+command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
+
+" CreateDefinition
+" ---------------- {{{
+
+function! CreateDefinition()
+  let state=winsaveview()
+  y
+  normal [{?class\s\+\zs\h\+"cyiw
+  call winrestview(state)
+  e %:p:r.cpp
+  $
+  normal ]p
+  $
+  substitute /\~\?\h\+(/\=@c . '::' . submatch(0)/
+  substitute /;/\r{\r}\r/
+endfunction
+" }}}
+
+" Python Configuration
+" -------------------- {{{
+
+" Enable all Python syntax highlighting features
+" let python_highlight_all = 1
+
+let g:python_recommended_style = 1
+let g:pyindent_open_paren = shiftwidth()
+
+" Seems to be a Neovim parameters used by some plugins
+if has('win32')
+  if has('nvim')
+    " let g:python3_host_prog='C:\Python27_Win32\python.exe'
+    " let g:python3_host_prog='C:\Python36_x64\python.exe'
+    let g:python3_host_prog='C:\Python39_x64\python.exe'
+  " let g:python3_host_prog='C:\Python312_x64\python.exe'
+  else
+    " let g:python3_host_prog='C:\Python39_x64\python.exe'
+    let g:python3_host_prog='C:\Python310_x64\python.exe'
+    " set pyxversion=0
+    " set pythonthreedll=python39.dll
+    " set pythonthreehome=C:\Python39_x64
+  endif
+endif
+" }}}
+
+" py_compile
+" ---------- {{{
+
+if 0
+  autocmd BufRead *.py set makeprg=C:\\python27\\python.exe\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
 
   " Set the error format to make cnext and cprevious working nice
   " Remark:
   " - this need autochdir to be set to work properly
-  " augroup errorformat
-  "   autocmd!
-  "   autocmd BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
-  " augroup END
-
-  " Make Ctrl-F5 run the script in an external console:
-  augroup console
+  augroup errorformat
     autocmd!
-    autocmd BufRead *.py,*.bat nmap <C-F5> :silent !start /min "py.exe" C:\\Softs\\open_console.py "%:p:h" --command "%:t"<CR>
-    " autocmd BufRead *.py nmap <C-F5> :!start "C:\\Program Files\\Console\\Console.exe" -d "%:p" -p "\"%:t\""<CR>
+    autocmd BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
   augroup END
-
-  " Helper to convert short month string into month index for date conversions:
-  function! GetMonthIndex(month)
-    if index(["Jan"], a:month) >= 0
-      return 1
-    endif
-    if index(["Feb"], a:month) >= 0
-      return 2
-    endif
-    if index(["Mar", "Mär"], a:month) >= 0
-      return 3
-    endif
-    if index(["Apr"], a:month) >= 0
-      return 4
-    endif
-    if index(["Mai"], a:month) >= 0
-      return 5
-    endif
-    if index(["Jun"], a:month) >= 0
-      return 6
-    endif
-    if index(["Jul"], a:month) >= 0
-      return 7
-    endif
-    if index(["Aug"], a:month) >= 0
-      return 8
-    endif
-    if index(["Sep"], a:month) >= 0
-      return 9
-    endif
-    if index(["Oct", "Okt"], a:month) >= 0
-      return 10
-    endif
-    if index(["Nov"], a:month) >= 0
-      return 11
-    endif
-    if index(["Dec", "Dez"], a:month) >= 0
-      return 12
-    endif
-    return 0
-  endfunction
-
-  function! s:vimclippy() abort
-    " Create the vimclippy buffer:
-    edit vimclippy
-    " Put the content of the clipboard into the buffer:
-    silent put! *
-      " Delete the last line:
-      $delete _
-    " Move to the first line:
-    1
-    " Make `:w` save the content of the buffer into the clipboard:
-    augroup vimclippy
-      autocmd!
-      autocmd BufWriteCmd vimclippy %yank * | set nomodified
-    augroup END
-  endfunction
-
-  " command! VimClippy call s:vimclippy()
-
-  function! Browse(...)
-    let l:dir = '"%:p:h"'
-    if a:0 > 0
-      let l:dir = a:1
-    endif
-
-    execute 'silent !open_folder.vbs' l:dir
-  endfunction
-
-  command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 endif
+" }}}
+
+" Ctrl-F5
+" ------- {{{
+
+augroup console
+  autocmd!
+  autocmd BufRead *.py,*.bat nmap <C-F5> :silent !start /min "py.exe" C:\\Softs\\open_console.py "%:p:h" --command "%:t"<CR>
+  " autocmd BufRead *.py nmap <C-F5> :!start "C:\\Program Files\\Console\\Console.exe" -d "%:p" -p "\"%:t\""<CR>
+augroup END
+" }}}
+
+" GetMonthIndex
+" ------------- {{{
+
+" Helper to convert short month string into month index for date conversions:
+function! GetMonthIndex(month)
+  if index(["Jan"], a:month) >= 0
+    return 1
+  endif
+  if index(["Feb"], a:month) >= 0
+    return 2
+  endif
+  if index(["Mar", "Mär"], a:month) >= 0
+    return 3
+  endif
+  if index(["Apr"], a:month) >= 0
+    return 4
+  endif
+  if index(["Mai"], a:month) >= 0
+    return 5
+  endif
+  if index(["Jun"], a:month) >= 0
+    return 6
+  endif
+  if index(["Jul"], a:month) >= 0
+    return 7
+  endif
+  if index(["Aug"], a:month) >= 0
+    return 8
+  endif
+  if index(["Sep"], a:month) >= 0
+    return 9
+  endif
+  if index(["Oct", "Okt"], a:month) >= 0
+    return 10
+  endif
+  if index(["Nov"], a:month) >= 0
+    return 11
+  endif
+  if index(["Dec", "Dez"], a:month) >= 0
+    return 12
+  endif
+  return 0
+endfunction
+" }}}
+
+" vimclippy
+" --------- {{{
+
+function! s:vimclippy() abort
+  " Create the vimclippy buffer:
+  edit vimclippy
+  " Put the content of the clipboard into the buffer:
+  silent put! *
+    " Delete the last line:
+    $delete _
+  " Move to the first line:
+  1
+  " Make `:w` save the content of the buffer into the clipboard:
+  augroup vimclippy
+    autocmd!
+    autocmd BufWriteCmd vimclippy %yank * | set nomodified
+  augroup END
+endfunction
+" command! VimClippy call s:vimclippy()
+" }}}
+
+" Browse
+" ------ {{{
+
+function! Browse(...)
+  let l:dir = '"%:p:h"'
+  if a:0 > 0
+    let l:dir = a:1
+  endif
+
+  execute 'silent !open_folder.vbs' l:dir
+endfunction
+command! -complete=dir -nargs=? Browse call Browse(<f-args>)
+" }}}
 " }}}
 
 " vim:foldmethod=marker:
