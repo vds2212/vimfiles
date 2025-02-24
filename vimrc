@@ -386,7 +386,7 @@ set formatoptions+=r
 set formatoptions+=j
 
 " Make that C/C++ inline comments (//) are not continued
-if v:version >= 801
+if v:version >= 802 && has("patch-8.2.4907")
   set formatoptions+=/
 endif
 
@@ -3990,6 +3990,8 @@ call s:addplugin(s:neoformat, "neoformat", 0)
 " 2.18.1. Linting Engine
 " ---------------------- {{{
 
+" Ale
+" --- {{{
 let s:ale = {}
 let s:ale.url = 'dense-analysis/ale'
 function! s:setup() dict
@@ -4056,8 +4058,11 @@ function! s:setup() dict
   endif
 endfunction
 let s:ale.setup = funcref('s:setup')
-call s:addplugin(s:ale, 'ale', 1)
+call s:addplugin(s:ale, 'ale', 0)
+" }}}
 
+" LightBulb
+" --------- {{{
 
 let s:lightbulb = {}
 let s:lightbulb.url = 'kosayoda/nvim-lightbulb'
@@ -4068,7 +4073,10 @@ function! s:setup() dict
 endfunction
 let s:lightbulb.setup = funcref("s:setup")
 call s:addplugin(s:lightbulb, "lightbulb", 0)
+" }}}
 
+" Treesitter
+" ---------- {{{
 
 let s:treesitter = {}
 let s:treesitter.url = 'nvim-treesitter/nvim-treesitter'
@@ -4127,6 +4135,7 @@ if has('nvim')
   " A TSUpdateSync call maybe necessary to update your language parser
   " A TSUpdate call maybe necessary to update your language parser
 endif
+" }}}
 " }}}
 
 " 2.18.2. Linting Mark
@@ -5932,23 +5941,6 @@ command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | 
 command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
 " }}}
 
-" CreateDefinition
-" ---------------- {{{
-
-function! CreateDefinition()
-  let state=winsaveview()
-  y
-  normal [{?class\s\+\zs\h\+"cyiw
-  call winrestview(state)
-  e %:p:r.cpp
-  $
-  normal ]p
-  $
-  substitute /\~\?\h\+(/\=@c . '::' . submatch(0)/
-  substitute /;/\r{\r}\r/
-endfunction
-" }}}
-
 " Python Configuration
 " -------------------- {{{
 
@@ -6044,6 +6036,32 @@ function! GetMonthIndex(month)
   endif
   return 0
 endfunction
+" }}}
+
+" Renumber
+" -------- {{{
+
+function! Renumber() range
+  let g:indexes = []
+  function! NewIndex(bullets)
+    let v = split(a:bullets, '\.')
+    if len(g:indexes) == 0
+      let g:indexes = v
+    else
+      if len(v) > len(g:indexes)
+        let g:indexes += repeat([1], len(v) - len(g:indexes))
+      elseif len(v) <= len(g:indexes)
+        let g:indexes = g:indexes[0:len(v)-1]
+        let g:indexes[len(v)-1] += 1
+      endif
+    endif
+    return join(g:indexes, '.') . '.'
+  endfunction
+  for i in range(a:firstline, a:lastline)
+    execute i . 's/\v^"\s+\zs\d+(\.\d+)*\.?/\=NewIndex(submatch(0))/e'
+  endfor
+endfunction
+command! -range=% Renumber <line1>,<line2>call Renumber()
 " }}}
 
 " vimclippy
