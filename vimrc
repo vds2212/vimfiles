@@ -708,7 +708,7 @@ endif
 " 2. Plugins
 " ========== {{{
 
-" 2.0. Plugin Infrastructure
+" 2.1. Plugin Infrastructure
 " ------------------------ {{{
 
 function! IsPlugInstalled()
@@ -959,10 +959,10 @@ function! s:mapkeys(mode, keys, action, options, description)
 endfunction
 " }}}
 
-" 2.1. Look & Feel
+" 2.2. Look & Feel
 " --------------- {{{
 
-" 2.1.1. Color Scheme
+" 2.2.1. Color Scheme
 " ------------------ {{{
 
 let s:nord_vim = {}
@@ -1051,7 +1051,7 @@ let s:afterglow = {'url' : 'danilo-augusto/vim-afterglow'}
 call s:addplugin(s:afterglow, "afterglow", 0)
 " }}}
 
-" 2.1.2. Devicon
+" 2.2.2. Devicon
 " ------------- {{{
 
 " Add Language specific icons to NerdTree, AirLine, LightLine, ...
@@ -1062,7 +1062,7 @@ let s:vim_devicons.url = 'ryanoasis/vim-devicons'
 call s:addplugin(s:vim_devicons, "vim_devicons")
 " }}}
 
-" 2.1.3. Status Line
+" 2.2.3. Status Line
 " ----------------- {{{
 
 " Status line enrichment
@@ -1205,17 +1205,17 @@ call s:addplugin(s:vim_lightline, "vim_lightline")
 " }}}
 " }}}
 
-" 2.2. Ergonomic
+" 2.3. Ergonomic
 " ------------- {{{
 
-" 2.2.1. Unimpaired
+" 2.3.1. Unimpaired
 " ----------------- {{{
 
 " Add a number of [x ]x mapping
 call s:addplugin('tpope/vim-unimpaired', "vim_unimpaired")
 " }}}
 
-" 2.2.2. Wilder
+" 2.3.2. Wilder
 " ------------- {{{
 
 " Command line helper (completion, proposition)
@@ -1369,7 +1369,7 @@ call s:addplugin(s:wilder, "wilder")
 endif
 " }}}
 
-" 2.2.3. Repeat
+" 2.3.3. Repeat
 " ------------- {{{
 
 " Make the '.' repeat action working with:
@@ -1486,7 +1486,7 @@ call s:addplugin(s:vim_remotions, "vim_remotions")
 endif
 " }}}
 
-" 2.2.4. Text Objects
+" 2.3.4. Text Objects
 " ------------------- {{{
 
 " Improved Text Objects
@@ -1521,7 +1521,7 @@ let s:vim_sentence.setup = funcref("s:setup")
 call s:addplugin(s:vim_sentence, "vim_sentence", 0)
 " }}}
 
-" 2.2.5. Dashboard
+" 2.3.5. Dashboard
 " ----------------  {{{
 
 let s:vim_startify = {}
@@ -1592,7 +1592,7 @@ if has('nvim')
 endif
 " }}}
 
-" 2.2.6. Windows
+" 2.3.6. Windows
 " -------------- {{{
 
 " Allows you to close buffer without closing the corresponding window
@@ -1632,7 +1632,7 @@ call s:addplugin(s:vim_maximizer, "vim_maximizer")
 call s:addplugin('ruedigerha/vim-fullscreen', "vim_fullscreen", 0)
 " }}}
 
-" 2.2.7. Clipboard
+" 2.3.7. Clipboard
 " ---------------- {{{
 
 " Highlight the yanked text:
@@ -1709,7 +1709,7 @@ let s:vim_yoink.setup = funcref("s:setup")
 call s:addplugin(s:vim_yoink, "vim_yoink", 0)
 " }}}
 
-" 2.2.8. Search
+" 2.3.8. Search
 " ------------- {{{
 
 " Visual Selection Search (using '*' and '#')
@@ -1773,7 +1773,7 @@ let s:local_search.setup = funcref("s:setup")
 call s:addplugin(s:local_search, "local_search", 0)
 " }}}
 
-" 2.2.9. Moves
+" 2.3.9. Moves
 " ------------- {{{
 
 " Extend the matching '%' movement to matching keywords
@@ -1835,7 +1835,7 @@ if has('nvim')
   call s:addplugin(s:hop, "hop", 0)
 endif
 
-" 2.2.10. Unicode
+" 2.3.10. Unicode
 " --------------
 
 " Help to find Unicode characters
@@ -1855,7 +1855,7 @@ call s:addplugin(s:unicode_helper, "unicode_helper", 0)
 call s:addplugin('tpope/vim-characterize', "vim_characterize", 0)
 " }}}
 
-" 2.2.11. Multiple Cursors
+" 2.3.11. Multiple Cursors
 " ----------------------- {{{
 
 " Multiple cursors
@@ -1865,7 +1865,7 @@ call s:addplugin('mg979/vim-visual-multi', "vim_visual_multi", 0)
 call s:addplugin('terryma/vim-multiple-cursors', "vim_multiple_cursors", 0)
 " }}}
 
-" 2.2.12. CSS Colors
+" 2.3.12. CSS Colors
 " ----------------- {{{
 
 " Highlight color codes
@@ -1956,7 +1956,7 @@ let s:colorizer.setup = funcref("s:setup")
 call s:addplugin(s:colorizer, "colorizer", 0)
 " }}}
 
-" 2.2.13. Miscellaneous
+" 2.3.13. Miscellaneous
 " --------------------- {{{
 
 " Make C-x C-f completion relative to the file and not to the current working directory
@@ -2151,10 +2151,10 @@ call s:addplugin('ThePrimeagen/vim-be-good', "vim_be_good", 0)
 " }}}
 " }}}
 
-" 2.3. File Browsing
+" 2.4. File Browsing
 " ------------------ {{{
 
-" 2.3.1. Rooter
+" 2.4.1. Rooter
 " ------------- {{{
 
 " Adapt automatically the working directory
@@ -2181,7 +2181,7 @@ let s:vim_rooter.setup = funcref("s:setup")
 call s:addplugin(s:vim_rooter, "vim_rooter")
 " }}}
 
-" 2.3.2. Fuzzy Searching
+" 2.4.2. Fuzzy Searching
 " --------------------- {{{
 
 " FzF (File Fuzzy Finder)
@@ -2341,7 +2341,7 @@ call s:addplugin(s:bufexplorer, "bufexplorer")
 call s:addplugin('troydm/easybuffer.vim', "easybuffer", 0)
 " }}}
 
-" 2.3.3. File searching
+" 2.4.3. File searching
 " -------------------- {{{
 
 " Ack
@@ -2523,7 +2523,7 @@ call s:addplugin(s:ferret, "ferret", 0)
 " }}}
 " }}}
 
-" 2.3.4. File browsing
+" 2.4.4. File browsing
 " ------------------- {{{
 
 let s:nerdtree = {}
@@ -2665,7 +2665,7 @@ call s:addplugin('tpope/vim-vinegar', "vim_vinegar", 0)
 " }}}
 " }}}
 
-" 2.4. Sessions
+" 2.5. Sessions
 " ------------- {{{
 
 " Session management made easy
@@ -2707,7 +2707,7 @@ call s:addplugin(s:vim_obsession, "vim_obsession", 0)
 call s:addplugin('dhruvasagar/vim-prosession', "vim_prosession", 0)
 " }}}
 
-" 2.5. Bookmark
+" 2.6. Bookmark
 " ------------- {{{
 
 " Bookmarks made easy
@@ -2746,7 +2746,7 @@ let s:vim_bookmarks.setup = funcref("s:setup")
 call s:addplugin(s:vim_bookmarks, "vim_bookmarks", 0)
 " }}}
 
-" 2.6. Undo Tree
+" 2.7. Undo Tree
 " -------------- {{{
 
 " Visualize and Navigate the undo tree:
@@ -2777,10 +2777,10 @@ call s:addplugin('sjl/gundo.vim', "gundo", 0)
 call s:addplugin('simnalamburt/vim-mundo', "vim_mundo", 0)
 " }}}
 
-" 2.7. Difference
+" 2.8. Difference
 " --------------- {{{
 
-" 2.7.1. Diff Char
+" 2.8.1. Diff Char
 " --------------- {{{
 
 " Diff at char level
@@ -2795,7 +2795,7 @@ let s:diffchar.setup = funcref("s:setup")
 call s:addplugin(s:diffchar, "diffchar", 0)
 " }}}
 
-" 2.7.2. Diff Command
+" 2.8.2. Diff Command
 " ------------------ {{{
 
 " Introduces the DiffOrig command that compare the current file with the
@@ -2803,7 +2803,7 @@ call s:addplugin(s:diffchar, "diffchar", 0)
 call s:addplugin('lifecrisis/vim-difforig', "difforig", 0)
 " }}}
 
-" 2.7.3 Spot Diff
+" 2.8.3. Spot Diff
 " --------------- {{{
 
 " Introduces the Diffthis command that let you compare range of buffers
@@ -2826,10 +2826,10 @@ call s:addplugin(s:spotdiff, "spotdiff", 0)
 " }}}
 " }}}
 
-" 2.8. Git
+" 2.9. Git
 " -------- {{{
 
-" 2.8.1. Git Operation
+" 2.9.1. Git Operation
 " -------------------- {{{
 
 " Git integration
@@ -2842,7 +2842,7 @@ let s:vim_fugitive.url = 'tpope/vim-fugitive'
 call s:addplugin(s:vim_fugitive, "vim_fugitive")
 " }}}
 
-" 2.8.2. Git Signs
+" 2.9.2. Git Signs
 " --------------- {{{
 
 let s:vim_signify = {}
@@ -2901,17 +2901,17 @@ call s:addplugin(s:vim_gitgutter, "vim_gitgutter")
 
 " }}}
 
-" 2.8.3. Git Helper
+" 2.9.3. Git Helper
 " ---------------- {{{
 
 call s:addplugin('itchyny/vim-gitbranch', "vim_gitbranch", 0)
 " }}}
 " }}}
 
-" 2.9. Indentation
+" 2.10. Indentation
 " ---------------- {{{
 
-" 2.9.1. Indentation lines
+" 2.10.1. Indentation lines
 " ----------------------- {{{
 
 " Visualize indentation vertical lines
@@ -2952,7 +2952,7 @@ call s:addplugin(s:vim_indent_guides, "vim_indent_guides", 0)
 
 " }}}
 
-" 2.9.2. EditorConfig
+" 2.10.2. EditorConfig
 " ------------------ {{{
 
 " Let each project have its own setting regarding:
@@ -2973,14 +2973,14 @@ endif
 endif
 " }}}
 
-" 2.9.3. Sleuth
+" 2.10.3. Sleuth
 " ------------ {{{
 
 call s:addplugin('tpope/vim-sleuth', "vim_sleuth", 0)
 " }}}
 " }}}
 
-" 2.10. Align
+" 2.11. Align
 " ----------- {{{
 
 " Alignment made easy
@@ -3018,10 +3018,10 @@ call s:addplugin(s:vim_easy_align, "vim_easy_align")
 call s:addplugin('godlygeek/tabular', "tabular", 0)
 " }}}
 
-" 2.11. Folding
+" 2.12. Folding
 " ------------- {{{
 
-" 2.11.1. Fold Creation
+" 2.12.1. Fold Creation
 " -------------------- {{{
 
 " Fold based on indentation
@@ -3064,7 +3064,7 @@ call s:addplugin(s:any_fold, "any_fold")
 call s:addplugin('tmhedberg/SimpylFold', "simpylfold", 0)
 " }}}
 
-" 2.11.2. Fold Handling
+" 2.12.2. Fold Handling
 " -------------------- {{{
 
 " Folding level control using [ret] and [bs]
@@ -3084,7 +3084,7 @@ call s:addplugin(s:fast_fold, "fast_fold", 0)
 " }}}
 " }}}
 
-" 2.12. Commenting
+" 2.13. Commenting
 " ---------------- {{{
 
 let s:vim_commentary = {}
@@ -3108,10 +3108,10 @@ let s:nerdcommenter.setup = funcref("s:setup")
 call s:addplugin(s:nerdcommenter, "nerdcommenter", 0)
 " }}}
 
-" 2.13. Parenthesis
+" 2.14. Parenthesis
 " ----------------- {{{
 
-" 2.13.1. Surround
+" 2.14.1. Surround
 " --------------- {{{
 
 " Add additional commands to manage pairs
@@ -3120,7 +3120,7 @@ call s:addplugin('tpope/vim-surround', "vim_surround")
 call s:addplugin('machakann/vim-sandwich', "vim_sandwich", 0)
 " }}}
 
-" 2.13.2. Auto-Pair
+" 2.14.2. Auto-Pair
 " ---------------- {{{
 
 " Automatically introduce the pairing character
@@ -3142,7 +3142,7 @@ call s:addplugin('vim-scripts/auto-pairs-gentle', "auto_pairs_gentle", 0)
 " }}}
 " }}}
 
-" 2.14. Snippet
+" 2.15. Snippet
 " ------------- {{{
 
 " Remark: for coc user a coc-snippets is available suggesting snippets
@@ -3205,10 +3205,10 @@ call s:addplugin(s:emmet_vim, "emmet_vim", 0)
 " }}}
 " }}}
 
-" 2.15. Tags
+" 2.16. Tags
 " ---------- {{{
 
-" 2.15.1. Tag Generation
+" 2.16.1. Tag Generation
 " --------------------- {{{
 
 " Automatic tag generation
@@ -3226,7 +3226,7 @@ let s:vim_gutentags.setup = funcref("s:setup")
 call s:addplugin(s:vim_gutentags, "vim_gutentags")
 " }}}
 
-" 2.15.2. Tag Browsing
+" 2.16.2. Tag Browsing
 " ------------------- {{{
 
 " TagBar
@@ -3454,7 +3454,7 @@ endif
 " }}}
 " }}}
 
-" 2.16. Code Completion
+" 2.17. Code Completion
 " --------------------- {{{
 
 " Remark:
@@ -3914,10 +3914,10 @@ call s:addplugin(s:hlargs, "hlargs", 0)
 
 " }}}
 
-" 2.17. Code Formatting
+" 2.18. Code Formatting
 " --------------------- {{{
 
-" 2.17.1. ISort
+" 2.18.1. ISort
 " ------------ {{{
 
 " Sort Python imports
@@ -3939,7 +3939,7 @@ if has('python3')
 endif
 " }}}
 
-" 2.17.2. Prettier
+" 2.18.2. Prettier
 " --------------- {{{
 
 " Format Web files (.html, .css, .ts, ...)
@@ -3984,10 +3984,10 @@ call s:addplugin(s:neoformat, "neoformat", 0)
 " }}}
 " }}}
 
-" 2.18. Linting
+" 2.19. Linting
 " ------------- {{{
 
-" 2.18.1. Linting Engine
+" 2.19.1. Linting Engine
 " ---------------------- {{{
 
 " Ale
@@ -4138,7 +4138,7 @@ endif
 " }}}
 " }}}
 
-" 2.18.2. Linting Mark
+" 2.19.2. Linting Mark
 " ------------------- {{{
 
 let s:vim_syntastic = {}
@@ -4171,7 +4171,7 @@ call s:addplugin(s:vim_syntastic, "vim_syntastic", 0)
 " }}}
 " }}}
 
-" 2.18. Testing
+" 2.20. Testing
 " ------------- {{{
 
 let s:vader = {}
@@ -4179,7 +4179,7 @@ let s:vader.url = 'junegunn/vader.vim'
 call s:addplugin(s:vader, "vader")
 " }}}
 
-" 2.19. Asynchronous Run
+" 2.21. Asynchronous Run
 " ---------------------- {{{
 
 call s:addplugin('skywind3000/asyncrun.vim', "asyncrun", 0)
@@ -4187,7 +4187,7 @@ call s:addplugin('skywind3000/asyncrun.vim', "asyncrun", 0)
 call s:addplugin('tpope/vim-dispatch', "vim_dispatch", 0)
 " }}}
 
-" 2.20 QuickFix filtering
+" 2.22. QuickFix filtering
 " ----------------------- {{{
 
 let s:cfilter = {}
@@ -4199,7 +4199,7 @@ call s:addplugin(s:cfilter, "cfilter", 0)
 call s:addplugin('jceb/vim-editqf', "vim_editqf", 0)
 " }}}
 
-" 2.21. Terminal
+" 2.23. Terminal
 " -------------- {{{
 
 let s:vim_floaterm = {}
@@ -4307,7 +4307,7 @@ let s:neoterm.setup = funcref("s:setup")
 call s:addplugin(s:neoterm, "neoterm", 0)
 " }}}
 
-" 2.22. Debugging
+" 2.24. Debugging
 " --------------- {{{
 
 let s:vimspector = {}
@@ -4397,10 +4397,10 @@ if has('nvim')
 endif
 " }}}
 
-" 2.23. File Types
+" 2.25. File Types
 " ---------------- {{{
 
-" 2.23.1. VimScript
+" 2.25.1. VimScript
 " ----------------- {{{
 
 " Helper to analyze vim scripts
@@ -4438,7 +4438,7 @@ let s:vim_synstax.setup = funcref("s:setup")
 call s:addplugin(s:vim_synstax, "vim_synstax")
 " }}}
 
-" 2.23.2. Markdown
+" 2.25.2. Markdown
 " ---------------- {{{
 
 " VimWiki
@@ -4682,7 +4682,7 @@ call s:addplugin(s:grammalecte, "grammalecte", 0)
 " }}}
 " }}}
 
-" 2.23.3 RST
+" 2.25.3. RST
 " ---------- {{{
 
 " Riv
@@ -4721,7 +4721,7 @@ call s:addplugin(s:instant_rst, "instant_rst", 0)
 " }}}
 " }}}
 
-" 2.23.3. CSV
+" 2.25.4. CSV
 " ----------- {{{
 
 let s:csv = {}
@@ -4767,7 +4767,7 @@ let s:rainbow_csv.setup = funcref("s:setup")
 call s:addplugin(s:rainbow_csv, "rainbow_csv", 0)
 " }}}
 
-" 2.23.5. Python Mode
+" 2.25.5. Python Mode
 " ------------------ {{{
 
 let s:python_mode = {}
@@ -4798,20 +4798,20 @@ let s:python_mode.setup = funcref("s:setup")
 call s:addplugin(s:python_mode, "python_mode", 0)
 " }}}
 
-" 2.23.4. Rust
+" 2.25.6. Rust
 " ------------ {{{
 
 " Rust support
 call s:addplugin('rust-lang/rust.vim', "rust_vim", 0)
 " }}}
 
-" 2.24.5. Jinja
+" 2.25.7. Jinja
 " ------------- {{{
 
 call s:addplugin('Glench/Vim-Jinja2-Syntax', "vim_jinja2_syntax")
 " }}}
 
-" 2.24.6. Logs
+" 2.25.8. Logs
 " ------------ {{{
 
 call s:addplugin('mtdl9/vim-log-highlighting', "vim_log_highligthing")
@@ -4819,7 +4819,7 @@ call s:addplugin('mtdl9/vim-log-highlighting', "vim_log_highligthing")
 call s:addplugin('powerman/vim-plugin-AnsiEsc', "ansiesc", 0)
 " }}}
 
-" 2.24.7 TeX/LaTeX
+" 2.25.9. TeX/LaTeX
 " ---------------- {{{
 
 let s:vimtex = {}
@@ -4842,14 +4842,14 @@ let s:vim_latex.setup = funcref("s:setup")
 call s:addplugin(s:vim_latex, "vim_latex", 0)
 " }}}
 
-" 2.24.8 Vim Help
+" 2.25.10. Vim Help
 " --------------- {{{
 
 call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
 " }}}
 " }}}
 
-" Select Plugins
+" 2.26. Select Plugins
 " -------------- {{{
 
 " Dark background
@@ -4886,7 +4886,7 @@ catch
 endtry
 " }}}
 
-" Plugin Settings
+" 2.27. Plugin Settings
 " --------------- {{{
 
 " Which-Key Settings
@@ -5029,7 +5029,7 @@ set wildignore+=Tests/**
 " Define config_files to fasten the use of the :vim command
 abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
 
-" Improved Ctrl-l
+" 3.1. Improved Ctrl-l
 " --------------- {{{
 
 nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
@@ -5038,7 +5038,7 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" Spelling correction <leader>z
+" 3.2. Spelling correction <leader>z
 " ----------------------------- {{{
 nnoremap <Leader>z ea<C-x>s
 if s:ispluginactive('which_key')
@@ -5046,7 +5046,7 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" Make Ctrl-n and Ctrl-p on the command line work like Down and Up
+" 3.3. Make Ctrl-n and Ctrl-p on the command line work like Down and Up
 " ---------------------------------------------------------------- {{{
 
 " Searching for a next/previous command in the history
@@ -5055,7 +5055,7 @@ cnoremap <expr> <C-n> wildmenumode() ? "\<C-n>" : "\<down>"
 cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
 " }}}
 
-" Select the pasted text with gp
+" 3.4. Select the pasted text with gp
 " ------------------------------ {{{
 " (inspired from gv that select the text that has been just selected)
 nnoremap gp `[v`]
@@ -5064,17 +5064,17 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" 3.1. File Browsing
+" 3.5. File Browsing
 " ------------------ {{{
 
-" 3.1.1. Fuzzy searching
+" 3.5.1. Fuzzy searching
 " ---------------------- {{{
 
 set grepprg=rp\ --vimgrep
 set grepformat=%f:%l:%c:%m
 " }}}
 
-" 3.1.2. File searching
+" 3.5.2. File searching
 " --------------------- {{{
 
 function! ToggleQuickFix()
@@ -5112,7 +5112,7 @@ endfunction
 " }}}
 " }}}
 
-" 3.2. Sessions
+" 3.6. Sessions
 " ------------- {{{
 
 let g:sessions_dir = GetVimDataFolder() . 'session'
@@ -5191,7 +5191,7 @@ if s:ispluginactive('reload_session_at_start')
 endif
 " }}}
 
-" 3.3. Snippet Trigger
+" 3.7. Snippet Trigger
 " -------------------- {{{
 
 function! IsEmmet(filetype)
@@ -5217,7 +5217,7 @@ if s:ispluginactive('ultisnips') && s:ispluginactive('emmet_vim')
 endif
 " }}}
 
-" Restore cursor position
+" 3.8. Restore cursor position
 " ----------------------- {{{
 
 " Make sure the position of the cursor is restored
@@ -5234,7 +5234,7 @@ if !s:ispluginactive('tagbar')
 endif
 " }}}
 
-" Create the file under the cursor if not existing:
+" 3.9. Create the file under the cursor if not existing:
 " ------------------------------------------------- {{{
 
 :noremap <leader>gf :e %:h/<cfile><CR>
@@ -5244,14 +5244,14 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" Search in the direction of the document:
+" 3.10. Search in the direction of the document:
 " ---------------------------------------- {{{
 
 nnoremap <expr> n (v:searchforward ? 'n' : 'N')
 nnoremap <expr> N (v:searchforward ? 'N' : 'n')
 " }}}
 
-" Move divider logic instead of adapting window size logic:
+" 3.11. Move divider logic instead of adapting window size logic:
 " --------------------------------------------------------- {{{
 
 " function! s:right_ids(layout)
@@ -5386,7 +5386,7 @@ nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 
 " nnoremap <expr><C-W>+ printf("\<cmd>%dresize%+d\r", winnr('k'), v:count1)
 " }}}
 
-" Which Key plugin settings:
+" 3.12. Which Key plugin settings:
 " -------------------------- {{{
 
 if s:ispluginactive('which_key')
@@ -5408,7 +5408,7 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" Add a Diff command to compare with the disk buffer
+" 3.13. Add a Diff command to compare with the disk buffer
 " -------------------------------------------------- {{{
 
 function! DiffOrig(spec)
@@ -5430,7 +5430,7 @@ endfunction
 command! -nargs=? DiffOrig call DiffOrig(<q-args>)
 " }}}
 
-" Correct Commands
+" 3.14. Correct Commands
 " ---------------- {{{
 
 " Define the Help command to display help in a vertical split:
@@ -5462,7 +5462,7 @@ endfunction
 cnoremap <expr> <CR> CorrectCommand()
 " }}}
 
-" Change Font Size
+" 3.15. Change Font Size
 " ---------------- {{{
 
 function! ChangeFontSize()
@@ -5518,7 +5518,7 @@ command! -count=1 FontDecrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\
 command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '<args>', '')
 " }}}
 
-" Terminal
+" 3.16. Terminal
 " -------- {{{
 
 " Leave terminal with Ctrl-q
@@ -5714,7 +5714,7 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" Active Window Focus
+" 3.17. Active Window Focus
 " ------------------- {{{
 
 " Adapt the color of the inactive window:
@@ -5755,7 +5755,7 @@ augroup END
 endif
 " }}}
 
-" SearchClipboard
+" 3.18. SearchClipboard
 " --------------- {{{
 
 " Add the search clipboard shortcut
@@ -5779,7 +5779,7 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" Barmade
+" 3.19. Barmade
 " ------- {{{
 
 function! IsSideBar(buf_nr)
@@ -5906,7 +5906,7 @@ endfunction
 autocmd BufEnter * call KillSideBars()
 " }}}
 
-" TrimWhitespaces
+" 3.20. TrimWhitespaces
 " --------------- {{{
 
 " Add the trim white spaces function
@@ -5927,21 +5927,21 @@ endfunction
 command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
 " }}}
 
-" WipeReg 
+" 3.21. WipeReg 
 " ------- {{{
 
 " Wipe out the content of all registers
 command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
 " }}}
 
-" UnloadNonProjectFiles
+" 3.22. UnloadNonProjectFiles
 " --------------------- {{{
 
 " Close all the buffers that are not child's of the current working directory
 command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
 " }}}
 
-" Python Configuration
+" 3.23. Python Configuration
 " -------------------- {{{
 
 " Enable all Python syntax highlighting features
@@ -5967,7 +5967,7 @@ if has('win32')
 endif
 " }}}
 
-" py_compile
+" 3.24. py_compile
 " ---------- {{{
 
 if 0
@@ -5983,7 +5983,7 @@ if 0
 endif
 " }}}
 
-" Ctrl-F5
+" 3.25. Ctrl-F5
 " ------- {{{
 
 augroup console
@@ -5993,7 +5993,7 @@ augroup console
 augroup END
 " }}}
 
-" GetMonthIndex
+" 3.26. GetMonthIndex
 " ------------- {{{
 
 " Helper to convert short month string into month index for date conversions:
@@ -6038,7 +6038,7 @@ function! GetMonthIndex(month)
 endfunction
 " }}}
 
-" Renumber
+" 3.27. Renumber
 " -------- {{{
 
 function! Renumber() range
@@ -6064,7 +6064,7 @@ endfunction
 command! -range=% Renumber <line1>,<line2>call Renumber()
 " }}}
 
-" vimclippy
+" 3.28. vimclippy
 " --------- {{{
 
 function! s:vimclippy() abort
@@ -6085,7 +6085,7 @@ endfunction
 " command! VimClippy call s:vimclippy()
 " }}}
 
-" Browse
+" 3.29. Browse
 " ------ {{{
 
 function! Browse(...)
