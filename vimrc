@@ -709,7 +709,7 @@ endif
 " ========== {{{
 
 " 2.1. Plugin Infrastructure
-" ------------------------ {{{
+" -------------------------- {{{
 
 function! IsPlugInstalled()
   if has('nvim')
@@ -960,10 +960,10 @@ endfunction
 " }}}
 
 " 2.2. Look & Feel
-" --------------- {{{
+" ---------------- {{{
 
 " 2.2.1. Color Scheme
-" ------------------ {{{
+" ------------------- {{{
 
 let s:nord_vim = {}
 let s:nord_vim.url = 'nordtheme/vim'
@@ -1052,7 +1052,7 @@ call s:addplugin(s:afterglow, "afterglow", 0)
 " }}}
 
 " 2.2.2. Devicon
-" ------------- {{{
+" -------------- {{{
 
 " Add Language specific icons to NerdTree, AirLine, LightLine, ...
 " Depend on full font to be download at: https://github.com/ryanoasis/nerd-fonts/
@@ -1063,7 +1063,7 @@ call s:addplugin(s:vim_devicons, "vim_devicons")
 " }}}
 
 " 2.2.3. Status Line
-" ----------------- {{{
+" ------------------ {{{
 
 " Status line enrichment
 " Content:
@@ -1206,7 +1206,7 @@ call s:addplugin(s:vim_lightline, "vim_lightline")
 " }}}
 
 " 2.3. Ergonomic
-" ------------- {{{
+" -------------- {{{
 
 " 2.3.1. Unimpaired
 " ----------------- {{{
@@ -1774,7 +1774,7 @@ call s:addplugin(s:local_search, "local_search", 0)
 " }}}
 
 " 2.3.9. Moves
-" ------------- {{{
+" ------------ {{{
 
 " Extend the matching '%' movement to matching keywords
 let s:matchit_legacy = {}
@@ -1836,7 +1836,7 @@ if has('nvim')
 endif
 
 " 2.3.10. Unicode
-" --------------
+" ---------------
 
 " Help to find Unicode characters
 " Remark:
@@ -1856,7 +1856,7 @@ call s:addplugin('tpope/vim-characterize', "vim_characterize", 0)
 " }}}
 
 " 2.3.11. Multiple Cursors
-" ----------------------- {{{
+" ------------------------ {{{
 
 " Multiple cursors
 call s:addplugin('mg979/vim-visual-multi', "vim_visual_multi", 0)
@@ -1866,7 +1866,7 @@ call s:addplugin('terryma/vim-multiple-cursors', "vim_multiple_cursors", 0)
 " }}}
 
 " 2.3.12. CSS Colors
-" ----------------- {{{
+" ------------------ {{{
 
 " Highlight color codes
 let s:vim_css_color = {}
@@ -2182,7 +2182,7 @@ call s:addplugin(s:vim_rooter, "vim_rooter")
 " }}}
 
 " 2.4.2. Fuzzy Searching
-" --------------------- {{{
+" ---------------------- {{{
 
 " FzF (File Fuzzy Finder)
 " Remark:
@@ -2342,7 +2342,7 @@ call s:addplugin('troydm/easybuffer.vim', "easybuffer", 0)
 " }}}
 
 " 2.4.3. File searching
-" -------------------- {{{
+" --------------------- {{{
 
 " Ack
 " --- {{{
@@ -2524,7 +2524,7 @@ call s:addplugin(s:ferret, "ferret", 0)
 " }}}
 
 " 2.4.4. File browsing
-" ------------------- {{{
+" -------------------- {{{
 
 let s:nerdtree = {}
 let s:nerdtree.url = 'scrooloose/nerdtree'
@@ -2781,7 +2781,7 @@ call s:addplugin('simnalamburt/vim-mundo', "vim_mundo", 0)
 " --------------- {{{
 
 " 2.8.1. Diff Char
-" --------------- {{{
+" ---------------- {{{
 
 " Diff at char level
 let s:diffchar = {}
@@ -2796,7 +2796,7 @@ call s:addplugin(s:diffchar, "diffchar", 0)
 " }}}
 
 " 2.8.2. Diff Command
-" ------------------ {{{
+" ------------------- {{{
 
 " Introduces the DiffOrig command that compare the current file with the
 " saved version
@@ -2804,7 +2804,7 @@ call s:addplugin('lifecrisis/vim-difforig', "difforig", 0)
 " }}}
 
 " 2.8.3. Spot Diff
-" --------------- {{{
+" ---------------- {{{
 
 " Introduces the Diffthis command that let you compare range of buffers
 let s:spotdiff = {}
@@ -2843,7 +2843,7 @@ call s:addplugin(s:vim_fugitive, "vim_fugitive")
 " }}}
 
 " 2.9.2. Git Signs
-" --------------- {{{
+" ---------------- {{{
 
 let s:vim_signify = {}
 let s:vim_signify.url = 'mhinz/vim-signify'
@@ -2902,17 +2902,17 @@ call s:addplugin(s:vim_gitgutter, "vim_gitgutter")
 " }}}
 
 " 2.9.3. Git Helper
-" ---------------- {{{
+" ----------------- {{{
 
 call s:addplugin('itchyny/vim-gitbranch', "vim_gitbranch", 0)
 " }}}
 " }}}
 
 " 2.10. Indentation
-" ---------------- {{{
+" ----------------- {{{
 
 " 2.10.1. Indentation lines
-" ----------------------- {{{
+" ------------------------- {{{
 
 " Visualize indentation vertical lines
 let s:indentline = {}
@@ -2953,7 +2953,7 @@ call s:addplugin(s:vim_indent_guides, "vim_indent_guides", 0)
 " }}}
 
 " 2.10.2. EditorConfig
-" ------------------ {{{
+" -------------------- {{{
 
 " Let each project have its own setting regarding:
 " - Indentation
@@ -2974,7 +2974,7 @@ endif
 " }}}
 
 " 2.10.3. Sleuth
-" ------------ {{{
+" -------------- {{{
 
 call s:addplugin('tpope/vim-sleuth', "vim_sleuth", 0)
 " }}}
@@ -3022,7 +3022,7 @@ call s:addplugin('godlygeek/tabular', "tabular", 0)
 " ------------- {{{
 
 " 2.12.1. Fold Creation
-" -------------------- {{{
+" --------------------- {{{
 
 " Fold based on indentation
 let s:any_fold = {}
@@ -3065,7 +3065,7 @@ call s:addplugin('tmhedberg/SimpylFold', "simpylfold", 0)
 " }}}
 
 " 2.12.2. Fold Handling
-" -------------------- {{{
+" --------------------- {{{
 
 " Folding level control using [ret] and [bs]
 call s:addplugin('arecarn/vim-fold-cycle', "cycle_fold", 0)
@@ -3112,7 +3112,7 @@ call s:addplugin(s:nerdcommenter, "nerdcommenter", 0)
 " ----------------- {{{
 
 " 2.14.1. Surround
-" --------------- {{{
+" ---------------- {{{
 
 " Add additional commands to manage pairs
 call s:addplugin('tpope/vim-surround', "vim_surround")
@@ -3121,7 +3121,7 @@ call s:addplugin('machakann/vim-sandwich', "vim_sandwich", 0)
 " }}}
 
 " 2.14.2. Auto-Pair
-" ---------------- {{{
+" ----------------- {{{
 
 " Automatically introduce the pairing character
 " (e.g. ", ', (, [, etc. )
@@ -3209,7 +3209,7 @@ call s:addplugin(s:emmet_vim, "emmet_vim", 0)
 " ---------- {{{
 
 " 2.16.1. Tag Generation
-" --------------------- {{{
+" ---------------------- {{{
 
 " Automatic tag generation
 let s:vim_gutentags = {}
@@ -3227,7 +3227,7 @@ call s:addplugin(s:vim_gutentags, "vim_gutentags")
 " }}}
 
 " 2.16.2. Tag Browsing
-" ------------------- {{{
+" -------------------- {{{
 
 " TagBar
 " ------ {{{
@@ -3918,7 +3918,7 @@ call s:addplugin(s:hlargs, "hlargs", 0)
 " --------------------- {{{
 
 " 2.18.1. ISort
-" ------------ {{{
+" ------------- {{{
 
 " Sort Python imports
 let s:vim_isort = {}
@@ -3940,7 +3940,7 @@ endif
 " }}}
 
 " 2.18.2. Prettier
-" --------------- {{{
+" ---------------- {{{
 
 " Format Web files (.html, .css, .ts, ...)
 let s:vim_prettier = {}
@@ -4139,7 +4139,7 @@ endif
 " }}}
 
 " 2.19.2. Linting Mark
-" ------------------- {{{
+" -------------------- {{{
 
 let s:vim_syntastic = {}
 let s:vim_syntastic.url = 'vim-syntastic/syntastic'
@@ -4188,7 +4188,7 @@ call s:addplugin('tpope/vim-dispatch', "vim_dispatch", 0)
 " }}}
 
 " 2.22. QuickFix filtering
-" ----------------------- {{{
+" ------------------------ {{{
 
 let s:cfilter = {}
 let s:cfilter.url = 'cfilter'
@@ -4683,7 +4683,7 @@ call s:addplugin(s:grammalecte, "grammalecte", 0)
 " }}}
 
 " 2.25.3. RST
-" ---------- {{{
+" ----------- {{{
 
 " Riv
 " --- {{{
@@ -4768,7 +4768,7 @@ call s:addplugin(s:rainbow_csv, "rainbow_csv", 0)
 " }}}
 
 " 2.25.5. Python Mode
-" ------------------ {{{
+" ------------------- {{{
 
 let s:python_mode = {}
 let s:python_mode.url = 'python-mode/python-mode'
@@ -4820,7 +4820,7 @@ call s:addplugin('powerman/vim-plugin-AnsiEsc', "ansiesc", 0)
 " }}}
 
 " 2.25.9. TeX/LaTeX
-" ---------------- {{{
+" ----------------- {{{
 
 let s:vimtex = {}
 let s:vimtex.url = 'lervag/vimtex'
@@ -4843,14 +4843,14 @@ call s:addplugin(s:vim_latex, "vim_latex", 0)
 " }}}
 
 " 2.25.10. Vim Help
-" --------------- {{{
+" ----------------- {{{
 
 call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
 " }}}
 " }}}
 
 " 2.26. Select Plugins
-" -------------- {{{
+" -------------------- {{{
 
 " Dark background
 set background=dark
@@ -4887,7 +4887,7 @@ endtry
 " }}}
 
 " 2.27. Plugin Settings
-" --------------- {{{
+" --------------------- {{{
 
 " Which-Key Settings
 " ------------------ {{{
@@ -5030,7 +5030,7 @@ set wildignore+=Tests/**
 abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
 
 " 3.1. Improved Ctrl-l
-" --------------- {{{
+" -------------------- {{{
 
 nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
 if s:ispluginactive('which_key')
@@ -5039,7 +5039,7 @@ endif
 " }}}
 
 " 3.2. Spelling correction <leader>z
-" ----------------------------- {{{
+" ---------------------------------- {{{
 nnoremap <Leader>z ea<C-x>s
 if s:ispluginactive('which_key')
   let g:which_key_map.z = [':normal! eas', 'Spelling Suggestion']
@@ -5047,7 +5047,7 @@ endif
 " }}}
 
 " 3.3. Make Ctrl-n and Ctrl-p on the command line work like Down and Up
-" ---------------------------------------------------------------- {{{
+" --------------------------------------------------------------------- {{{
 
 " Searching for a next/previous command in the history
 " instead of going for the next/previous command
@@ -5056,7 +5056,7 @@ cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
 " }}}
 
 " 3.4. Select the pasted text with gp
-" ------------------------------ {{{
+" ----------------------------------- {{{
 " (inspired from gv that select the text that has been just selected)
 nnoremap gp `[v`]
 if s:ispluginactive('which_key')
@@ -5218,7 +5218,7 @@ endif
 " }}}
 
 " 3.8. Restore cursor position
-" ----------------------- {{{
+" ---------------------------- {{{
 
 " Make sure the position of the cursor is restored
 " when you switch between buffers
@@ -5235,7 +5235,7 @@ endif
 " }}}
 
 " 3.9. Create the file under the cursor if not existing:
-" ------------------------------------------------- {{{
+" ------------------------------------------------------ {{{
 
 :noremap <leader>gf :e %:h/<cfile><CR>
 if s:ispluginactive('which_key')
@@ -5245,14 +5245,14 @@ endif
 " }}}
 
 " 3.10. Search in the direction of the document:
-" ---------------------------------------- {{{
+" ---------------------------------------------- {{{
 
 nnoremap <expr> n (v:searchforward ? 'n' : 'N')
 nnoremap <expr> N (v:searchforward ? 'N' : 'n')
 " }}}
 
 " 3.11. Move divider logic instead of adapting window size logic:
-" --------------------------------------------------------- {{{
+" --------------------------------------------------------------- {{{
 
 " function! s:right_ids(layout)
 "   let type = a:layout[0]
@@ -5387,7 +5387,7 @@ nnoremap <expr> <C-w>+ index(<SID>bottom_ids(winlayout(), 0), win_getid()) >= 0 
 " }}}
 
 " 3.12. Which Key plugin settings:
-" -------------------------- {{{
+" -------------------------------- {{{
 
 if s:ispluginactive('which_key')
   set timeoutlen=1000
@@ -5409,7 +5409,7 @@ endif
 " }}}
 
 " 3.13. Add a Diff command to compare with the disk buffer
-" -------------------------------------------------- {{{
+" -------------------------------------------------------- {{{
 
 function! DiffOrig(spec)
   let cft=&filetype
@@ -5431,7 +5431,7 @@ command! -nargs=? DiffOrig call DiffOrig(<q-args>)
 " }}}
 
 " 3.14. Correct Commands
-" ---------------- {{{
+" ---------------------- {{{
 
 " Define the Help command to display help in a vertical split:
 command! -nargs=? Help vert help <args>
@@ -5463,7 +5463,7 @@ cnoremap <expr> <CR> CorrectCommand()
 " }}}
 
 " 3.15. Change Font Size
-" ---------------- {{{
+" ---------------------- {{{
 
 function! ChangeFontSize()
   " let g:columns=&columns
@@ -5519,7 +5519,7 @@ command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cAN
 " }}}
 
 " 3.16. Terminal
-" -------- {{{
+" -------------- {{{
 
 " Leave terminal with Ctrl-q
 if v:version >= 801
@@ -5715,7 +5715,7 @@ endif
 " }}}
 
 " 3.17. Active Window Focus
-" ------------------- {{{
+" ------------------------- {{{
 
 " Adapt the color of the inactive window:
 if v:version >= 801
@@ -5756,7 +5756,7 @@ endif
 " }}}
 
 " 3.18. SearchClipboard
-" --------------- {{{
+" --------------------- {{{
 
 " Add the search clipboard shortcut
 function! SearchClipboard()
@@ -5780,7 +5780,7 @@ endif
 " }}}
 
 " 3.19. Barmade
-" ------- {{{
+" ------------- {{{
 
 function! IsSideBar(buf_nr)
   " Return 1 if the buffer correspond to a side bar:
@@ -5907,7 +5907,7 @@ autocmd BufEnter * call KillSideBars()
 " }}}
 
 " 3.20. TrimWhitespaces
-" --------------- {{{
+" --------------------- {{{
 
 " Add the trim white spaces function
 " (that trim the trailing white spaces ;-) )
@@ -5928,14 +5928,14 @@ command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
 " }}}
 
 " 3.21. WipeReg 
-" ------- {{{
+" -------------- {{{
 
 " Wipe out the content of all registers
 command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
 " }}}
 
 " 3.23. Python Configuration
-" -------------------- {{{
+" -------------------------- {{{
 
 " Enable all Python syntax highlighting features
 " let python_highlight_all = 1
@@ -5948,7 +5948,7 @@ if has('win32')
   if has('nvim')
     let g:python3_host_prog='C:\Python39_x64\python.exe'
   else
-    " let g:python3_host_prog='C:\Python39_x64\python.exe'
+    let g:python3_host_prog='C:\Python39_x64\python.exe'
     " set pyxversion=0
     " set pythonthreedll=python39.dll
     " set pythonthreehome=C:\Python39_x64
@@ -5957,7 +5957,7 @@ endif
 " }}}
 
 " 3.24. py_compile
-" ---------- {{{
+" ---------------- {{{
 
 if 0
   autocmd BufRead *.py set makeprg=C:\\python27\\python.exe\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
@@ -5973,7 +5973,7 @@ endif
 " }}}
 
 " 3.25. Ctrl-F5
-" ------- {{{
+" ------------- {{{
 
 augroup console
   autocmd!
@@ -5983,7 +5983,7 @@ augroup END
 " }}}
 
 " 3.26. GetMonthIndex
-" ------------- {{{
+" ------------------- {{{
 
 " Helper to convert short month string into month index for date conversions:
 function! GetMonthIndex(month)
@@ -6028,7 +6028,7 @@ endfunction
 " }}}
 
 " 3.27. Renumber
-" -------- {{{
+" -------------- {{{
 
 function! Renumber() range
   let g:indexes = []
@@ -6055,7 +6055,7 @@ command! -range=% Renumber <line1>,<line2>call Renumber()
 " }}}
 
 " 3.28. vimclippy
-" --------- {{{
+" --------------- {{{
 
 function! s:vimclippy() abort
   " Create the vimclippy buffer:
@@ -6076,14 +6076,14 @@ endfunction
 " }}}
 
 " 3.22. UnloadNonProjectFiles
-" --------------------- {{{
+" --------------------------- {{{
 
 " Close all the buffers that are not child's of the current working directory
 command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
 " }}}
 
 " 3.29. Browse
-" ------ {{{
+" ------------ {{{
 
 function! Browse(...)
   let l:dir = '"%:p:h"'
