@@ -5934,13 +5934,6 @@ command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
 command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
 " }}}
 
-" 3.22. UnloadNonProjectFiles
-" --------------------- {{{
-
-" Close all the buffers that are not child's of the current working directory
-command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
-" }}}
-
 " 3.23. Python Configuration
 " -------------------- {{{
 
@@ -5953,13 +5946,9 @@ let g:pyindent_open_paren = shiftwidth()
 " Seems to be a Neovim parameters used by some plugins
 if has('win32')
   if has('nvim')
-    " let g:python3_host_prog='C:\Python27_Win32\python.exe'
-    " let g:python3_host_prog='C:\Python36_x64\python.exe'
     let g:python3_host_prog='C:\Python39_x64\python.exe'
-  " let g:python3_host_prog='C:\Python312_x64\python.exe'
   else
     " let g:python3_host_prog='C:\Python39_x64\python.exe'
-    let g:python3_host_prog='C:\Python310_x64\python.exe'
     " set pyxversion=0
     " set pythonthreedll=python39.dll
     " set pythonthreehome=C:\Python39_x64
@@ -6060,6 +6049,7 @@ function! Renumber() range
   for i in range(a:firstline, a:lastline)
     execute i . 's/\v^"\s+\zs\d+(\.\d+)*\.?/\=NewIndex(submatch(0))/e'
   endfor
+  %s/\v"(.*)\n"\s*([=\-~]{3,})/\='"'.submatch(1)."\n\" ".repeat(submatch(2)[0], len(submatch(1))-1)
 endfunction
 command! -range=% Renumber <line1>,<line2>call Renumber()
 " }}}
@@ -6083,6 +6073,13 @@ function! s:vimclippy() abort
   augroup END
 endfunction
 " command! VimClippy call s:vimclippy()
+" }}}
+
+" 3.22. UnloadNonProjectFiles
+" --------------------- {{{
+
+" Close all the buffers that are not child's of the current working directory
+command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(cwd)-1] !=# cwd) | bd | endif
 " }}}
 
 " 3.29. Browse
