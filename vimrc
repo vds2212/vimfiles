@@ -58,7 +58,7 @@ set display=truncate
 " Make sure at least tree context lines are available while scrolling
 " Show a few lines of context around the cursor.  Note that this makes the
 " text scroll if you mouse-click near the start or end of the window.
-set scrolloff=3
+set scrolloff=1
 
 " Make sure at least five context columns are available while scrolling
 " set sidescrolloff=5
@@ -697,6 +697,34 @@ let g:netrw_banner = 0
 " autocmd FileType netrw setl bufhidden=wipe
 let g:netrw_fastbrowse = 0
 " }}}
+
+" Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column
+" It make the selection in block mode more intuitive.
+" It is a Neovim default
+set nostartofline
+
+" Align the $ motion in Normal and Visual mode
+" Don't make the mapping for Visual blockwise since $ has a very special
+" meaning in that context
+vnoremap <expr> $ (mode() ==# 'v') ? '$h' : '$'
+
+" Ignore compiled files
+set wildignore=*.o,*.obj,*~,*.pyc,*.pyd
+if has("win16") || has("win32")
+  set wildignore+=.git\*,.hg\*,.svn\*
+else
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
+set wildignore+=Tests/**
+
+if has('nvim')
+  " On Belgian keyboard make <C-[> be <Esc>
+  inoremap <C-¨> <Esc>
+  cnoremap <C-¨> <Esc>
+endif
+
+" On Belgian keyboard <C-^> is nearly impossible to get
+nnoremap <C-§> <C-^>
 
 " Workaround to make the Ctrl-] working on a Belgian keyboard with Vim 9.0
 " Remark: The <C-]> is used to navigate through the help system
@@ -4998,37 +5026,6 @@ endif
 " 3. Miscellaneous
 " ================ {{{
 
-if has('nvim')
-  " On Belgian keyboard make <C-[> be <Esc>
-  inoremap <C-¨> <Esc>
-  cnoremap <C-¨> <Esc>
-endif
-
-" On Belgian keyboard <C-^> is nearly impossible to get
-nnoremap <C-§> <C-^>
-
-" Make a number of moves (e.g. G, gg, Ctrl-d, Ctrl-u) respect the starting column
-" It make the selection in block mode more intuitive.
-" It is a Neovim default
-set nostartofline
-
-" Align the $ motion in Normal and Visual mode
-" Don't make the mapping for Visual blockwise since $ has a very special
-" meaning in that context
-vnoremap <expr> $ (mode() ==# 'v') ? '$h' : '$'
-
-" Ignore compiled files
-set wildignore=*.o,*.obj,*~,*.pyc,*.pyd
-if has("win16") || has("win32")
-  set wildignore+=.git\*,.hg\*,.svn\*
-else
-  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-endif
-set wildignore+=Tests/**
-
-" Define config_files to fasten the use of the :vim command
-abbreviate config_files **/*.cfg **/*.fmt **/*.tsn **/*.cof **/*.tng **/*.rls **/*.setup **/*.alpha **/*.beta **/*.pm **/*.mfc **/*.py **/*.bat
-
 " 3.1. Improved Ctrl-l
 " -------------------- {{{
 
@@ -5946,12 +5943,13 @@ let g:pyindent_open_paren = shiftwidth()
 " Seems to be a Neovim parameters used by some plugins
 if has('win32')
   if has('nvim')
+    " set pyxversion=0
     let g:python3_host_prog='C:\Python39_x64\python.exe'
   else
-    let g:python3_host_prog='C:\Python39_x64\python.exe'
-    " set pyxversion=0
+    " Used by wilder
     " set pythonthreedll=python39.dll
     " set pythonthreehome=C:\Python39_x64
+    let g:python3_host_prog='C:\Python39_x64\python.exe'
   endif
 endif
 " }}}
