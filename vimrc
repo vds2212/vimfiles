@@ -386,7 +386,7 @@ set formatoptions+=r
 set formatoptions+=j
 
 " Make that C/C++ inline comments (//) are not continued
-if v:version >= 802 && has("patch-8.2.4907")
+if has('nvim') || v:version >= 802 && has("patch-8.2.4907")
   set formatoptions+=/
 endif
 
@@ -1044,6 +1044,10 @@ function! s:setup() dict
     highlight Cursor guifg=#ebdbb2 guibg=#282828
     " Make Visual selection transparent
     highlight Visual guifg=NONE guibg=#665C54 ctermbg=NONE term=NONE cterm=NONE gui=NONE
+
+    " Make the quckfix selection solid
+    " (at least when the quickfix is not dimmed)
+    highlight Search guibg=#fabd2f guifg=#282828 term=None cterm=None gui=None
   endfunction
   autocmd ColorScheme gruvbox call FixGruvbox()
 endfunction
@@ -1256,7 +1260,7 @@ call s:addplugin('tpope/vim-unimpaired', "vim_unimpaired")
 "   It seems wilder prevent digraph in the command line
 "   (because of the <C-k> mapping for previous completion menu)
 " More information: :help wilder.txt
-if v:version >= 801
+if has('nvim') || v:version >= 801
 let s:wilder_simple = 0
 let s:wilder = {}
 let s:wilder.url = 'gelguy/wilder.nvim'
@@ -1437,7 +1441,7 @@ let s:repeatable_motion.setup = funcref("s:setup")
 call s:addplugin(s:repeatable_motion, "repeatable_motion", 0)
 
 " Make the ';', ',' repeat motion working for more motions:
-if v:version >= 801
+if has('nvim') || v:version >= 801
 let s:vim_remotions = {}
 let s:vim_remotions.url = 'vds2212/vim-remotions'
 " let s:vim_remotions.url = 'vim-remotions'
@@ -2271,7 +2275,7 @@ endfunction
 let s:ctrlp.setup = funcref("s:setup")
 call s:addplugin(s:ctrlp, "ctrlp", 0)
 
-if v:version >= 801 && has('patch-8.1.2114')
+if has('nvim') || v:version >= 801 && has('patch-8.1.2114')
 " In order to make tag generation working install maple:
 " Downloading from GitHub:
 "   :call clap#installer#download_binary()
@@ -2987,7 +2991,7 @@ call s:addplugin(s:vim_indent_guides, "vim_indent_guides", 0)
 " - Indentation
 " - Trailing Whitespaces
 " - ...
-if v:version >= 901
+if has('nvim') || v:version >= 901
 let s:editorconfig = {}
 let s:editorconfig.url = 'editorconfig'
 let s:editorconfig.manager = "packadd"
@@ -3506,7 +3510,7 @@ endif
 "     - pip install jedi-language-server
 " - Depends on pip install jedi-language-server
 
-if v:version >= 900 && has('patch-9.0.438')
+if has('nvim') || v:version >= 900 && has('patch-9.0.438')
 let coc_nvim = {}
 let coc_nvim.url = 'neoclide/coc.nvim'
 let coc_nvim.options = {'branch': 'release'}
@@ -3729,7 +3733,7 @@ function! s:setup() dict
   " More information with: :help coc-nvim
 endfunction
 let coc_nvim.setup = funcref("s:setup")
-call s:addplugin(coc_nvim, "coc_nvim")
+call s:addplugin(coc_nvim, "coc_nvim", 1)
 endif
 
 " Remark: Install additional lsp modules with:
@@ -3758,7 +3762,7 @@ function! s:setup() dict
 endfunction
 let s:mason.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin(s:mason, "mason")
+  call s:addplugin(s:mason, "mason", 1)
 endif
 
 let s:null_ls = {}
@@ -4327,7 +4331,7 @@ let s:neoterm.url = 'kassio/neoterm'
 function! s:setup() dict
     nnoremap <C-q> :Ttoggle<CR>
     inoremap <C-q> <Esc>:Ttoggle<CR>
-  if v:version >= 801
+  if has('nvim') || v:version >= 801
     tnoremap <C-q>  <C-\><C-n>:Ttoggle<CR>
   endif
 endfunction
@@ -5519,7 +5523,7 @@ command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cAN
 " -------------- {{{
 
 " Leave terminal with Ctrl-q
-if v:version >= 801
+if has('nvim') || v:version >= 801
   tnoremap <C-q>  <C-\><C-n>
 
 " Make Neovim supporting the Ctrl-w mapping like Vim does
@@ -5715,7 +5719,7 @@ endif
 " ------------------------- {{{
 
 " Adapt the color of the inactive window:
-if v:version >= 801
+if has('nvim') || v:version >= 801
 if g:colors_name == 'nord'
   hi DimNormal guibg=#1b212c
   hi DimConsole guifg=#d8dee9 guibg=#1b212c
