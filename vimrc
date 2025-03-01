@@ -1009,11 +1009,13 @@ let s:nord_vim.setup = funcref("s:setup")
 call s:addplugin(s:nord_vim, "nord_vim")
 
 let s:rose_pine = {}
-let s:rose_pine.url = 'rose-pine/neovim'
-let s:rose_pine.options = {'as': 'rose-pine'}
 if has('nvim')
-  call s:addplugin(s:rose_pine, "rose_pine")
+  let s:rose_pine.url = 'rose-pine/neovim'
+else
+  let s:rose_pine.url = 'rose-pine/vim'
 endif
+let s:rose_pine.options = {'as': 'rose-pine'}
+call s:addplugin(s:rose_pine, "rose_pine")
 
 let s:vim_gruvbox = {'url' : 'morhetz/gruvbox'}
 function! s:setup() dict
