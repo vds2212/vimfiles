@@ -1059,6 +1059,9 @@ call s:addplugin(s:vim_gruvbox, "vim_gruvbox")
 let s:vim_color_solarized = {'url' : 'altercation/vim-colors-solarized'}
 call s:addplugin(s:vim_color_solarized, "vim_color_solarized", 0)
 
+let s:iceberg = {'url' : 'cocopon/iceberg.vim'}
+call s:addplugin(s:iceberg, "iceberg", 1)
+
 let s:tokyonight = {'url' : 'folke/tokyonight.nvim'}
 call s:addplugin(s:tokyonight, "tokyonight", 0)
 
@@ -1067,7 +1070,9 @@ call s:addplugin(s:onedark, "onedark", 0)
 
 let s:catppuccin = {'url' : 'catppuccin/nvim'}
 let s:catppuccin.options = { 'as': 'catppuccin' }
-call s:addplugin(s:catppuccin, "catppuccin", 0)
+if has('nvim')
+  call s:addplugin(s:catppuccin, "catppuccin", 0)
+endif
 
 let s:molokai = {'url' : 'tomasr/molokai'}
 call s:addplugin(s:molokai, "molokai", 0)
@@ -1079,7 +1084,9 @@ let s:everforest = {'url' : 'sainnhe/everforest'}
 call s:addplugin(s:everforest, "everforest", 0)
 
 let s:kanagawa = {'url' : 'rebelot/kanagawa.nvim'}
-call s:addplugin(s:kanagawa, "kanagawa", 0)
+if has('nvim')
+  call s:addplugin(s:kanagawa, "kanagawa", 0)
+endif
 
 let s:afterglow = {'url' : 'danilo-augusto/vim-afterglow'}
 call s:addplugin(s:afterglow, "afterglow", 0)
@@ -2321,6 +2328,20 @@ function! s:setup() dict
         \ }
 
   " More information with: :help clap
+
+  " For Gruvbox colorscheme
+  function! FixClapColorScheme()
+    highlight ClapFuzzyMatches1 guifg=#FABD2F
+    highlight ClapFuzzyMatches2 guifg=#FABD2F
+    highlight ClapFuzzyMatches3 guifg=#FABD2F
+    highlight ClapFuzzyMatches4 guifg=#FABD2F
+    highlight ClapFuzzyMatches5 guifg=#FABD2F
+    highlight ClapFuzzyMatches6 guifg=#FABD2F
+    highlight ClapFuzzyMatches7 guifg=#FABD2F
+    highlight ClapFuzzyMatches8 guifg=#FABD2F
+    highlight ClapFuzzyMatches9 guifg=#FABD2F
+  endfunction
+  autocmd ColorScheme gruvbox call FixClapColorScheme()
 endfunction
 let s:vim_clap.setup = funcref("s:setup")
 call s:addplugin(s:vim_clap, "vim_clap", 1)
@@ -5073,7 +5094,7 @@ endif
 " 3.5.1. Fuzzy searching
 " ---------------------- {{{
 
-set grepprg=rp\ --vimgrep
+set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 " }}}
 
@@ -5528,8 +5549,7 @@ command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cAN
 if has('nvim') || v:version >= 801
   tnoremap <C-q>  <C-\><C-n>
 
-" Make Neovim supporting the Ctrl-w mapping like Vim does
-if has('nvim')
+  " Make Neovim supporting the Ctrl-w mapping like Vim does
   " tnoremap <C-w> <C-w>
   tnoremap <C-w><C-w> <cmd>wincmd w<CR>
   tnoremap <C-w>w <cmd>wincmd w<CR>
@@ -5538,21 +5558,20 @@ if has('nvim')
   tnoremap <C-w>j <cmd>wincmd j<CR>
   tnoremap <C-w>k <cmd>wincmd k<CR>
   tnoremap <C-w>p <cmd>wincmd p<CR>
+
+  " Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
+  tnoremap <expr> <C-v> getreg('*')
+
+  " make <kbd>Ctrl-Enter</kbd> passed correctly into the terminal
+  tnoremap <expr> <C-Cr> <SID>SendToTerm("\<Esc>\<Cr>")
 endif
 
-" Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
-tnoremap <expr> <C-v> getreg('*')
-
-" make <kbd>Ctrl-Enter</kbd> passed correctly into the terminal
-tnoremap <expr> <C-Cr> SendToTerm("\<Esc>\<Cr>")
-endif
-
-function! SendToTerm(what)
+function! <SID>SendToTerm(what)
   call term_sendkeys('', a:what)
   return ''
 endfunc
 
-function! SwitchToTerminal(...) abort
+function! s:SwitchToTerminal(...) abort
   let l:bufindex = 0
   if a:0 == 0
     " If no name is given use the working directory:
@@ -5665,7 +5684,7 @@ function! SwitchToTerminal(...) abort
   endif
 endfunction
 
-function! TermList()
+function! s:TermList()
   let ret = []
   let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
 
@@ -5688,17 +5707,17 @@ function! TermList()
   return ret
 endfunction
 
-function! CompleteTerm(arg_lead, cmd_line, position)
-  let ret = map(TermList(), {_, val -> val[1]})
+function! s:CompleteTerm(arg_lead, cmd_line, position)
+  let ret = map(s:TermList(), {_, val -> val[1]})
   return join(ret, "\n")
 endfunction
 
-" command! -nargs=? Term call SwitchToTerminal(<f-args>)
-command! -complete=custom,CompleteTerm -nargs=? Term call SwitchToTerminal(<f-args>)
+" command! -nargs=? Term call s:SwitchToTerminal(<f-args>)
+command! -complete=custom,<SID>CompleteTerm -nargs=? Term call <SID>SwitchToTerminal(<f-args>)
 
-command TermList echo join(map(TermList(), {_, val -> printf("%3d %s", val[0], val[1])}), "\n")
+command TermList echo join(map(<SID>TermList(), {_, val -> printf("%3d %s", val[0], val[1])}), "\n")
 
-function! ToggleTerm(name)
+function! s:ToggleTerm(name)
   let win_infos = filter(getwininfo(), "v:val.terminal")
   if len(win_infos)
     " If a terminal window exist go to the terminal:
@@ -5707,13 +5726,13 @@ function! ToggleTerm(name)
     endfor
     return
   else
-    call SwitchToTerminal(a:name)
+    call s:SwitchToTerminal(a:name)
   endif
 endfunction
 
-nnoremap <leader>tb <cmd>call ToggleTerm(expand('%:p:h'))<CR>
+nnoremap <leader>tb <cmd>call <SID>ToggleTerm(expand('%:p:h'))<CR>
 if s:ispluginactive('which_key')
-  let g:which_key_map.t.b = [":call ToggleTerm(expand('%:p:h'))", 'Toggle Term']
+  let g:which_key_map.t.b = [":call <SID>ToggleTerm(expand('%:p:h'))", 'Toggle Term']
 endif
 " }}}
 
