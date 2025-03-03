@@ -6139,6 +6139,34 @@ function! Browse(...)
 endfunction
 command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 " }}}
+
+" 3.30 Reformatting
+" ----------------- {{{
+
+function! Reformat(...)
+  if a:0 >= 1
+    let l:path = a:1
+  else
+    let l:path = expand('%')
+  endif
+  if &filetype == 'json'
+      %!jq
+      return
+  endif
+  write
+  if &filetype == 'html'
+    " !djlint --reformat --quiet %
+    execute '!djlint --reformat --quiet' l:path
+    return
+  if &filetype == 'xml'
+    " !xmllint --format --output % %
+    execute '!xmllint --format --output' l:path l:path
+    return
+  endif
+endfunction
+
+command! -complete=file -nargs=? Reformat call Reformat(<f-args>)
+" }}}
 " }}}
 
 " vim:foldmethod=marker:
