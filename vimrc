@@ -5544,7 +5544,7 @@ command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cAN
 
 " 3.16. Terminal
 " -------------- {{{
-
+if 0
 " Leave terminal with Ctrl-q
 if has('nvim') || v:version >= 801
   tnoremap <C-q>  <C-\><C-n>
@@ -5734,6 +5734,7 @@ nnoremap <leader>tb <cmd>call <SID>ToggleTerm(expand('%:p:h'))<CR>
 if s:ispluginactive('which_key')
   let g:which_key_map.t.b = [":call <SID>ToggleTerm(expand('%:p:h'))", 'Toggle Term']
 endif
+endif
 " }}}
 
 " 3.17. Active Window Focus
@@ -5817,7 +5818,17 @@ function! IsSideBar(buf_nr)
     return 1
   endif
 
+  if !&modifiable
+    " the non modifiable buffers
+    " e.g.:
+    " - fugitive
+    " - nerdtree
+    " - tagbar
+    return 1
+  endif
+
   if buf_type ==# 'quickfix'
+    " the quickfix or location lists:
     return 1
   endif
 
@@ -5828,6 +5839,10 @@ function! IsSideBar(buf_nr)
 
   let listed = getbufvar(a:buf_nr, '&buflisted')
   if !listed
+    " the not listed buffers
+    " e.g.:
+    " - nerdtree
+    " - tagbar
     return 1
   endif
 
