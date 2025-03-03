@@ -5818,14 +5818,20 @@ function! IsSideBar(buf_nr)
     return 1
   endif
 
-  if !&modifiable
-    " the non modifiable buffers
-    " e.g.:
-    " - fugitive
-    " - nerdtree
-    " - tagbar
-    return 1
-  endif
+  " This code prevent the fugitive buffer to open properly
+  " if &filetype == "fugitive"
+  "   return 1
+  " endif
+
+  " This code prevent the fugitive buffer to open properly
+  " if !&modifiable
+  "   " the non modifiable buffers
+  "   " e.g.:
+  "   " - fugitive
+  "   " - nerdtree
+  "   " - tagbar
+  "   return 1
+  " endif
 
   if buf_type ==# 'quickfix'
     " the quickfix or location lists:
