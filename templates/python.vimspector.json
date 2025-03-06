@@ -1,0 +1,33 @@
+{
+    "configurations" : {
+        "Real": {
+            "default" : false,
+            "adapter": "debugpy",
+            "breakpoints": {
+                "exception": {
+                    "raised": "N",
+                    "uncaught": "Y"
+                }
+            },
+            "configuration": {
+                "type": "python",
+                "request": "launch",
+                "cwd": "${workspaceFolder}",
+                "python": "python.exe",
+                "stopOnEntry": true,
+                "justMyCode": false,
+                "console": "externalTerminal",
+                "debugOptions": [],
+
+                "program": "preprocessInputs.py",
+                "args": [
+                    "--setup",
+                    "../make.tsn",
+                    "--debug"
+                ],
+                "env": {
+                }
+            }
+        }
+    }
+}

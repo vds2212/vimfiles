@@ -2474,6 +2474,7 @@ function! s:setup() dict
         \ "popenf" : "",
         \ "tab" : "",
         \ "tabb" : "",
+        \ "chgmode" : "M",
         \ }
 
   " QuickFix List bufnr
@@ -4403,7 +4404,14 @@ function! s:setup() dict
   let g:vimspector_enable_winbar = 0
 
   function! VimspectorConfig()
-    edit %:h/.vimspector.json
+    if filereadable(expand('%:h/.vimspector.json'))
+      edit %:h/.vimspector.json
+      return
+    endif
+    enew
+    silent 0read $MYVIMDIR/templates/python.vimspector.json
+    file .vimspector.json
+    set ft=json
   endfunction
 
   if s:ispluginactive('which_key')
@@ -4517,7 +4525,7 @@ function! s:setup() dict
   "   \ 'template_ext': '.tpl'}]
   " let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 
-  " let g:vimwiki_list = [{'path': '~/vimwiki'}]
+  let g:vimwiki_list = [{'path': '~/vimwiki', 'nested_syntaxes' : {'py': 'python'}}]
   " let g:vimwiki_ext2syntax = {
   " \   '.md': 'markdown',
   " \   '.mkd': 'markdown',
@@ -4539,6 +4547,8 @@ function! s:setup() dict
         \   'mouse': 0,
         \ }
 
+  let g:vimwiki_listing_hl = 1
+  let g:vimwiki_listing_hl_command = 'C:\Python39_x64\Scripts\pygmentize.exe -f html'
   " Make that only .wiki files are considered as vimwiki documents
   let g:vimwiki_global_ext = 0
   if s:ispluginactive('which_key')
@@ -4611,7 +4621,7 @@ function! s:setup() dict
   let g:markdown_fenced_languages = ['html', 'python', 'vim']
 endfunction
 let s:vim_markdown.setup = funcref("s:setup")
-call s:addplugin(s:vim_markdown, "vim_markdown")
+call s:addplugin(s:vim_markdown, "vim_markdown", 0)
 " }}}
 
 " Markdown Preview
@@ -5970,7 +5980,7 @@ endfunction
 command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
 " }}}
 
-" 3.21. WipeReg 
+" 3.21. WipeReg
 " -------------- {{{
 
 " Wipe out the content of all registers
@@ -6149,15 +6159,20 @@ function! Reformat(...)
   else
     let l:path = expand('%')
   endif
+
   if &filetype == 'json'
-      %!jq
+      %!jq .
       return
   endif
+
   write
+
   if &filetype == 'html'
     " !djlint --reformat --quiet %
-    execute '!djlint --reformat --quiet' l:path
+    execute '!djlint --reformat --format-css --format-js --quiet' l:path
     return
+  endif
+
   if &filetype == 'xml'
     " !xmllint --format --output % %
     execute '!xmllint --format --output' l:path l:path
