@@ -19,11 +19,8 @@
                 "console": "externalTerminal",
                 "debugOptions": [],
 
-                "program": "preprocessInputs.py",
+                "program": "${file}",
                 "args": [
-                    "--setup",
-                    "../make.tsn",
-                    "--debug"
                 ],
                 "env": {
                 }

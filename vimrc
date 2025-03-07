@@ -4404,14 +4404,23 @@ function! s:setup() dict
   let g:vimspector_enable_winbar = 0
 
   function! VimspectorConfig()
-    if filereadable(expand('%:h/.vimspector.json'))
-      edit %:h/.vimspector.json
+    let l:bufnr = bufnr()
+    if filereadable(expand('%:p:h') . '/.vimspector.json')
+      edit %:p:h/.vimspector.json
       return
     endif
-    enew
-    silent 0read $MYVIMDIR/templates/python.vimspector.json
-    file .vimspector.json
-    set ft=json
+    try
+      execute 'buffer' expand('%:p:h') . '/.vimspector.json '
+    catch
+      enew
+      silent 0read $MYVIMDIR/templates/python.vimspector.json
+      " Reset the # buffer
+      " Remark: The read command has set the # buffer to $MYVIMDIR/templates/python.vimspector.json
+      execute 'buffer' l:bufnr
+      buffer #
+      file %:p:h/.vimspector.json
+      set ft=json
+    endtry
   endfunction
 
   if s:ispluginactive('which_key')
