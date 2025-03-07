@@ -1192,7 +1192,7 @@ function! s:setup() dict
   let g:lightline = {
         \ 'active': {
         \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
+        \             [ 'readonly', 'relativepath', 'modified' ] ],
         \  'right': [ [ 'lineinfo' ],
         \             [ 'percent' ],
         \             [ 'fileformat', 'fileencoding', 'filetype' ], ]
@@ -4079,13 +4079,18 @@ function! s:setup() dict
   "         \   ]
   "         \}
 
+  "       \ 'python': [
+  "       \       'pylint',
+  "       \  ],
   let g:ale_linters = {
         \ 'python': [
-        \       'pylint',
         \  ],
         \ 'html' : [
         \       'djlint',
-        \  ]
+        \  ],
+        \ 'vim' : [
+        \       'ale_custom_linting_rules'
+        \ ]
         \}
   " I rely on flak8 and mypy to detect problems
   "         \       'flake8',
