@@ -4410,12 +4410,16 @@ function! s:setup() dict
 
   function! VimspectorConfig()
     let l:bufnr = bufnr()
-    if filereadable(expand('%:p:h') . '/.vimspector.json')
-      edit %:p:h/.vimspector.json
+    " let l:bufname = '.vimspector.json'
+    let l:bufname = expand('%:p:h') . '/.vimspector.json'
+    if filereadable(l:bufname)
+      execute 'edit' l:bufname
+      " edit .vimspector.json
       return
     endif
     try
-      execute 'buffer' expand('%:p:h') . '/.vimspector.json '
+      " buffer .vimspector.json
+      execute 'buffer' l:bufname
     catch
       enew
       silent 0read $MYVIMDIR/templates/python.vimspector.json
@@ -4423,7 +4427,8 @@ function! s:setup() dict
       " Remark: The read command has set the # buffer to $MYVIMDIR/templates/python.vimspector.json
       execute 'buffer' l:bufnr
       buffer #
-      file %:p:h/.vimspector.json
+      " file .vimspector.json
+      execute 'file' l:bufname
       set ft=json
     endtry
   endfunction
