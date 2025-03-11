@@ -210,24 +210,13 @@ endif
 
 let s:gui_running = has('gui_running') || has('nvim')
 
-function! GetVimDataFolder()
+function! s:datafolder()
   if has('nvim')
     let l:vim_data_folder = stdpath('data') . '/'
   else
-    if has('win32')
-      if $HOME != ''
-        let l:vim_data_folder = $HOME . '/vimfiles/'
-      else
-        let l:vim_data_folder= ' ~/vimfiles/'
-      endif
-    else
-      if $HOME != ''
-        let l:vim_data_folder = $HOME . '/.vim/'
-      else
-        let l:vim_data_folder= '~/.vim/'
-      endif
-    endif
+    let l:vim_data_folder = $MYVIMDIR
   endif
+  " Convert the path separator according to the OS:
   let l:vim_data_folder = expand(l:vim_data_folder)
   return l:vim_data_folder
 endfunction
@@ -427,10 +416,10 @@ set undofile
 " Save undo files in the .undo sub-folder (if it exists)
 " Otherwise in the ~/vimfiles/undo folder (if it exists)
 " It avoid to pollute your local folder
-if !isdirectory(GetVimDataFolder() . 'undo')
-  call mkdir(GetVimDataFolder() . 'undo')
+if !isdirectory(s:datafolder() . 'undo')
+  call mkdir(s:datafolder() . 'undo')
 endif
-exe 'set undodir=' . '.undo/,' . GetVimDataFolder() . 'undo/'
+exe 'set undodir=' . '.undo/,' . s:datafolder() . 'undo/'
 
 " number of undo saved
 set undolevels=10000
@@ -442,26 +431,26 @@ set undolevels=10000
 " Otherwise in the ~/vimfiles/swap folder (if it exists)
 " (instead of next to the real file)
 " It avoid to pollute your local folder
-if !isdirectory(GetVimDataFolder() . 'swap')
-  call mkdir(GetVimDataFolder() . 'swap')
+if !isdirectory(s:datafolder() . 'swap')
+  call mkdir(s:datafolder() . 'swap')
 endif
-exe 'set directory=.swap/,' . GetVimDataFolder() . 'swap/'
+exe 'set directory=.swap/,' . s:datafolder() . 'swap/'
 
 " Define/Create the view folder to store information from :mkview
-if !isdirectory(GetVimDataFolder() . 'view')
-  call mkdir(GetVimDataFolder() . 'view')
+if !isdirectory(s:datafolder() . 'view')
+  call mkdir(s:datafolder() . 'view')
 endif
-exe 'set viewdir=' . GetVimDataFolder() .'view/'
+exe 'set viewdir=' . s:datafolder() .'view/'
 
 " Disable backup files (the myfile.myext~ files)
 " It seems to be the default
 set nobackup
 set nowritebackup
-if !isdirectory(GetVimDataFolder() . 'backup')
-  call mkdir(GetVimDataFolder() . 'backup')
+if !isdirectory(s:datafolder() . 'backup')
+  call mkdir(s:datafolder() . 'backup')
 endif
-" exe 'set backupdir=.backup//,' . GetVimDataFolder() . 'backup//'
-" exe 'set backupdir=.backup/,' . GetVimDataFolder() . 'backup/'
+" exe 'set backupdir=.backup//,' . s:datafolder() . 'backup//'
+" exe 'set backupdir=.backup/,' . s:datafolder() . 'backup/'
 
 " Mapping between non printable characters (e.g.: eol or tab) and Unicode char.
 set listchars=eol:¶,tab:→\ ,space:.,trail:~,extends:>,precedes:<,nbsp:-
@@ -588,7 +577,7 @@ endif
 " Restore Vim to its previous size and position
 if s:gui_running
   function! ScreenFilename()
-    let l:vim_data_folder = g:GetVimDataFolder()
+    let l:vim_data_folder = <SID>datafolder()
     if has('amiga')
       return "s:.vimsize"
     else
@@ -649,23 +638,6 @@ if s:gui_running
       autocmd VimLeavePre * if g:screen_size_restore_pos == 1 | call ScreenSave() | endif
     augroup END
   endif
-else
-  " Set the windows size to be 46, 100
-  " Set to the size of the corresponding console window
-  " set lines=46 columns=100
-
-  " if !has('nvim') && $ConEmuANSI == 'ON'
-  "   " set termencoding=utf8
-  "   set term=xterm
-  "   set t_Co=256
-  "   let &t_AB="\e[48;5;%dm"
-  "   let &t_AF="\e[38;5;%dm"
-
-  "   " inoremap <Char-0x07F> <BS>
-  "   " nnoremap <Char-0x07F> <BS>
-
-  "   set encoding=cp1252
-  " endif
 endif
 
 " Make sure the split are reset to equal height and width when vim is resized.
@@ -741,9 +713,9 @@ endif
 
 function! IsPlugInstalled()
   if has('nvim')
-    let plug_file = GetVimDataFolder() . 'site/autoload/plug.vim'
+    let plug_file = s:datafolder() . 'site/autoload/plug.vim'
   else
-    let plug_file = GetVimDataFolder() . 'autoload/plug.vim'
+    let plug_file = s:datafolder() . 'autoload/plug.vim'
   endif
   if empty(glob(plug_file))
     return 0
@@ -756,15 +728,15 @@ function! InstallPlug()
   let l:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   if has('win32')
     if has('nvim')
-      let cmd = 'silent !powershell -Command "&{iwr -useb ' . l:plug_url . ' | ni ' . GetVimDataFolder() . 'site/autoload/plug.vim -Force}"'
+      let cmd = 'silent !powershell -Command "&{iwr -useb ' . l:plug_url . ' | ni ' . s:datafolder() . 'site/autoload/plug.vim -Force}"'
     else
-      let cmd = 'silent !powershell -Command "&{iwr -useb ' . l:plug_url . ' | ni ' . GetVimDataFolder() . 'autoload/plug.vim -Force}"'
+      let cmd = 'silent !powershell -Command "&{iwr -useb ' . l:plug_url . ' | ni ' . s:datafolder() . 'autoload/plug.vim -Force}"'
     endif
   else
     if has('nvim')
-      let cmd = 'silent !curl -fLo ' . GetVimDataFolder() . 'site/autoload/plug.vim --create-dirs ' . l:plug_url
+      let cmd = 'silent !curl -fLo ' . s:datafolder() . 'site/autoload/plug.vim --create-dirs ' . l:plug_url
     else
-      let cmd = 'silent !curl -fLo ' .GetVimDataFolder() . 'autoload/plug.vim --create-dirs ' . l:plug_url
+      let cmd = 'silent !curl -fLo ' .s:datafolder() . 'autoload/plug.vim --create-dirs ' . l:plug_url
     endif
   endif
   execute cmd
@@ -4414,11 +4386,9 @@ function! s:setup() dict
     let l:bufname = expand('%:p:h') . '/.vimspector.json'
     if filereadable(l:bufname)
       execute 'edit' l:bufname
-      " edit .vimspector.json
       return
     endif
     try
-      " buffer .vimspector.json
       execute 'buffer' l:bufname
     catch
       enew
@@ -4427,7 +4397,6 @@ function! s:setup() dict
       " Remark: The read command has set the # buffer to $MYVIMDIR/templates/python.vimspector.json
       execute 'buffer' l:bufnr
       buffer #
-      " file .vimspector.json
       execute 'file' l:bufname
       set ft=json
     endtry
@@ -4729,7 +4698,7 @@ function! s:setup() dict
 
   " use a custom markdown style must be absolute path
   " like '/Users/username/markdown.css' or expand('~/markdown.css')
-  let g:mkdp_markdown_css = GetVimDataFolder() . 'markdownpreview/markdown.css'
+  let g:mkdp_markdown_css = s:datafolder() . 'markdownpreview/markdown.css'
 
   " use a custom highlight style must absolute path
   " like '/Users/username/highlight.css' or expand('~/highlight.css')
@@ -5168,7 +5137,7 @@ endfunction
 " 3.6. Sessions
 " ------------- {{{
 
-let g:sessions_dir = GetVimDataFolder() . 'session'
+let g:sessions_dir = s:datafolder() . 'session'
 
 " Sessions settings:
 " ------------------
