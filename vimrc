@@ -1274,8 +1274,8 @@ function! s:setup() dict
 
   call wilder#setup({
         \ 'modes': [':', '/', '?'],
-        \ 'next_key': '<C-j>',
-        \ 'previous_key': '<C-k>',
+        \ 'next_key': '<C-n>',
+        \ 'previous_key': '<C-p>',
         \ 'accept_key': '<Down>',
         \ 'reject_key': '<Up>',
         \ })
@@ -5074,8 +5074,8 @@ endif
 
 " Searching for a next/previous command in the history
 " instead of going for the next/previous command
-cnoremap <expr> <C-n> wildmenumode() ? "\<C-n>" : "\<down>"
-cnoremap <expr> <C-p> wildmenumode() ? "\<C-p>" : "\<up>"
+cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<down>"
+cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<up>"
 " }}}
 
 " 3.4. Select the pasted text with gp
