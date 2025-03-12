@@ -4397,7 +4397,8 @@ function! s:setup() dict
       " Remark: The read command has set the # buffer to $MYVIMDIR/templates/python.vimspector.json
       execute 'buffer' l:bufnr
       buffer #
-      execute 'file' l:bufname
+      " execute 'file' l:bufname
+      execute 'saveas' l:bufname
       set ft=json
     endtry
   endfunction
@@ -5984,15 +5985,16 @@ command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | 
 let g:python_recommended_style = 1
 let g:pyindent_open_paren = shiftwidth()
 
-" Seems to be a Neovim parameters used by some plugins
+set pyxversion=3
 if has('win32')
   if has('nvim')
-    " set pyxversion=0
+    " Seems to be a Neovim parameters used by some plugins
     let g:python3_host_prog='C:\Python39_x64\python.exe'
   else
-    " Used by wilder
     " set pythonthreedll=python39.dll
     " set pythonthreehome=C:\Python39_x64
+
+    " Used by wilder:
     let g:python3_host_prog='C:\Python39_x64\python.exe'
   endif
 endif
