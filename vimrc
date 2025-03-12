@@ -3799,29 +3799,29 @@ let s:blink_cmp.url = 'Saghen/blink.cmp'
 function! s:setup() dict
   " local configuration:
 lua << EOF
-  require("blink.cmp").setup({
-      -- 'default' for mappings similar to built-in completion
-      -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
-      -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
-      -- See the full "keymap" documentation for information on defining your own keymap.
-      keymap = { preset = 'enter' },
+require("blink.cmp").setup({
+    -- 'default' for mappings similar to built-in completion
+    -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
+    -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+    -- See the full "keymap" documentation for information on defining your own keymap.
+    keymap = { preset = 'enter' },
 
-      appearance = {
-          -- Sets the fallback highlight groups to nvim-cmp's highlight groups
-          -- Useful for when your theme doesn't support blink.cmp
-          -- Will be removed in a future release
-          use_nvim_cmp_as_default = true,
-          -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-          -- Adjusts spacing to ensure icons are aligned
-          nerd_font_variant = 'mono'
-      },
+    appearance = {
+      -- Sets the fallback highlight groups to nvim-cmp's highlight groups
+      -- Useful for when your theme doesn't support blink.cmp
+      -- Will be removed in a future release
+      use_nvim_cmp_as_default = true,
+      -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+      -- Adjusts spacing to ensure icons are aligned
+      nerd_font_variant = 'mono'
+    },
 
-      -- Default list of enabled providers defined so that you can extend it
-      -- elsewhere in your config, without redefining it, due to `opts_extend`
-      sources = {
-          default = { 'lsp', 'path', 'snippets', 'buffer' },
-      },
-  })
+    -- Default list of enabled providers defined so that you can extend it
+    -- elsewhere in your config, without redefining it, due to `opts_extend`
+    sources = {
+      default = { 'lsp', 'path', 'snippets', 'buffer' },
+    },
+})
 EOF
 endfunction
 let s:blink_cmp.setup = funcref("s:setup")
@@ -3834,7 +3834,7 @@ let s:r_nvim = {}
 let s:r_nvim.url = 'R-nvim/R.nvim'
 let s:r_nvim.dependencies = ['R-nvim/cmp-r']
 function! s:setup() dict
-  lua require("cmp").setup({ sources = {{ name = "cmp_r" }} })
+  lua require("cmp").setup({ sources = {{ name = "cmp_r" }}})
   lua require("cmp_r").setup()
 endfunction
 let s:r_nvim.setup = funcref("s:setup")
@@ -4116,49 +4116,49 @@ let s:treesitter.url = 'nvim-treesitter/nvim-treesitter'
 let s:treesitter.options = {'do': ':TSUpdate'}
 function! s:setup() dict
 lua << EOF
-  require'nvim-treesitter.configs'.setup {
-      -- A list of parser names, or "all" (the five listed parsers should always be installed)
-      ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all" (the five listed parsers should always be installed)
+  ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
 
-      -- Install parsers synchronously (only applied to `ensure_installed`)
-      sync_install = false,
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
 
-      -- Automatically install missing parsers when entering buffer
-      -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-      auto_install = true,
+  -- Automatically install missing parsers when entering buffer
+  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+  auto_install = true,
 
-      -- List of parsers to ignore installing (or "all")
-      ignore_install = { "javascript" },
+  -- List of parsers to ignore installing (or "all")
+  ignore_install = { "javascript" },
 
-      ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-      -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
 
-      indent = {enable = true},
+  indent = {enable = true},
 
-      highlight = {
-          enable = true,
+  highlight = {
+    enable = true,
 
-          -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-          -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-          -- the name of the parser)
-          -- list of language that will be disabled
-          disable = { "c", "rust" },
-          -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-          disable = function(lang, buf)
-          local max_filesize = 100 * 1024 -- 100 KB
-          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-          if ok and stats and stats.size > max_filesize then
-          return true
-          end
-          end,
+    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+    -- the name of the parser)
+    -- list of language that will be disabled
+    disable = { "c", "rust" },
+    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+    disable = function(lang, buf)
+    local max_filesize = 100 * 1024 -- 100 KB
+    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+    if ok and stats and stats.size > max_filesize then
+    return true
+    end
+    end,
 
-          -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-          -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-          -- Using this option may slow down your editor, and you may see some duplicate highlights.
-          -- Instead of true it can also be a list of languages
-          additional_vim_regex_highlighting = false,
-      },
-  }
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
 EOF
 endfunction
 let s:treesitter.setup = funcref("s:setup")
@@ -4564,34 +4564,34 @@ let s:neorg.url = 'nvim-neorg/neorg'
 let s:neorg.dependencies = ['nvim-treesitter/nvim-treesitter']
 function! s:setup() dict
 lua << EOF
-  require('neorg').setup {
-      load = {
-          -- Loads default behaviour
-          ["core.defaults"] = {},
+require('neorg').setup {
+  load = {
+    -- Loads default behaviour
+    ["core.defaults"] = {},
 
-          -- Adds pretty icons to your documents
-          ["core.concealer"] = {},
+    -- Adds pretty icons to your documents
+    ["core.concealer"] = {},
 
-          -- Manages Neorg workspaces
-          ["core.dirman"] = {
-              config = {
-                  workspaces = {
-                      notes = "~/notes",
-                      neorg = "~/neorg",
-                  },
-                  default_workspace = "notes"
-              },
-          },
+    -- Manages Neorg workspaces
+    ["core.dirman"] = {
+      config = {
+        workspaces = {
+            notes = "~/notes",
+            neorg = "~/neorg",
+        },
+        default_workspace = "notes"
+      },
+    },
 
-          -- ["core.pivot"] = {},
+    -- ["core.pivot"] = {},
 
-          -- ["core.keybinds"] = {
-              --   config = {
-                  --     default_keybinds = true,
-                  --   }
-              -- }
-      }
+    -- ["core.keybinds"] = {
+    --   config = {
+    --     default_keybinds = true,
+    --   }
+    -- }
   }
+}
 EOF
 endfunction
 let s:neorg.setup = funcref("s:setup")
