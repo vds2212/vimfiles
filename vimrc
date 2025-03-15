@@ -214,7 +214,15 @@ function! s:datafolder()
   if has('nvim')
     let l:vim_data_folder = stdpath('data') . '/'
   else
-    let l:vim_data_folder = $MYVIMDIR
+    if v:version >= 901 && has("patch-9.1.0718")
+      let l:vim_data_folder = $MYVIMDIR . '/'
+    else
+      if has('win32')
+        let l:vim_data_folder = expand('~') . '\vimrc\'
+      else
+        let l:vim_data_folder = expand('~') . '/.vim/'
+      endif
+    endif
   endif
   " Convert the path separator according to the OS:
   let l:vim_data_folder = expand(l:vim_data_folder)
@@ -904,10 +912,26 @@ function! s:installplugins()
   endfor
   call plug#end()
 
+  " let l:plugin_paths = split(&runtimepath, ',')
+  " let l:plugin_names = map(copy(l:plugin_paths), {k, v -> split(v, '[\\/]')[-1]})
+
   for plugin in s:plugin_list
     if !plugin.active
       continue
     endif
+
+    " let l:plugin_name = split(plugin.url, '/')[-1]
+    " let l:plugin_index = index(l:plugin_names, l:plugin_name)
+    " if l:plugin_index < 0
+    "   echom 'not found:' . l:plugin_name
+    "   continue
+    " endif
+    " if !isdirectory(l:plugin_paths[l:plugin_index])
+    "   echom 'not downloaded:' . l:plugin_name
+    "   echom 'folder:' . l:plugin_paths[l:plugin_index]
+    "   continue
+    " endif
+
     if has_key(plugin, 'setup')
       try
         call plugin.setup()
@@ -3485,6 +3509,9 @@ endif
 " 2.17. Code Completion
 " --------------------- {{{
 
+" Coc
+" --- {{{
+
 " Remark:
 " - Depend on Node.js
 "   - sudo apt install nodejs
@@ -3510,7 +3537,7 @@ if has('nvim') || v:version >= 900 && has('patch-9.0.438')
 let coc_nvim = {}
 let coc_nvim.url = 'neoclide/coc.nvim'
 let coc_nvim.options = {'branch': 'release'}
-function! s:setup() dict
+function! s:setup() dict abort
   if !has('nvim')
     let $XDG_CONFIG_HOME=$HOME . '\vimfiles'
     let $XDG_DATA_HOME=$HOME . '\vimfiles'
@@ -3731,6 +3758,10 @@ endfunction
 let coc_nvim.setup = funcref("s:setup")
 call s:addplugin(coc_nvim, "coc_nvim", 1)
 endif
+" }}}
+
+" Mason
+" ----- {{{
 
 " Remark: Install additional lsp modules with:
 " - MasonInstall pyright
@@ -3790,6 +3821,10 @@ let s:nvim_cmp.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin(s:nvim_cmp, "nvim_cmp")
 endif
+" }}}
+
+" Blink
+" ----- {{{
 
 let s:blink_cmp = {}
 let s:blink_cmp.url = 'Saghen/blink.cmp'
@@ -3828,20 +3863,26 @@ let s:blink_cmp.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin(s:blink_cmp, "blink_cmp", 0)
 endif
+" }}}
 
+" R_Nvim
+" ------ {{{
 
 let s:r_nvim = {}
 let s:r_nvim.url = 'R-nvim/R.nvim'
 let s:r_nvim.dependencies = ['R-nvim/cmp-r']
 function! s:setup() dict
-  lua require("cmp").setup({ sources = {{ name = "cmp_r" }}})
+  lua require("cmp").setup({ sources = {{ name = "cmp_r" }} })
   lua require("cmp_r").setup()
 endfunction
 let s:r_nvim.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin(s:r_nvim, "r_nvim", 0)
 endif
+" }}}
 
+" YouCompleteMe
+" ------------- {{{
 
 " Code completion
 " Remark:
@@ -3852,6 +3893,10 @@ endif
 "   - Go
 " - Run: install.py
 call s:addplugin('ycm-core/YouCompleteMe', "you_complete_me", 0)
+" }}}
+
+" Vim-Polyglot
+" ------------ {{{
 
 " Multiple Languages Support:
 let s:vim_polyglot = {}
@@ -3873,6 +3918,10 @@ function! s:setup() dict
 endfunction
 let s:vim_polyglot.setup = funcref("s:setup")
 call s:addplugin(s:vim_polyglot, "vim_polyglot", 0)
+" }}}
+
+" Deoplete
+" -------- {{{
 
 " Code Completion
 " Remark:
@@ -3893,6 +3942,10 @@ function! s:setup() dict
 endfunction
 let s:deoplete.setup = funcref("s:setup")
 call s:addplugin(s:deoplete, "deoplete", 0)
+" }}}
+
+" Jedi
+" ---- {{{
 
 " Python code completion
 let s:jedi_vim = {}
@@ -3918,7 +3971,11 @@ function! s:setup() dict
 endfunction
 let s:jedi_vim.setup = funcref("s:setup")
 call s:addplugin(s:jedi_vim, "jedi_vim", 0)
+" }}}
+" }}}
 
+" 2.18. Semantic Higlighting
+" -------------------------- {{{
 
 " Semantic highlighting
 let s:semshi = {}
@@ -3929,7 +3986,6 @@ if has('nvim')
   call s:addplugin(s:semshi, "semshi", 0)
 endif
 
-
 " Semantic highlighting
 let s:hlargs = {}
 let s:hlargs.url = 'm-demare/hlargs.nvim'
@@ -3939,7 +3995,6 @@ function! s:setup() dict
 endfunction
 let s:hlargs.setup = funcref("s:setup")
 call s:addplugin(s:hlargs, "hlargs", 0)
-
 " }}}
 
 " 2.18. Code Formatting
@@ -4343,6 +4398,9 @@ call s:addplugin(s:neoterm, "neoterm", 0)
 " 2.24. Debugging
 " --------------- {{{
 
+" Vimspector
+" ---------- {{{
+
 let s:vimspector = {}
 let s:vimspector.url = 'puremourning/vimspector'
 function! s:setup() dict
@@ -4424,7 +4482,10 @@ let s:vimspector.setup = funcref("s:setup")
 if has('python3')
   call s:addplugin(s:vimspector, "vimspector", 1)
 endif
+" }}}
 
+" Dap
+" --- {{{
 let s:nvim_dap = {}
 let s:nvim_dap.url = 'mfussenegger/nvim-dap'
 let s:nvim_dap.dependencies = ['nvim-neotest/nvim-nio', 'rcarriga/nvim-dap-ui', 'mfussenegger/nvim-dap-python']
@@ -4447,6 +4508,7 @@ let s:nvim_dap.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin(s:nvim_dap, "nvim_dap")
 endif
+" }}}
 " }}}
 
 " 2.25. File Types
@@ -4620,7 +4682,8 @@ let s:markdown_preview = {}
 let s:markdown_preview.url = 'iamcco/markdown-preview.nvim'
 let s:markdown_preview.options = { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 if !has('nvim')
-  " Remark: It seems that markdown_preview works on vim only until commit: 'e5bfe9b'
+  " Remark: It seems that markdown_preview works on vim only until:
+  " commit: 'e5bfe9b' of 10th of March 2021
   let s:markdown_preview.options.commit = 'e5bfe9b'
 else
 endif
@@ -4899,7 +4962,7 @@ call s:addplugin(s:vim_latex, "vim_latex", 0)
 " 2.25.10. Vim Help
 " ----------------- {{{
 
-call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
+call s:addplugin('tweekmonster/helpful.vim', "helpful", 1)
 " }}}
 " }}}
 
@@ -6175,3 +6238,4 @@ command! -complete=file -nargs=? Reformat call Reformat(<f-args>)
 " }}}
 
 " vim:foldmethod=marker:
+
