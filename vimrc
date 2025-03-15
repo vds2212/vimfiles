@@ -4684,7 +4684,8 @@ let s:markdown_preview.options = { 'do': { -> mkdp#util#install() }, 'for': ['ma
 if !has('nvim')
   " Remark: It seems that markdown_preview works on vim only until:
   " commit: 'e5bfe9b' of 10th of March 2021
-  let s:markdown_preview.options.commit = 'e5bfe9b'
+  " commit: 'd7f95e8' of 13th of May 2022 9:08
+  let s:markdown_preview.options.commit = 'd7f95e8'
 else
 endif
 function! s:setup() dict
