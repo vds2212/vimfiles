@@ -884,6 +884,29 @@ function s:installplugin(plugin)
   endif
 endfunction
 
+function! s:ispluginavailable(plugin)
+  if a:plugin.manager == 'plug'
+    let l:plugin_dir = split(a:plugin.url, '/')[-1]
+    if has_key(a:plugin, 'options') && has_key(a:plugin.options, 'as')
+      let l:plugin_dir = a:plugin.options.as
+    endif
+    return isdirectory(s:datafolder() . 'plugged/' . l:plugin_dir)
+  endif
+  if a:plugin.manager == 'runtime'
+    return filereadable($VIMRUNTIME . '/' . a:plugin.url)
+  endif
+  if a:plugin.manager == 'packadd'
+    if isdirectory($VIMRC . 'pack/opt' . a:plugin.url)
+      return 1
+    elseif isdirectory(s:datafolder() . 'pack/opt' . a:plugin.url)
+      return 1
+    else
+      return 0
+    endif
+  endif
+  return 1
+endfunction
+
 function! s:installplugins()
   call plug#begin()
   for plugin in s:plugin_list
@@ -912,25 +935,16 @@ function! s:installplugins()
   endfor
   call plug#end()
 
-  " let l:plugin_paths = split(&runtimepath, ',')
-  " let l:plugin_names = map(copy(l:plugin_paths), {k, v -> split(v, '[\\/]')[-1]})
-
   for plugin in s:plugin_list
     if !plugin.active
       continue
     endif
 
-    " let l:plugin_name = split(plugin.url, '/')[-1]
-    " let l:plugin_index = index(l:plugin_names, l:plugin_name)
-    " if l:plugin_index < 0
-    "   echom 'not found:' . l:plugin_name
-    "   continue
-    " endif
-    " if !isdirectory(l:plugin_paths[l:plugin_index])
-    "   echom 'not downloaded:' . l:plugin_name
-    "   echom 'folder:' . l:plugin_paths[l:plugin_index]
-    "   continue
-    " endif
+    if !s:ispluginavailable(plugin)
+      " Don't run the setup function for non-available plugin
+      " Wait PlugInstall call and Vim restart to avoid error messages.
+      continue
+    endif
 
     if has_key(plugin, 'setup')
       try
@@ -2281,13 +2295,13 @@ let s:ctrlp.setup = funcref("s:setup")
 call s:addplugin(s:ctrlp, "ctrlp", 0)
 
 if has('nvim') || v:version >= 801 && has('patch-8.1.2114')
-" In order to make tag generation working install maple:
-" Downloading from GitHub:
-"   :call clap#installer#download_binary()
-" Or building from source using Rust
-"   :call clap#installer#build_maple()
 " Remark:
-"   - Deleting the vimfiles/plugged/vim-clap/bin/maple.exe manually to make
+" - If installation fails to downloads the required executable run:
+"     :call clap#installer#download_binary()
+"   Or building from source using Rust
+"     :call clap#installer#build_maple()
+" Remark:
+"   - Deleting the $MYVIMDIR/plugged/vim-clap/bin/maple.exe manually to make
 "     sure it is replaced by the fresh version.
 let s:vim_clap = {}
 let s:vim_clap.url = 'liuchengxu/vim-clap'
@@ -4678,14 +4692,21 @@ call s:addplugin(s:vim_markdown, "vim_markdown", 0)
 " Markdown Preview
 " ---------------- {{{
 
+" Remark:
+" - If installation fails to downloads the required executable run:
+"   On Linux:
+"   ~ !$MYVIMDIR/plugged/markdown-preview.nvim/app/install.sh
+"   On Windows:
+"   ~ !$MYVIMDIR/plugged/markdown-preview.nvim/app/install.cmd
 let s:markdown_preview = {}
 let s:markdown_preview.url = 'iamcco/markdown-preview.nvim'
 let s:markdown_preview.options = { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 if !has('nvim')
   " Remark: It seems that markdown_preview works on vim only until:
   " commit: 'e5bfe9b' of 10th of March 2021
+  " let s:markdown_preview.options.commit = 'e5bfe9b'
   " commit: 'd7f95e8' of 13th of May 2022 9:08
-  let s:markdown_preview.options.commit = 'd7f95e8'
+  " let s:markdown_preview.options.commit = 'd7f95e8'
 else
 endif
 function! s:setup() dict
