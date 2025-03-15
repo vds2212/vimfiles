@@ -1,6 +1,7 @@
 .temp
 .netrwhist
 _vimsize
+autoload/plug.vim
 autoload/plug.vim.old
 backup/
 coc/
