@@ -593,13 +593,12 @@ if s:gui_running
     endif
   endfunction
 
-  function! ScreenRestore()
+  function! s:screenrestore()
     " Restore window size (columns and lines) and position
     " from values stored in vimsize file.
     " Must set font first so columns and lines are based on font size.
-    let gui_running = has('gui_running')
     let f = ScreenFilename()
-    if gui_running && g:screen_size_restore_pos && filereadable(f)
+    if g:screen_size_restore_pos && filereadable(f)
       let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
       for line in readfile(f)
         let sizepos = split(line)
@@ -612,10 +611,9 @@ if s:gui_running
     endif
   endfunction
 
-  function! ScreenSave()
+  function! s:screensave()
     " Save window size and position.
-    let gui_running = has('gui_running')
-    if gui_running && g:screen_size_restore_pos
+    if g:screen_size_restore_pos
       let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
       let data = vim_instance . ' ' . &columns . ' ' . &lines . ' ' .
             \ (getwinposx()<0?0:getwinposx()) . ' ' .
@@ -638,12 +636,13 @@ if s:gui_running
   if !exists('g:screen_size_by_vim_instance')
     let g:screen_size_by_vim_instance = 1
   endif
+
   if !has('nvim')
     " Neovim seems to keep its size from Windows
     augroup savepos
       autocmd!
-      autocmd VimEnter * if g:screen_size_restore_pos == 1 | call ScreenRestore() | endif
-      autocmd VimLeavePre * if g:screen_size_restore_pos == 1 | call ScreenSave() | endif
+      autocmd VimEnter * if g:screen_size_restore_pos == 1 | call <SID>screenrestore() | endif
+      autocmd VimLeavePre * if g:screen_size_restore_pos == 1 | call <SID>screensave() | endif
     augroup END
   endif
 endif
@@ -1675,7 +1674,7 @@ function! s:setup() dict
   nnoremap <C-w>m :MaximizerToggle<CR>
 endfunction
 let s:vim_maximizer.setup = funcref("s:setup")
-call s:addplugin(s:vim_maximizer, "vim_maximizer")
+call s:addplugin(s:vim_maximizer, "vim_maximizer", 0)
 
 " Allow to run vim in full screen
 " Requires pywin32:
@@ -2076,7 +2075,7 @@ endfunction
 let s:large_file.setup = funcref("s:setup")
 call s:addplugin(s:large_file, "large_file")
 
-call s:addplugin('PeterRincker/vim-argumentative', "argumentative")
+call s:addplugin('PeterRincker/vim-argumentative', "vim_argumentative", 1)
 
 " Add the CheckHealth command to Vim
 if !has('nvim')
@@ -2401,7 +2400,7 @@ function! s:setup() dict
   let g:bufExplorerSplitRight=0
 endfunction
 let s:bufexplorer.setup = funcref("s:setup")
-call s:addplugin(s:bufexplorer, "bufexplorer")
+call s:addplugin(s:bufexplorer, "bufexplorer", 0)
 
 call s:addplugin('troydm/easybuffer.vim', "easybuffer", 0)
 " }}}
@@ -4278,7 +4277,7 @@ call s:addplugin(s:vim_syntastic, "vim_syntastic", 0)
 
 let s:vader = {}
 let s:vader.url = 'junegunn/vader.vim'
-call s:addplugin(s:vader, "vader")
+call s:addplugin(s:vader, "vader", 0)
 " }}}
 
 " 2.21. Asynchronous Run
@@ -4706,7 +4705,7 @@ if !has('nvim')
   " commit: 'e5bfe9b' of 10th of March 2021
   " let s:markdown_preview.options.commit = 'e5bfe9b'
   " commit: 'd7f95e8' of 13th of May 2022 9:08
-  " let s:markdown_preview.options.commit = 'd7f95e8'
+  let s:markdown_preview.options.commit = 'd7f95e8'
 else
 endif
 function! s:setup() dict
