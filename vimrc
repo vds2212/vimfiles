@@ -2493,17 +2493,34 @@ function! s:setup() dict
   " last utilization time
   " getbufinfo(bufnr)[0].lastused
   function! QuickFixVisible()
+    let winids = {}
     for winnr in range(1, winnr('$'))
-      if getwinvar(winnr, '&syntax') == 'qf'
-        return 1
+      let winid = get(getloclist(winnr, {'winid':0}), 'winid', 0)
+      if winid != 0
+        let winids[winid] = 0
       endif
+    endfor
+    for winnr in range(1, winnr('$'))
+      if getwinvar(winnr, '&syntax') != 'qf'
+        " Not a quickfix nor a location list window
+        continue
+      endif
+      if has_key(winids, win_getid(winnr))
+        " a location list window
+        continue
+      endif
+      return 1
     endfor
     return 0
   endfunction
 
   function! CtrlSFNextMatch()
-    if QuickFixVisible() && s:ispluginactive('vim_unimpaired')
-      execute "normal \<Plug>(unimpaired-cnext)"
+    if QuickFixVisible()
+      if s:ispluginactive('vim_unimpaired')
+        execute "normal \<Plug>(unimpaired-cnext)"
+       else
+         cnext
+       endif
       return
     endif
     CtrlSFOpen
@@ -2512,9 +2529,12 @@ function! s:setup() dict
   endfunction
 
   function! CtrlSFPreviousMatch()
-    if QuickFixVisible() && s:ispluginactive('vim_unimpaired')
-      execute "normal \<Plug>(unimpaired-cprevious)"
-      return
+    if QuickFixVisible()
+      if s:ispluginactive('vim_unimpaired')
+        execute "normal \<Plug>(unimpaired-cprevious)"
+      else
+        cprevious
+      endif return
     endif
     CtrlSFOpen
     call ctrlsf#NextMatch(0)
