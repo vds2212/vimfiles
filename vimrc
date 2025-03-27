@@ -2523,9 +2523,11 @@ function! s:setup() dict
        endif
       return
     endif
-    CtrlSFOpen
-    call ctrlsf#NextMatch(1)
-    call ctrlsf#JumpTo('open_background')
+    if s:ispluginactive('ctrlsf') && ctrlsf#win#FindMainWindow() != -1
+      CtrlSFOpen
+      call ctrlsf#NextMatch(1)
+      call ctrlsf#JumpTo('open_background')
+    endif
   endfunction
 
   function! CtrlSFPreviousMatch()
@@ -2534,11 +2536,14 @@ function! s:setup() dict
         execute "normal \<Plug>(unimpaired-cprevious)"
       else
         cprevious
-      endif return
+      endif
+      return
     endif
-    CtrlSFOpen
-    call ctrlsf#NextMatch(0)
-    call ctrlsf#JumpTo('open_background')
+    if s:ispluginactive('ctrlsf') && ctrlsf#win#FindMainWindow() != -1
+      CtrlSFOpen
+      call ctrlsf#NextMatch(0)
+      call ctrlsf#JumpTo('open_background')
+    endif
   endfunction
 
   function! CtrlSFNextFMatch()
@@ -2546,9 +2551,11 @@ function! s:setup() dict
       cnfile
       return
     endif
-    CtrlSFOpen
-    call ctrlsf#NextMatch(1, 1)
-    call ctrlsf#JumpTo('open_background')
+    if s:ispluginactive('ctrlsf') && ctrlsf#win#FindMainWindow() != -1
+      CtrlSFOpen
+      call ctrlsf#NextMatch(1, 1)
+      call ctrlsf#JumpTo('open_background')
+    endif
   endfunction
 
   function! CtrlSFPreviousFMatch()
@@ -2556,9 +2563,11 @@ function! s:setup() dict
       cpfile
       return
     endif
-    CtrlSFOpen
-    call ctrlsf#NextMatch(0, 1)
-    call ctrlsf#JumpTo('open_background')
+    if s:ispluginactive('ctrlsf') && ctrlsf#win#FindMainWindow() != -1
+      CtrlSFOpen
+      call ctrlsf#NextMatch(0, 1)
+      call ctrlsf#JumpTo('open_background')
+    endif
   endfunction
 
   nnoremap ]q <Cmd>call CtrlSFNextMatch()<CR>
