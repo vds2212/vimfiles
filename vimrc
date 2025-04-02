@@ -8,6 +8,8 @@ if v:progname =~? "evim"
   finish
 endif
 
+" This is a comment
+
 " Bail out if something that ran earlier, e.g. a system wide vimrc, does not
 " want Vim to use these default values.
 if exists('skip_defaults_vim')
@@ -5656,7 +5658,7 @@ command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cAN
 
 " 3.16. Terminal
 " -------------- {{{
-if 0
+if 1
 " Leave terminal with Ctrl-q
 if has('nvim') || v:version >= 801
   tnoremap <C-q>  <C-\><C-n>
@@ -5709,6 +5711,7 @@ function! s:SwitchToTerminal(...) abort
   endif
 
   let win_infos = filter(getwininfo(), "v:val.terminal")
+  call filter(win_infos, {_, x -> x.tabnr == tabpagenr()})
   if len(win_infos)
     let winnr = win_infos[-1].winnr
 
@@ -5831,6 +5834,7 @@ command TermList echo join(map(<SID>TermList(), {_, val -> printf("%3d %s", val[
 
 function! s:ToggleTerm(name)
   let win_infos = filter(getwininfo(), "v:val.terminal")
+  call filter(win_infos, {_, x -> x.tabnr == tabpagenr()})
   if len(win_infos)
     " If a terminal window exist go to the terminal:
     for i in range(len(win_infos)-1, 0, -1)
