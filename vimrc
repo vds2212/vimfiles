@@ -897,9 +897,14 @@ function! s:ispluginavailable(plugin)
     return filereadable($VIMRUNTIME . '/' . a:plugin.url)
   endif
   if a:plugin.manager == 'packadd'
-    if isdirectory($VIMRC . 'pack/opt' . a:plugin.url)
+    " TODO: loop on child folder of $MYVIMDIR . 'pack'
+    if isdirectory($MYVIMDIR . 'pack/dist/opt/' . a:plugin.url)
       return 1
-    elseif isdirectory(s:datafolder() . 'pack/opt' . a:plugin.url)
+    if isdirectory($MYVIMDIR . 'pack/dist/start/' . a:plugin.url)
+      return 1
+    elseif isdirectory(s:datafolder() . 'pack/dist/opt/' . a:plugin.url)
+      return 1
+    elseif isdirectory(s:datafolder() . 'pack/dist/start' . a:plugin.url)
       return 1
     else
       return 0
@@ -4334,6 +4339,9 @@ call s:addplugin('jceb/vim-editqf', "vim_editqf", 0)
 " 2.23. Terminal
 " -------------- {{{
 
+" Floaterm
+" -------- {{{
+
 let s:vim_floaterm = {}
 let s:vim_floaterm.url = 'voldikss/vim-floaterm'
 function! s:setup() dict
@@ -4345,10 +4353,13 @@ endfunction
 let s:vim_floaterm.setup = funcref("s:setup")
 call s:addplugin(s:vim_floaterm, "vim_floaterm", 0)
 
-
 " vim-clap support for floaterm
 call s:addplugin('voldikss/clap-floaterm', "clap_floaterm", 0)
+" }}}
 
+
+" ToggleTerm 
+" ----------- {{{
 
 let s:toggleterm = {}
 let s:toggleterm.url = 'akinsho/toggleterm.nvim'
@@ -4360,6 +4371,10 @@ let s:toggleterm.setup = funcref("s:setup")
 if has('nvim')
   call s:addplugin(s:toggleterm, "toggleterm")
 endif
+" }}}
+
+" Terminus
+" -------- {{{
 
 " Provide control on the terminal cursor shape:
 " Remark: Doesn't seems to have any effect on Windows
@@ -4370,7 +4385,10 @@ function! s:setup() dict
 endfunction
 let s:terminus.setup = funcref("s:setup")
 call s:addplugin(s:terminus, "terminus", 0)
+" }}}
 
+" Jupyter-Vim
+" ----------- {{{
 
 let s:jupyter_vim = {}
 let s:jupyter_vim.url = 'jupyter-vim/jupyter-vim'
@@ -4400,7 +4418,10 @@ function! s:setup() dict
 endfunction
 let s:jupyter_vim.setup = funcref("s:setup")
 call s:addplugin(s:jupyter_vim, "jupyter_vim")
+" }}}
 
+" Magma
+" ----- {{{
 
 let s:magma = {}
 let s:magma.url = 'dccsillag/magma-nvim'
@@ -4423,9 +4444,11 @@ function! s:setup() dict
 endfunction
 let s:magma.setup = funcref("s:setup")
 call s:addplugin(s:magma, "magma", 0)
+" }}}
 
+" NeoTerm
+" ------- {{{
 
-" Terminal support
 let s:neoterm = {}
 let s:neoterm.url = 'kassio/neoterm'
 function! s:setup() dict
@@ -4437,6 +4460,29 @@ function! s:setup() dict
 endfunction
 let s:neoterm.setup = funcref("s:setup")
 call s:addplugin(s:neoterm, "neoterm", 0)
+" }}}
+
+" Vim-Term
+" -------- {{{
+
+let s:vim_term = {}
+let s:vim_term.url = 'vim-term'
+let s:vim_term.manager = "packadd"
+function! s:setup() dict
+  if has('win32')
+    if has('nvim')
+      let g:term_command = 'cmd.exe /s /k C:\Softs\Clink\Clink.bat inject'
+    else
+      let g:term_command = 'cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul'
+    endif
+  endif
+
+  let g:term_width = 100
+  nnoremap <leader>tz <Plug>(TermToggle)
+endfunction
+let s:vim_term.setup = funcref("s:setup")
+call s:addplugin(s:vim_term, "vim-term", 1)
+" }}}
 " }}}
 
 " 2.24. Debugging
@@ -5656,203 +5702,6 @@ command! -count=1 FontDecrease let &guifont = substitute(&guifont, '\(\d\+\)\ze\
 command! -nargs=1 FontSet let &guifont = substitute(&guifont, '\(\d\+\)\ze\(:cANSI\)\?$', '<args>', '')
 " }}}
 
-" 3.16. Terminal
-" -------------- {{{
-if 1
-" Leave terminal with Ctrl-q
-if has('nvim') || v:version >= 801
-  tnoremap <C-q>  <C-\><C-n>
-
-  " Make Neovim supporting the Ctrl-w mapping like Vim does
-  " tnoremap <C-w> <C-w>
-  tnoremap <C-w><C-w> <cmd>wincmd w<CR>
-  tnoremap <C-w>w <cmd>wincmd w<CR>
-  tnoremap <C-w>h <cmd>wincmd h<CR>
-  tnoremap <C-w>l <cmd>wincmd l<CR>
-  tnoremap <C-w>j <cmd>wincmd j<CR>
-  tnoremap <C-w>k <cmd>wincmd k<CR>
-  tnoremap <C-w>p <cmd>wincmd p<CR>
-
-  " Make <kbd>Ctrl-v</kbd> paste the content of the clipboard into the terminal
-  tnoremap <expr> <C-v> getreg('*')
-
-  " make <kbd>Ctrl-Enter</kbd> passed correctly into the terminal
-  tnoremap <expr> <C-Cr> <SID>SendToTerm("\<Esc>\<Cr>")
-endif
-
-function! <SID>SendToTerm(what)
-  call term_sendkeys('', a:what)
-  return ''
-endfunc
-
-function! s:SwitchToTerminal(...) abort
-  let l:bufindex = 0
-  if a:0 == 0
-    " If no name is given use the working directory:
-    " let l:name = fnamemodify(getcwd(), ':p')
-    " If no name is given use the current file directory:
-    let l:name = fnamemodify(expand('%:p:h'), ':p')
-  else
-    if a:1 =~ '^\d\+'
-      let l:bufindex = str2nr(a:1)
-      let l:name = ''
-    else
-      let l:name = expand(a:1)
-      if !isdirectory(l:name)
-        " If the name given is the name of a file
-        " use the parent folder
-        " End with '/'
-        let l:name = fnamemodify(fnamemodify(l:name, ':p:h'), ':p')
-      else
-        " End with '/'
-        let l:name = fnamemodify(l:name, ':p')
-      endif
-    endif
-  endif
-
-  let win_infos = filter(getwininfo(), "v:val.terminal")
-  call filter(win_infos, {_, x -> x.tabnr == tabpagenr()})
-  if len(win_infos)
-    let winnr = win_infos[-1].winnr
-
-    " If a terminal window exist with the right name/index switch to it:
-    if l:bufindex == 0
-      let win_info = filter(win_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
-    else
-      let win_info = filter(win_infos, "v:val.bufnr ==" . l:bufindex)
-    endif
-    if len(win_info) > 0
-      let winnr = win_info[0].winnr
-      execute winnr . 'wincmd w'
-      return
-    endif
-
-    " Otherwise if a terminal window exist reuse it:
-    execute winnr . 'wincmd w'
-  else
-    " If no terminal window create a vertical window at the right side:
-    wincmd s
-    wincmd L
-    100wincmd |
-    let winnr = winnr()
-  endif
-
-  " Search among existing terminal buffer:
-  if l:bufindex == 0
-    let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
-  else
-    let buf_infos = filter(getbufinfo(), "v:val.bufnr ==" . l:bufindex)
-  endif
-  if len(buf_infos)
-    if l:bufindex == 0
-      let buf_infos = filter(buf_infos, "getbufvar(v:val.bufnr, 'terminal_name')=='" . l:name . "'")
-    endif
-    if len(buf_infos)
-      " If a hidden terminal with the right name exist use it:
-      execute 'buffer ' . buf_infos[0].bufnr
-      return
-    endif
-  endif
-
-  if l:bufindex != 0
-    echom 'Fail to find buffer:' . l:bufindex
-    return
-  endif
-
-  let l:workingdir = getcwd()
-  if l:name != l:workingdir
-    " Change the working directory temporarily
-    " In order to create the terminal with the correct working directory
-    execute 'cd' l:name
-
-    let l:restore_rooter = 0
-    if exists('g:rooter_manual_only') && !g:rooter_manual_only
-      " Disable vim-rooter temporarily
-      RooterToggle
-      let l:restore_rooter = 1
-    endif
-  endif
-
-  " Load a new terminal into the window:
-  if has('nvim')
-    " The redirection to >nul hide the output of the console
-    terminal cmd.exe /s /k C:\Softs\Clink\Clink.bat inject
-    " Switch to console mode:
-    norma a
-  else
-    " 96 = 100 - &numberwidth
-    " &signcolumn == yes -> 2 columns
-    " &numberwidth -> max(&numberwidth, ceil(log(line('$'))/log(10)) + 1)
-    terminal ++curwin ++cols=96 ++close ++kill=kill cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul
-  endif
-
-  setlocal nobuflisted
-  let b:terminal_name = l:name
-  " Set a name for the terminal buffer:
-  execute 'file' 'Term ' . bufnr()
-
-  if l:name != l:workingdir
-    execute 'cd' l:workingdir
-    if l:restore_rooter
-      RooterToggle
-    endif
-  endif
-endfunction
-
-function! s:TermList()
-  let ret = []
-  let buf_infos = filter(getbufinfo(), "getbufvar(v:val.bufnr, '&buftype')=='terminal'")
-
-  let cwd = getcwd()
-  let cwd = fnamemodify(cwd, ':p')
-
-  for buf_info in buf_infos
-    if !has_key(buf_info.variables, 'terminal_name')
-      continue
-    endif
-    let terminal_name  = buf_info.variables.terminal_name
-    if terminal_name[0:len(cwd)-1] ==# cwd
-      let terminal_name = terminal_name[len(cwd):]
-      if terminal_name == ''
-        let terminal_name = '.'
-      endif
-    endif
-    call add(ret, [buf_info.bufnr, terminal_name])
-  endfor
-  return ret
-endfunction
-
-function! s:CompleteTerm(arg_lead, cmd_line, position)
-  let ret = map(s:TermList(), {_, val -> val[1]})
-  return join(ret, "\n")
-endfunction
-
-" command! -nargs=? Term call s:SwitchToTerminal(<f-args>)
-command! -complete=custom,<SID>CompleteTerm -nargs=? Term call <SID>SwitchToTerminal(<f-args>)
-
-command TermList echo join(map(<SID>TermList(), {_, val -> printf("%3d %s", val[0], val[1])}), "\n")
-
-function! s:ToggleTerm(name)
-  let win_infos = filter(getwininfo(), "v:val.terminal")
-  call filter(win_infos, {_, x -> x.tabnr == tabpagenr()})
-  if len(win_infos)
-    " If a terminal window exist go to the terminal:
-    for i in range(len(win_infos)-1, 0, -1)
-      execute win_infos[i].winnr . 'wincmd c'
-    endfor
-    return
-  else
-    call s:SwitchToTerminal(a:name)
-  endif
-endfunction
-
-nnoremap <leader>tb <cmd>call <SID>ToggleTerm(expand('%:p:h'))<CR>
-if s:ispluginactive('which_key')
-  let g:which_key_map.t.b = [":call <SID>ToggleTerm(expand('%:p:h'))", 'Toggle Term']
-endif
-endif
-" }}}
-
 " 3.17. Active Window Focus
 " ------------------------- {{{
 
@@ -6027,7 +5876,7 @@ function! KillSideBars()
 
   " Delete the terminal buffers that don't correspond to a window
   let wininfos = getwininfo()
-  let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
+  call filter(wininfos, "v:val.tabnr == " . tabpagenr())
   if has('nvim')
     let term_buffers = map(filter(win_infos, 'v:val.terminal'), 'v:val.winnr')
   else
@@ -6042,7 +5891,7 @@ function! KillSideBars()
   endfor
 
   let wininfos = getwininfo()
-  let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
+  call filter(wininfos, "v:val.tabnr == " . tabpagenr())
   if has('nvim')
     let term_buffers = map(filter(wininfos, 'v:val.terminal'), 'v:val.winnr')
   else
@@ -6276,13 +6125,13 @@ function! Reformat(...)
 
   if &filetype == 'html'
     " !djlint --reformat --quiet %
-    execute '!djlint --reformat --format-css --format-js --quiet' l:path
+    execute '!djlint --reformat --format-css --format-js --quiet' '"' . l:path . '"'
     return
   endif
 
   if &filetype == 'xml'
     " !xmllint --format --output % %
-    execute '!xmllint --format --output' l:path l:path
+    execute '!xmllint --format --output'  '"' . l:path . '"' '"' . l:path . '"'
     return
   endif
 endfunction
