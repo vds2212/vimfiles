@@ -897,18 +897,19 @@ function! s:ispluginavailable(plugin)
     return filereadable($VIMRUNTIME . '/' . a:plugin.url)
   endif
   if a:plugin.manager == 'packadd'
-    " TODO: loop on child folder of $MYVIMDIR . 'pack'
-    if isdirectory($MYVIMDIR . 'pack/dist/opt/' . a:plugin.url)
-      return 1
-    if isdirectory($MYVIMDIR . 'pack/dist/start/' . a:plugin.url)
-      return 1
-    elseif isdirectory(s:datafolder() . 'pack/dist/opt/' . a:plugin.url)
-      return 1
-    elseif isdirectory(s:datafolder() . 'pack/dist/start' . a:plugin.url)
-      return 1
-    else
-      return 0
-    endif
+    let gdirs = globpath($MYVIMDIR . 'pack', '*', 1, 1)
+    let ldirs = globpath(s:datafolder() . 'pack', '*', 1, 1)
+    let dirs = gdirs + ldirs
+    call filter(dirs, 'isdirectory(v:val)')
+    for dir in dirs
+      if isdirectory(dir . '/opt/' . a:plugin.url)
+        return 1
+      endif
+      if isdirectory(dir . '/start/' . a:plugin.url)
+        return 1
+      endif
+    endfor
+    return 0
   endif
   return 1
 endfunction
