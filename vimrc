@@ -4460,7 +4460,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:neoterm.setup = funcref("s:setup")
-call s:addplugin(s:neoterm, "neoterm", 0)
+call s:addplugin(s:neoterm, "neoterm", 1)
 " }}}
 
 " Vim-Term
@@ -4482,7 +4482,7 @@ function! s:setup() dict
   nnoremap <leader>tz <Plug>(TermToggle)
 endfunction
 let s:vim_term.setup = funcref("s:setup")
-call s:addplugin(s:vim_term, "vim-term", 1)
+call s:addplugin(s:vim_term, "vim-term", 0)
 " }}}
 " }}}
 
@@ -6097,12 +6097,15 @@ command! UnloadNonProjectFiles let cwd=getcwd() | bufdo if (expand('%:p')[0:len(
 " ------------ {{{
 
 function! Browse(...)
-  let l:dir = '"%:p:h"'
+  let l:dir = expand("%:p:h")
   if a:0 > 0
-    let l:dir = a:1
+    let l:dir = fnamemodify(expand(a:1), ":p")
+    if !isdirectory(l:dir)
+      let l:dir = fnamemodify(l:dir, ":h")
+    endif
   endif
 
-  execute 'silent !open_folder.vbs' l:dir
+  execute 'silent !open_folder.vbs' '"' . l:dir . '"'
 endfunction
 command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 " }}}
