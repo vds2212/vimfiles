@@ -8,7 +8,6 @@ if v:progname =~? "evim"
   finish
 endif
 
-" This is a comment
 
 " Bail out if something that ran earlier, e.g. a system wide vimrc, does not
 " want Vim to use these default values.
@@ -229,6 +228,25 @@ function! s:datafolder()
   " Convert the path separator according to the OS:
   let l:vim_data_folder = expand(l:vim_data_folder)
   return l:vim_data_folder
+endfunction
+
+function! s:configfolder()
+  if has('nvim')
+    let l:vim_config_folder = stdpath('config') . '/'
+  else
+    if v:version >= 901 && has("patch-9.1.0718")
+      let l:vim_config_folder = $MYVIMDIR . '/'
+    else
+      if has('win32')
+        let l:vim_config_folder = expand('~') . '\vimrc\'
+      else
+        let l:vim_config_folder = expand('~') . '/.vim/'
+      endif
+    endif
+  endif
+  " Convert the path separator according to the OS:
+  let l:vim_config_folder = expand(l:vim_config_folder)
+  return l:vim_config_folder
 endfunction
 
 " Define the <leader> key to \ (the default)
@@ -544,10 +562,12 @@ set nowrap
 
 " Turn the bottom scroll bar on and off depending on the value of
 " the wrap flag.
+if !has('nvim')
 if &wrap
   set guioptions-=b
 else
   set guioptions+=b
+  endif
 endif
 
 augroup scrollbar
@@ -563,7 +583,9 @@ set linebreak
 " - Tab index
 " - File name (tail)
 " - Modified flag (+ | -)
+if !has('nvim')
 set guitablabel=[%N]\ %t\ %M
+endif
 
 " Move between splits with Ctrl motion keys:
 " Remark:
@@ -897,8 +919,8 @@ function! s:ispluginavailable(plugin)
     return filereadable($VIMRUNTIME . '/' . a:plugin.url)
   endif
   if a:plugin.manager == 'packadd'
-    let gdirs = globpath($MYVIMDIR . 'pack', '*', 1, 1)
-    let ldirs = globpath(s:datafolder() . 'pack', '*', 1, 1)
+    let gdirs = globpath($VIMRUNTIME . 'pack', '*', 1, 1)
+    let ldirs = globpath(s:configfolder() . 'pack', '*', 1, 1)
     let dirs = gdirs + ldirs
     call filter(dirs, 'isdirectory(v:val)')
     for dir in dirs
@@ -1423,7 +1445,7 @@ function! s:setup() dict
   " More information with: :help wilder.txt
 endfunction
 let s:wilder.setup = funcref("s:setup")
-call s:addplugin(s:wilder, "wilder")
+call s:addplugin(s:wilder, "wilder", 1)
 endif
 " }}}
 
@@ -4460,7 +4482,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:neoterm.setup = funcref("s:setup")
-call s:addplugin(s:neoterm, "neoterm", 1)
+call s:addplugin(s:neoterm, "neoterm", 0)
 " }}}
 
 " Vim-Term
@@ -4482,7 +4504,7 @@ function! s:setup() dict
   nnoremap <leader>tz <Plug>(TermToggle)
 endfunction
 let s:vim_term.setup = funcref("s:setup")
-call s:addplugin(s:vim_term, "vim-term", 0)
+call s:addplugin(s:vim_term, "vim-term", 1)
 " }}}
 " }}}
 
@@ -5061,7 +5083,7 @@ call s:addplugin(s:vim_latex, "vim_latex", 0)
 " 2.25.10. Vim Help
 " ----------------- {{{
 
-call s:addplugin('tweekmonster/helpful.vim', "helpful", 1)
+call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
 " }}}
 " }}}
 
@@ -5733,6 +5755,8 @@ if !has('nvim')
     au WinEnter,BufEnter,BufWinEnter * setlocal wincolor=
     au WinLeave,BufLeave * call DimWindow()
   augroup END
+else
+  set winhighlight=Normal:Normal,NormalNC:DimNormal
 endif
 
 " Hide the cursor line for the non active window:
