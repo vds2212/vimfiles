@@ -333,6 +333,9 @@ set shortmess-=S
 " By default unfold completely the buffer when loaded:
 set foldlevel=999
 
+set foldopen+=jump,search
+set foldclose=all
+
 " Search a string that can't be fond to stop highlighting search
 command! Noh s/91385034739874398234/
 
@@ -563,17 +566,18 @@ set nowrap
 " Turn the bottom scroll bar on and off depending on the value of
 " the wrap flag.
 if !has('nvim')
-if &wrap
-  set guioptions-=b
-else
-  set guioptions+=b
+  if &wrap
+    " If wrap is set hide the bottom scroll bar
+    set guioptions-=b
+  else
+    " Otherwise activate the bottom scroll bar
+    set guioptions+=b
   endif
+  augroup scrollbar
+    autocmd!
+    autocmd OptionSet wrap if &wrap|set guioptions-=b|else|set guioptions+=b|endif
+  augroup END
 endif
-
-augroup scrollbar
-  autocmd!
-  autocmd OptionSet wrap if &wrap|set guioptions-=b|else|set guioptions+=b|endif
-augroup END
 
 " Make vim breaking line at words boundaries instead of at line length
 " for wrapping long lines.
@@ -1045,7 +1049,7 @@ function! s:setup()
   autocmd ColorScheme nord call FixNord()
 endfunction
 let s:nord_vim.setup = funcref("s:setup")
-call s:addplugin(s:nord_vim, "nord_vim")
+call s:addplugin(s:nord_vim, "nord_vim", 0)
 
 let s:rose_pine = {}
 if has('nvim')
@@ -1054,7 +1058,7 @@ else
   let s:rose_pine.url = 'rose-pine/vim'
 endif
 let s:rose_pine.options = {'as': 'rose-pine'}
-call s:addplugin(s:rose_pine, "rose_pine")
+call s:addplugin(s:rose_pine, "rose_pine", 0)
 
 let s:vim_gruvbox = {'url' : 'morhetz/gruvbox'}
 function! s:setup() dict
@@ -1093,13 +1097,13 @@ function! s:setup() dict
   autocmd ColorScheme gruvbox call FixGruvbox()
 endfunction
 let s:vim_gruvbox.setup = funcref("s:setup")
-call s:addplugin(s:vim_gruvbox, "vim_gruvbox")
+call s:addplugin(s:vim_gruvbox, "vim_gruvbox", 1)
 
 let s:vim_color_solarized = {'url' : 'altercation/vim-colors-solarized'}
 call s:addplugin(s:vim_color_solarized, "vim_color_solarized", 0)
 
 let s:iceberg = {'url' : 'cocopon/iceberg.vim'}
-call s:addplugin(s:iceberg, "iceberg", 1)
+call s:addplugin(s:iceberg, "iceberg", 0)
 
 let s:tokyonight = {'url' : 'folke/tokyonight.nvim'}
 call s:addplugin(s:tokyonight, "tokyonight", 0)
@@ -1445,10 +1449,62 @@ function! s:setup() dict
   " More information with: :help wilder.txt
 endfunction
 let s:wilder.setup = funcref("s:setup")
-call s:addplugin(s:wilder, "wilder", 1)
+call s:addplugin(s:wilder, "wilder", 0)
 endif
 " }}}
 
+" Vim-Suggest
+" ----------- {{{
+
+let s:vim_suggest = {}
+let s:vim_suggest.url = 'girishji/vimsuggest'
+function! s:setup() dict
+  let s:vim_suggest = {}
+  let s:vim_suggest.cmd = {
+        \ 'enable': v:true,
+        \ 'pum': v:true,
+        \ 'exclude': [],
+        \ 'onspace': ['b\%[uffer]','colo\%[rscheme]'],
+        \ 'alwayson': v:false,
+        \ 'popupattrs': {},
+        \ 'wildignore': v:true,
+        \ 'addons': v:true,
+        \ 'trigger': 'n',
+        \ 'reverse': v:false,
+        \ 'prefixlen': 1,
+        \ }
+  let s:vim_suggest.keymap = {
+      \ 'page_up': ["\<PageUp>", "\<S-Up>"],
+      \ 'page_down': ["\<PageDown>", "\<S-Down>"],
+      \ 'hide': "\<C-e>",
+      \ 'dismiss': "\<C-s>",
+      \ 'send_to_qflist': "\<C-q>",
+      \ 'send_to_arglist': "\<C-l>",
+      \ 'send_to_clipboard': "\<C-g>",
+      \ 'split_open': "\<C-j>",
+      \ 'vsplit_open': "\<C-v>",
+      \ 'tab_open': "\<C-t>",
+  \ }
+  autocmd VimEnter * call g:VimSuggestSetOptions(s:vim_suggest)
+endfunction
+let s:vim_suggest.setup = funcref("s:setup")
+call s:addplugin(s:vim_suggest, "vim_suggest", 1)
+" }}}
+
+" Barmaid
+" ------- {{{
+
+let s:vim_barmaid = {}
+let s:vim_barmaid.url = 'vim-barmaid'
+let s:vim_barmaid.manager = "packadd"
+function! s:setup() dict
+  let g:barmaid_terminal_is_bar = 1
+endfunction
+let s:vim_barmaid.setup = funcref("s:setup")
+call s:addplugin(s:vim_barmaid, "vim_barmaid", 1)
+
+"  }}}
+"
 " 2.3.3. Repeat
 " ------------- {{{
 
@@ -1495,6 +1551,7 @@ let s:vim_remotions.url = 'vds2212/vim-remotions'
 " let s:vim_remotions.url = 'vim-remotions'
 " let s:vim_remotions.manager = "packadd"
 function! s:setup() dict
+  let g:remotions_debug = 0
   let g:remotions_direction = 1
   let g:remotions_repeat_count = 1
 
@@ -1562,7 +1619,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_remotions.setup = funcref("s:setup")
-call s:addplugin(s:vim_remotions, "vim_remotions")
+call s:addplugin(s:vim_remotions, "vim_remotions", 1)
 endif
 " }}}
 
@@ -2112,7 +2169,7 @@ if !has('nvim')
   call s:addplugin('rhysd/vim-healthcheck', "checkhealth", 0)
 endif
 
-call s:addplugin('dstein64/vim-startuptime', "startuptime", 0)
+call s:addplugin('dstein64/vim-startuptime', "startuptime", 1)
 
 " Ensure the context lines keep being visible
 let s:context = {}
@@ -2336,16 +2393,16 @@ let s:vim_clap = {}
 let s:vim_clap.url = 'liuchengxu/vim-clap'
 let s:vim_clap.options = { 'do': { -> clap#installer#force_download() } }
 function! s:setup() dict
-  nnoremap <C-p> :call LeaveSideBar() <bar> Clap files<CR>
-  nnoremap <leader>m :call LeaveSideBar() <bar> Clap history<CR>
-  nnoremap <leader>b :call LeaveSideBar() <bar> Clap buffers<CR>
+  nnoremap <C-p> :LeaveSideBar <bar> Clap files<CR>
+  nnoremap <leader>m :LeaveSideBar <bar> Clap history<CR>
+  nnoremap <leader>b :LeaveSideBar <bar> Clap buffers<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.m = [':Clap history', 'Browse MRU']
     let g:which_key_map.b = [':Clap buffers', 'Browse Buffers']
   endif
 
   " Requires Vista and maple
-  nnoremap <leader>p :call LeaveSideBar() <bar> Clap proj_tags<CR>
+  nnoremap <leader>p :LeaveSideBar <bar> Clap proj_tags<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.p = [':Clap proj_tags', 'Browse Tags']
   endif
@@ -2484,7 +2541,12 @@ call s:addplugin(s:ack_vim, "ack_vim", 0)
 " Remark:
 " - Seems to work in asynchronous mode on Windows
 let s:ctrlsf = {}
-let s:ctrlsf.url = 'dyng/ctrlsf.vim'
+if 0
+  let s:ctrlsf.url = 'dyng/ctrlsf.vim'
+else
+  let s:ctrlsf.url = 'ctrlsf.vim'
+  let s:ctrlsf.manager = 'packadd'
+endif
 function! s:setup() dict
   " Compact view
   let g:ctrlsf_default_view_mode = 'compact'
@@ -2515,6 +2577,8 @@ function! s:setup() dict
         \ "tabb" : "",
         \ "chgmode" : "M",
         \ }
+
+  " let g:ctrlsf_absolute_file_path = 1
 
   " QuickFix List bufnr
   " getqflist(0, {"qfbufnr":1}).qfbufnr
@@ -2682,7 +2746,7 @@ function! s:setup() dict
       if isdirectory(a:1)
         execute printf("NERDTree %s", a:1)
       else
-        call LeaveSideBar()
+        LeaveSideBar
         execute printf("e %s", a:1)
       endif
     endif
@@ -2772,7 +2836,7 @@ function! s:setup() dict
       if isdirectory(a:1)
         execute printf("Fern %s -drawer -reveal=% -width=35", a:1)
       else
-        call LeaveSideBar()
+        LeaveSideBar
         execute printf("e %s", a:1)
       endif
     endif
@@ -3159,7 +3223,7 @@ function! s:setup() dict
 
     " Activate for python
     " Should take into account &diff option?
-    autocmd Filetype python AnyFoldActivate
+    " autocmd Filetype python AnyFoldActivate
     " Open the fold that correspond to Python classes:
     " autocmd FileType python g/^class\s\+/norm zo
 
@@ -3185,7 +3249,25 @@ call s:addplugin(s:any_fold, "any_fold")
 " Python code folding
 " Remarks:
 "   any_fold seems to give better results
-call s:addplugin('tmhedberg/SimpylFold', "simpylfold", 0)
+let s:simpylfold = {}
+let s:simpylfold.url = 'tmhedberg/SimpylFold'
+function! s:setup() dict
+  function! MyFoldText()
+      let nl = v:foldend - v:foldstart + 1
+      let linetext = getline(v:foldstart)
+      let l:sign_width = 0
+      let l:sign_width += (&l:signcolumn=='yes' ? 2 : 0)
+      let l:sign_width += &l:number ? max([&l:numberwidth, float2nr(log10(line('$'))) + 2]) : 0
+      let right_label = nl . " lines"
+      let txt = linetext . repeat(' ', winwidth(winnr()) - l:sign_width - len(linetext) - len(right_label)) . right_label
+      return txt
+  endfunction
+  let &fillchars.=",fold: "
+  set foldtext=MyFoldText()
+  let g:SimpylFold_fold_blank = 1
+endfunction
+let s:simpylfold.setup = funcref("s:setup")
+call s:addplugin(s:simpylfold, "simpylfold", 1)
 " }}}
 
 " 2.12.2. Fold Handling
@@ -4046,7 +4128,7 @@ call s:addplugin(s:jedi_vim, "jedi_vim", 0)
 " }}}
 " }}}
 
-" 2.18. Semantic Higlighting
+" 2.18. Semantic Highlighting
 " -------------------------- {{{
 
 " Semantic highlighting
@@ -4090,7 +4172,7 @@ function! s:setup() dict
 endfunction
 let s:vim_isort.setup = funcref("s:setup")
 if has('python3')
-  call s:addplugin(s:vim_isort, "vim_isort")
+  call s:addplugin(s:vim_isort, "vim_isort", 1)
 endif
 " }}}
 
@@ -4504,7 +4586,7 @@ function! s:setup() dict
   nnoremap <leader>tz <Plug>(TermToggle)
 endfunction
 let s:vim_term.setup = funcref("s:setup")
-call s:addplugin(s:vim_term, "vim-term", 1)
+call s:addplugin(s:vim_term, "vim_term", 1)
 " }}}
 " }}}
 
@@ -5258,8 +5340,16 @@ endif
 
 " Searching for a next/previous command in the history
 " instead of going for the next/previous command
-cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<down>"
-cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<up>"
+if s:ispluginactive('wilder')
+  cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<down>"
+  cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<up>"
+elseif s:ispluginactive('vim_suggest')
+  cnoremap <expr> <C-j> pumvisible() ? "\<C-s>\<down>" : "\<down>"
+  cnoremap <expr> <C-k> pumvisible() ? "\<C-s>\<up>" : "\<up>"
+else
+  cnoremap <expr> <C-j> "\<down>"
+  cnoremap <expr> <C-k> "\<up>"
+endif
 " }}}
 
 " 3.4. Select the pasted text with gp
@@ -5792,153 +5882,6 @@ if s:ispluginactive('which_key')
 endif
 " }}}
 
-" 3.19. Barmade
-" ------------- {{{
-
-function! IsSideBar(buf_nr)
-  " Return 1 if the buffer correspond to a side bar:
-  " - A terminal window
-  " - The quickfix window
-  " - The help
-  " - The NERDTree side bar
-  " - ...
-  let buf_type = getbufvar(a:buf_nr, '&buftype')
-
-  if buf_type ==# 'terminal'
-    return 1
-  endif
-
-  " This code prevent the fugitive buffer to open properly
-  " if &filetype == "fugitive"
-  "   return 1
-  " endif
-
-  " This code prevent the fugitive buffer to open properly
-  " if !&modifiable
-  "   " the non modifiable buffers
-  "   " e.g.:
-  "   " - fugitive
-  "   " - nerdtree
-  "   " - tagbar
-  "   return 1
-  " endif
-
-  if buf_type ==# 'quickfix'
-    " the quickfix or location lists:
-    return 1
-  endif
-
-  if bufname(a:buf_nr) == ''
-    " the [No Name] buffer
-    return 0
-  endif
-
-  let listed = getbufvar(a:buf_nr, '&buflisted')
-  if !listed
-    " the not listed buffers
-    " e.g.:
-    " - nerdtree
-    " - tagbar
-    return 1
-  endif
-
-  return 0
-endfunction
-
-function! LeaveSideBar()
-  " Go to a non side bar window
-  let win_infos = getwininfo()
-  let win_infos =  filter(getwininfo(), "v:val.tabnr == " . tabpagenr())
-  let winindex = winnr() - 1
-  for i in range(len(win_infos))
-    let index = (winindex + i) % len(win_infos)
-    if IsSideBar(win_infos[index].bufnr)
-      continue
-    endif
-    execute (index + 1) . 'wincmd w'
-    return
-  endfor
-endfunction
-
-command! LeaveSideBar call LeaveSideBar()
-
-function! GetNumNonSideBarWindows()
-  let num_windows = 0
-  " echom "winnr('$'):" . winnr('$')
-
-  for win_nr in range(1, winnr('$'))
-    let buf_nr = winbufnr(win_nr)
-    if IsSideBar(buf_nr)
-      continue
-    endif
-    let num_windows = num_windows + 1
-  endfor
-
-  return num_windows
-endfunction
-
-function! IsAutoClose(buf_nr)
-  " Return 1 if the side bar should already auto close
-  let buf_type = getbufvar(a:buf_nr, '&filetype')
-
-  " let term_buffers = term_list()
-
-  if buf_type ==# 'tagbar'
-    " Not Read Only
-    return 1
-  else
-    return 0
-  endif
-endfunction
-
-function! KillSideBars()
-  let num_windows = GetNumNonSideBarWindows()
-  " echom "Num windows: " . num_windows
-  if num_windows > 0
-    " If there are non side bar windows do nothing
-    return
-  endif
-
-  " Delete the terminal buffers that don't correspond to a window
-  let wininfos = getwininfo()
-  call filter(wininfos, "v:val.tabnr == " . tabpagenr())
-  if has('nvim')
-    let term_buffers = map(filter(win_infos, 'v:val.terminal'), 'v:val.winnr')
-  else
-    let term_buffers = term_list()
-  endif
-  for buf_nr in term_buffers
-    " echom "what about terminal: " . buf_nr
-    if len(win_findbuf(buf_nr)) == 0
-      " echom "delete terminal: " . buf_nr
-      execute 'bd! ' . buf_nr
-    endif
-  endfor
-
-  let wininfos = getwininfo()
-  call filter(wininfos, "v:val.tabnr == " . tabpagenr())
-  if has('nvim')
-    let term_buffers = map(filter(wininfos, 'v:val.terminal'), 'v:val.winnr')
-  else
-    let term_buffers = term_list()
-  endif
-  let buf_nr = bufnr('%')
-  " echom "buffer: " . buf_nr
-  if index(term_buffers, buf_nr) >= 0
-    " Kill the terminal buffer and quit
-    " echom "terminal buffer"
-    call feedkeys("\<C-w>:bd!\<CR>:quit\<CR>:\<BS>")
-  elseif !IsAutoClose(buf_nr)
-    " Kill the side bar window
-    " echom "side bar"
-    call feedkeys(":quit\<CR>:\<BS>")
-  endif
-endfunction
-
-" Close Vim if the last buffer is side bar:
-autocmd BufEnter * call KillSideBars()
-" }}}
-
 " 3.20. TrimWhitespaces
 " --------------------- {{{
 
@@ -6165,6 +6108,50 @@ function! Reformat(...)
 endfunction
 
 command! -complete=file -nargs=? Reformat call Reformat(<f-args>)
+" }}}
+
+" Vertical Divider
+" ---------------- {{{
+
+function! AddVertDivider(width)
+  wincmd v
+  wincmd p
+  set nowrap
+  normal 0
+  let l:width = (&signcolumn=='yes' ? 2 : 0) +max([(&number ? &numberwidth : 0), float2nr(log10(line('$')))]) + a:width
+  execute l:width . 'wincmd |'
+  set winfixwidth
+  set scrollbind
+  wincmd p
+  let b:number = &number
+  setlocal nonumber
+  let b:signcolumn = &signcolumn
+  setlocal signcolumn=no
+  set scrollopt=ver,jump
+  set scrollbind
+  syncbind
+endfunction
+
+function! RemoveVertDivider()
+  let &number = b:number
+  let &signcolumn = b:signcolumn
+  set noscrollbind
+  wincmd h
+  q
+endfunction
+
+function! AddHorzDivider(height)
+  wincmd s
+  set nowrap
+  0
+  execute a:height . 'wincmd _'
+  set winfixheight
+  set scrollbind
+  wincmd j
+  set scrollopt=hor,jump
+  set scrollbind
+  syncbind
+endfunction
 " }}}
 " }}}
 
