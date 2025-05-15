@@ -2757,7 +2757,7 @@ function! s:setup() dict
   " More information with: :help NERDTree.txt
 endfunction
 let s:nerdtree.setup = funcref("s:setup")
-call s:addplugin(s:nerdtree, "nerdtree")
+call s:addplugin(s:nerdtree, "nerdtree", 1)
 " Plug 'Xuyuanp/nerdtree-git-plugin'
 
 let s:nvim_tree = {}
@@ -2774,7 +2774,7 @@ function! s:setup() dict
 endfunction
 let s:nvim_tree.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin(s:nvim_tree, "nvim_tree")
+  call s:addplugin(s:nvim_tree, "nvim_tree", 1)
 endif
 
 if has('nvim')
@@ -3973,7 +3973,7 @@ function! s:setup() dict
 endfunction
 let s:nvim_cmp.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin(s:nvim_cmp, "nvim_cmp")
+  call s:addplugin(s:nvim_cmp, "nvim_cmp", 1)
 endif
 " }}}
 
@@ -4129,7 +4129,7 @@ call s:addplugin(s:jedi_vim, "jedi_vim", 0)
 " }}}
 
 " 2.18. Semantic Highlighting
-" -------------------------- {{{
+" --------------------------- {{{
 
 " Semantic highlighting
 let s:semshi = {}
@@ -5184,15 +5184,15 @@ let s:colorscheme_desired = 'gruvbox'
 " let s:colorscheme_desired = 'nord'
 
 " call s:selectplugins('11110001')
+" call s:selectplugins('101111')
 
 " Problem with b:undo_ftpplugin (the four plugins should be present together)
 " call s:selectplugins(['vim_easymotion', 'markdown_preview', 'csv', 'vim_remotions'])
-" call s:deactivateplugins(['csv']) " important
+call s:deactivateplugins(['coc_nvim']) " important
 " call s:deactivateplugins(['vim_remotions']) " important
 " call s:deactivateplugins(['vim_easymotion']) " important
 " call s:deactivateplugins(['markdown_preview']) " optional
 
-" call s:activateplugins(['ale'])
 " call s:activateplugins(['vim_gruvbox', 'vim_easymotion', 'vim_remotions'])
 " call s:deactivateplugins(['vim_easymotion'])
 " call s:activateplugins(['vim_gruvbox'])
@@ -5321,7 +5321,19 @@ endif
 " 3.1. Improved Ctrl-l
 " -------------------- {{{
 
-nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
+let s:refresh = ''
+let s:refresh .= ':nohlsearch<cr>'
+let s:refresh .= ':windo filetype detect<cr>'
+let s:refresh .= ':diffupdate<cr>'
+let s:refresh .= ':syntax sync fromstart<cr>'
+let s:refresh .= ':setlocal wincolor=<cr>'
+if s:ispluginactive('vim_signature')
+  let s:refresh .= ':SignatureRefresh<cr>'
+endif
+let s:refresh .= '<C-l>'
+execute 'nnoremap <leader>l ' . s:refresh
+" nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
+
 if s:ispluginactive('which_key')
   let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
 endif
