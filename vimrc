@@ -413,20 +413,22 @@ endif
 " Get rid of the introduction message when starting Vim
 " set shortmess=+I
 
-" Make vim not beeping when an error occur
 set noerrorbells
-set visualbell
-" Make vim not using flashing screen when an error occur
-set t_vb=
-if has('autocmd')
-  augroup silent
-    autocmd!
-    autocmd GUIEnter * set visualbell t_vb=
-  augroup END
+" Make vim not beeping when an error occur
+if 1
+  Make vim not beeping when an error occur:
+  set belloff=all
+else
+  " Replace the bell by a visual bell effect (set visualbell)
+  " Kill the visual bell effect (t_vb=)
+  set visualbell t_vb=
+  if has('autocmd')
+    augroup silent
+      autocmd!
+      autocmd GUIEnter * set visualbell t_vb=
+    augroup END
+  endif
 endif
-
-" Make vim not beeping when an error occur (alternative solution)
-" set belloff=all
 
 " Open split below and on the right by default
 " (the standard is up and on the left)
@@ -5059,7 +5061,7 @@ function! s:setup() dict
   " More information: :help ft-csv
 endfunction
 let s:csv.setup = funcref("s:setup")
-call s:addplugin(s:csv, "csv")
+call s:addplugin(s:csv, "csv", 0)
 
 let s:rainbow_csv = {}
 let s:rainbow_csv.url = 'mechatroner/rainbow_csv'
@@ -5165,7 +5167,7 @@ call s:addplugin(s:vim_latex, "vim_latex", 0)
 " 2.25.10. Vim Help
 " ----------------- {{{
 
-call s:addplugin('tweekmonster/helpful.vim', "helpful", 0)
+call s:addplugin('tweekmonster/helpful.vim', "helpful", 1)
 " }}}
 " }}}
 
@@ -5188,7 +5190,7 @@ let s:colorscheme_desired = 'gruvbox'
 
 " Problem with b:undo_ftpplugin (the four plugins should be present together)
 " call s:selectplugins(['vim_easymotion', 'markdown_preview', 'csv', 'vim_remotions'])
-call s:deactivateplugins(['coc_nvim']) " important
+" call s:deactivateplugins(['coc_nvim']) " important
 " call s:deactivateplugins(['vim_remotions']) " important
 " call s:deactivateplugins(['vim_easymotion']) " important
 " call s:deactivateplugins(['markdown_preview']) " optional
