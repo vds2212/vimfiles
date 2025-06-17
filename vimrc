@@ -416,7 +416,7 @@ endif
 set noerrorbells
 " Make vim not beeping when an error occur
 if 1
-  Make vim not beeping when an error occur:
+  " Make vim not beeping when an error occur:
   set belloff=all
 else
   " Replace the bell by a visual bell effect (set visualbell)
