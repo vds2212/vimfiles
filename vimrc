@@ -413,8 +413,8 @@ endif
 " Get rid of the introduction message when starting Vim
 " set shortmess=+I
 
-set noerrorbells
 " Make vim not beeping when an error occur
+set noerrorbells
 if 1
   " Make vim not beeping when an error occur:
   set belloff=all
@@ -1490,7 +1490,9 @@ function! s:setup() dict
   autocmd VimEnter * call g:VimSuggestSetOptions(s:vim_suggest)
 endfunction
 let s:vim_suggest.setup = funcref("s:setup")
-call s:addplugin(s:vim_suggest, "vim_suggest", 1)
+if !has('nvim')
+  call s:addplugin(s:vim_suggest, "vim_suggest", 1)
+endif
 " }}}
 
 " Barmaid
@@ -5334,7 +5336,6 @@ if s:ispluginactive('vim_signature')
 endif
 let s:refresh .= '<C-l>'
 execute 'nnoremap <leader>l ' . s:refresh
-" nnoremap <leader>l :nohlsearch<cr>:windo filetype detect<cr>:diffupdate<cr>:syntax sync fromstart<cr>:setlocal wincolor=<cr><C-l>
 
 if s:ispluginactive('which_key')
   let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
@@ -5753,9 +5754,9 @@ function! CorrectCommand()
   endif
 
   let l:substitutions = []
-  call add(l:substitutions, ['\v^(h%[elp])>(.*)', 'Help\2'])
+  call add(l:substitutions, ['\C\v^(h%[elp])>(.*)', 'Help\2'])
   if s:ispluginactive('vim_bbye')
-    call add(l:substitutions, ['\v^(bd>)(.*)', 'Bd\2'])
+    call add(l:substitutions, ['\C\v^(bd>)(.*)', 'Bd\2'])
   endif
   let g:substitutions = l:substitutions
 
@@ -5764,6 +5765,7 @@ function! CorrectCommand()
     if matchstr(l:command, l:substitution[0]) != ''
       let l:command = substitute(l:command, l:substitution[0], l:substitution[1], '')
       return "\<End>\<C-u>" . l:command . "\<CR>"
+      " return "\<End>\<C-u>" . l:command
     endif
   endfor
 
