@@ -590,7 +590,7 @@ set linebreak
 " - File name (tail)
 " - Modified flag (+ | -)
 if !has('nvim')
-set guitablabel=[%N]\ %t\ %M
+  set guitablabel=[%N]\ %t\ %M
 endif
 
 " Move between splits with Ctrl motion keys:
@@ -4482,6 +4482,7 @@ if has('nvim')
 endif
 " }}}
 
+
 " Terminus
 " -------- {{{
 
@@ -4495,6 +4496,23 @@ endfunction
 let s:terminus.setup = funcref("s:setup")
 call s:addplugin(s:terminus, "terminus", 0)
 " }}}
+
+
+" Codi
+" ---- {{{
+
+" Provide control on the terminal cursor shape:
+" Remark: Doesn't seems to have any effect on Windows
+let s:codi = {}
+let s:codi.url = 'metakirby5/codi.vim'
+function! s:setup() dict
+endfunction
+let s:codi.setup = funcref("s:setup")
+if has('nvim')
+  call s:addplugin(s:codi, "codi", 0)
+endif
+" }}}
+
 
 " Jupyter-Vim
 " ----------- {{{
