@@ -2267,22 +2267,6 @@ call s:addplugin(s:beacon, "beacon", 0)
 " Introduce a LongLines mode where the j and k key works like gj and gk
 call s:addplugin('manu-mannattil/vim-longlines', "vim_long_lines", 0)
 
-" Interactive Scratchpad
-" Remarks:
-" - Currently only working for Linux or MacOS
-let s:codi_vim = {}
-let s:codi_vim.url = 'metakirby5/codi.vim'
-function! s:setup() dict
-  let g:codi#interpreters = {
-        \ 'python': {
-        \ 'bin': 'C:\Python36_x64\python.exe',
-        \ 'prompt': '^\(>>>\|\.\.\.\) ',
-        \ },
-        \ }
-endfunction
-let s:codi_vim.setup = funcref("s:setup")
-call s:addplugin(s:codi_vim, "codi_vim", 0)
-
 " Tridactyl Firefox add-on support
 call s:addplugin('tridactyl/vim-tridactyl', "vim_tridactyl", 0)
 
@@ -4501,15 +4485,22 @@ call s:addplugin(s:terminus, "terminus", 0)
 " Codi
 " ---- {{{
 
-" Provide control on the terminal cursor shape:
-" Remark: Doesn't seems to have any effect on Windows
-let s:codi = {}
-let s:codi.url = 'metakirby5/codi.vim'
+" Interactive Scratchpad
+" Remarks:
+" - Currently only working for Linux or MacOS
+let s:codi_vim = {}
+let s:codi_vim.url = 'metakirby5/codi.vim'
 function! s:setup() dict
+  let g:codi#interpreters = {
+        \ 'python': {
+        \ 'bin': 'C:\Python39_x64\python.exe',
+        \ 'prompt': '^\(>>>\|\.\.\.\) ',
+        \ },
+        \ }
 endfunction
-let s:codi.setup = funcref("s:setup")
+let s:codi_vim.setup = funcref("s:setup")
 if has('nvim')
-  call s:addplugin(s:codi, "codi", 0)
+  call s:addplugin(s:codi_vim, "codi_vim", 0)
 endif
 " }}}
 
