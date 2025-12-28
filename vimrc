@@ -5448,17 +5448,32 @@ endif
 " 3.1. Improved Ctrl-l
 " -------------------- {{{
 
-let s:refresh = ''
-let s:refresh .= ':nohlsearch<cr>'
-let s:refresh .= ':windo filetype detect<cr>'
-let s:refresh .= ':diffupdate<cr>'
-let s:refresh .= ':syntax sync fromstart<cr>'
-let s:refresh .= ':setlocal wincolor=<cr>'
-if s:ispluginactive('vim_signature')
-  let s:refresh .= ':SignatureRefresh<cr>'
-endif
-let s:refresh .= '<C-l>'
-execute 'nnoremap <leader>l ' . s:refresh
+function! Refresh()
+  let l:window = winnr()
+  let l:view=winsaveview()
+  " let s:refresh = ''
+  " let s:refresh .= ':nohlsearch<cr>'
+  nohlsearch
+  " let s:refresh .= ':windo filetype detect<cr>'
+  windo filetype detect
+  " let s:refresh .= ':diffupdate<cr>'
+  diffupdate
+  " let s:refresh .= ':syntax sync fromstart<cr>'
+  syntax sync fromstart
+  " let s:refresh .= ':setlocal wincolor=<cr>'
+  setlocal wincolor=
+  if s:ispluginactive('vim_signature')
+    " let s:refresh .= ':SignatureRefresh<cr>'
+    SignatureRefresh
+  endif
+  " let s:refresh .= '<C-l>'
+  execute "normal \<C-l>"
+  call winrestview(l:view)
+  execute l:window . "wincmd w"
+endfunction
+
+" execute 'nnoremap <leader>l ' . s:refresh
+nnoremap <leader>l <Cmd>call Refresh()<CR>
 
 if s:ispluginactive('which_key')
   let g:which_key_map.l = [':nohlsearch:diffupdate:syntax sync fromstart', 'Refresh']
