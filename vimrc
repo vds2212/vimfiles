@@ -327,6 +327,9 @@ set hlsearch
 " remark: to get back the non g behavior in search use the g flag
 set gdefault
 
+" Make the search continue from the top of the file if necessary
+set wrapscan
+
 " Show the count message when searching
 set shortmess-=S
 
@@ -733,7 +736,14 @@ if has('nvim')
 endif
 
 " On Belgian keyboard <C-^> is nearly impossible to get
-nnoremap <C-§> <C-^>
+function! SwitchBuffer()
+  LeaveSideBar
+  execute "normal! \<C-^>"
+endfunction
+
+" nnoremap <C-§> <Cmd>call SwitchBuffer()<CR>
+nnoremap <C-^> <Cmd>call SwitchBuffer()<CR>
+" nnoremap <C-§> <C-^>
 
 " Workaround to make the Ctrl-] working on a Belgian keyboard with Vim 9.0
 " Remark: The <C-]> is used to navigate through the help system
@@ -1062,6 +1072,11 @@ endif
 let s:rose_pine.options = {'as': 'rose-pine'}
 call s:addplugin(s:rose_pine, "rose_pine", 0)
 
+let s:the_apprentice = {}
+let s:the_apprentice.url = 'romainl/Apprentice'
+" let s:the_apprentice.options = {'as': 'rose-pine'}
+call s:addplugin(s:the_apprentice, "the_apprentice", 0)
+
 let s:vim_gruvbox = {'url' : 'morhetz/gruvbox'}
 function! s:setup() dict
   function! FixGruvbox()
@@ -1365,7 +1380,7 @@ function! s:setup() dict
   " cnoremap <expr> <C-n> wilder#in_context() ? wilder#next() : "\<down>"
   " cnoremap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<up>"
 
-  nnoremap <leader>tx :call wilder#toggle()<CR>
+  nnoremap <leader>tx <Cmd>call wilder#toggle()<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.x = [':call wilder#toggle()', 'Toggle Wilder']
   endif
@@ -1451,7 +1466,7 @@ function! s:setup() dict
   " More information with: :help wilder.txt
 endfunction
 let s:wilder.setup = funcref("s:setup")
-call s:addplugin(s:wilder, "wilder", 0)
+call s:addplugin(s:wilder, "wilder", 1)
 endif
 " }}}
 
@@ -1491,7 +1506,7 @@ function! s:setup() dict
 endfunction
 let s:vim_suggest.setup = funcref("s:setup")
 if !has('nvim')
-  call s:addplugin(s:vim_suggest, "vim_suggest", 1)
+  call s:addplugin(s:vim_suggest, "vim_suggest", 0)
 endif
 " }}}
 
@@ -1623,7 +1638,7 @@ function! s:setup() dict
   endif
 endfunction
 let s:vim_remotions.setup = funcref("s:setup")
-call s:addplugin(s:vim_remotions, "vim_remotions", 1)
+call s:addplugin(s:vim_remotions, "vim_remotions", 0)
 endif
 " }}}
 
@@ -2014,13 +2029,13 @@ let s:vim_css_color = {}
 let s:vim_css_color.url = 'ap/vim-css-color'
 let s:vim_css_color.options = {}
 function! s:setup() dict
-  nnoremap <leader>th :call css_color#toggle()<CR>
+  nnoremap <leader>th <Cmd>call css_color#toggle()<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.h = [':call css_color#toggle()', 'Toggle Colorizer']
   endif
 endfunction
 let s:vim_css_color.setup = funcref("s:setup")
-call s:addplugin(s:vim_css_color, "vim_css_color")
+call s:addplugin(s:vim_css_color, "vim_css_color", 1)
 
 " Remarks:
 " - Requires: Go Language installation
@@ -2068,7 +2083,7 @@ function! s:setup() dict
   " \     'tsn': 'full_hex,rgb,rgba,hsl,hsla,colour_names',
   " \ }
 
-  nnoremap <leader>th :HexokinaseToggle<CR>
+  nnoremap <leader>th <Cmd>HexokinaseToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.h = [':HexokinaseToggle', 'Toggle Colorizer']
   endif
@@ -2194,7 +2209,7 @@ function! s:setup() dict
 
   " let g:context_extend_regex = '^\s*\([]{})]\|end\|else\|\(case\|default\|done\|elif\|fi\)\>\)'
 
-  nnoremap <leader>tc :ContextToggle<CR>
+  nnoremap <leader>tc <Cmd>ContextToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.c = [':ContextToggle', 'Toggle Context']
   endif
@@ -2202,7 +2217,7 @@ endfunction
 let s:context.setup = funcref("s:setup")
 call s:addplugin(s:context, "context")
 
-call s:addplugin('AndrewRadev/splitjoin.vim', "context", 0)
+call s:addplugin('AndrewRadev/splitjoin.vim', "splitjoin", 0)
 
 let s:treejs = {}
 let s:treejs.url = 'Wansmer/treesj'
@@ -2295,7 +2310,7 @@ function! s:setup() dict
   let g:rooter_patterns = ['.git', '.gitignore', '_darcs', '.hg', '.bzr', '.svn', 'Makefile']
   let g:rooter_change_directory_for_non_project_files = 'current'
 
-  nnoremap <leader>tr :RooterToggle<CR>
+  nnoremap <leader>tr <Cmd>RooterToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.r = [':RooterToggle', 'Toggle Rooter']
   endif
@@ -2319,9 +2334,9 @@ let s:fzf.options = { 'do': { -> fzf#install() } }
 let s:fzf.dependencies = ['junegunn/fzf.vim']
 function! s:setup() dict
   nnoremap <C-p> :Files<CR>
-  nnoremap <leader>m :History<CR>
-  nnoremap <leader>b :Buffers<CR>
-  nnoremap <leader>p :Tags<CR>
+  nnoremap <leader>m <Cmd>History<CR>
+  nnoremap <leader>b <Cmd>Buffers<CR>
+  nnoremap <leader>p <Cmd>Tags<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.m = [':History', 'Browse MRU']
     let g:which_key_map.b = [':Buffers', 'Browse Buffers']
@@ -2335,17 +2350,17 @@ function! s:setup() dict
   " - To learn more about preview window options, see `--preview-window` section of `man fzf`.
   " Remark:
   " - It seems that on a Belgium keyboard Ctrl-/ lead to Ctrl-_
-  let g:fzf_preview_window = ['right:50%', 'ctrl-_']
+  " let g:fzf_preview_window = ['right:50%', 'ctrl-_']
 
   " Preview window on the upper side of the window with 40% height,
   " hidden by default, ctrl-/ to toggle
   " let g:fzf_preview_window = ['up:40%:hidden', 'ctrl-/']
 
   " Empty value to disable preview window altogether
-  " let g:fzf_preview_window = []
+  let g:fzf_preview_window = []
 endfunction
 let s:fzf.setup = funcref("s:setup")
-call s:addplugin(s:fzf, "fzf", 0)
+call s:addplugin(s:fzf, "fzf", 1)
 
 " Fuzzy finder
 let s:ctrlp = {}
@@ -2353,8 +2368,8 @@ let s:ctrlp.url = 'ctrlpvim/ctrlp.vim'
 let s:ctrlp.options = {}
 function! s:setup() dict
   " <C-p> is the default of CtrlP ;-)
-  nnoremap <leader>m :CtrlPMRUFiles<CR>
-  nnoremap <leader>b :CtrlPBuffer<CR>
+  nnoremap <leader>m <Cmd>CtrlPMRUFiles<CR>
+  nnoremap <leader>b <Cmd>CtrlPBuffer<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.m = [':CtrlPMRUFiles', 'Browse MRU']
     let g:which_key_map.b = [':CtrlPBuffer', 'Browse Buffers']
@@ -2382,15 +2397,15 @@ let s:vim_clap.url = 'liuchengxu/vim-clap'
 let s:vim_clap.options = { 'do': { -> clap#installer#force_download() } }
 function! s:setup() dict
   nnoremap <C-p> :LeaveSideBar <bar> Clap files<CR>
-  nnoremap <leader>m :LeaveSideBar <bar> Clap history<CR>
-  nnoremap <leader>b :LeaveSideBar <bar> Clap buffers<CR>
+  nnoremap <leader>m <Cmd>LeaveSideBar <bar> Clap history<CR>
+  nnoremap <leader>b <Cmd>LeaveSideBar <bar> Clap buffers<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.m = [':Clap history', 'Browse MRU']
     let g:which_key_map.b = [':Clap buffers', 'Browse Buffers']
   endif
 
   " Requires Vista and maple
-  nnoremap <leader>p :LeaveSideBar <bar> Clap proj_tags<CR>
+  nnoremap <leader>p <Cmd>LeaveSideBar <bar> Clap proj_tags<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.p = [':Clap proj_tags', 'Browse Tags']
   endif
@@ -2402,33 +2417,52 @@ function! s:setup() dict
 
   " let g:clap_disable_run_rooter = v:true
   let g:clap_project_root_markers = ['.gitignore', '.vimspector.json', '.root', '.git', '.git/']
-  " let g:clap_provider_grep_opts = '-H --no-heading --vimgrep --smart-case -g!*.pyc'
+  " let g:clap_provider_grep_opts = '-H --no-heading --vimgrep --smart-case -g !tags'
+  let g:clap_provider_grep_opts = '--hidden -g "!tags"'
+  " let g:clap_provider_live_grep_opts = '-H --no-heading --vimgrep --smart-case --hidden -g !tags'
 
   " Change the default next/previous suggestion
   " from <C-j>/<C-k> to <C-n>/<C-p>:
   let g:clap_popup_move_manager = {
-        \ "\<C-N>": "\<Down>",
-        \ "\<C-P>": "\<Up>",
-        \ }
+      \ "\<C-N>": "\<Down>",
+      \ "\<C-P>": "\<Up>",
+      \ }
 
   " More information with: :help clap
-
   " For Gruvbox colorscheme
-  function! FixClapColorScheme()
-    highlight ClapFuzzyMatches1 guifg=#FABD2F
-    highlight ClapFuzzyMatches2 guifg=#FABD2F
-    highlight ClapFuzzyMatches3 guifg=#FABD2F
+  function! FixClapGruvbox()
+    highlight ClapFuzzyMatches1 guifg=#fabd2f
+    highlight ClapFuzzyMatches2 guifg=#fabd2f
+    highlight ClapFuzzyMatches3 guifg=#fabd2f
     highlight ClapFuzzyMatches4 guifg=#FABD2F
     highlight ClapFuzzyMatches5 guifg=#FABD2F
     highlight ClapFuzzyMatches6 guifg=#FABD2F
     highlight ClapFuzzyMatches7 guifg=#FABD2F
     highlight ClapFuzzyMatches8 guifg=#FABD2F
     highlight ClapFuzzyMatches9 guifg=#FABD2F
+    let g:clap_theme = {
+        \ "display" : { "guibg" : "#282828" },
+        \ "spinner" : { "guifg" : "#d65d0e", "guibg" : "#3c3836" },
+        \ "search_text" : { "guifg" : "#fabd2f", "guibg" : "#3c3836" },
+        \ "input" : { "guibg" : "#3c3836" },
+        \ "indicator" : { "guibg" : "#3c3836" },
+        \ "current_selection" : { "guibg" : "#3c3836" },
+        \ "selected_sign" : { "guibg" : "#3c3836", "guifg" : "#d65d0e" },
+        \ "current_selection_sign" : { "guibg" : "#3c3836", "guifg" : "#b16286" },
+        \ }
+    let g:clap_current_selection_sign = {
+       \ 'text': '➟',
+       \ 'texthl': 'ClapSelectedSign',
+       \ 'linehl': 'ClapSelected' }
+    let g:clap_current_selection_sign = {
+        \ "text" : "→",
+        \ 'texthl': 'ClapCurrentSelectionSign',
+        \ 'linehl': 'ClapCurrentSelection' }
   endfunction
-  autocmd ColorScheme gruvbox call FixClapColorScheme()
+  autocmd ColorScheme gruvbox call FixClapGruvbox()
 endfunction
 let s:vim_clap.setup = funcref("s:setup")
-call s:addplugin(s:vim_clap, "vim_clap", 1)
+call s:addplugin(s:vim_clap, "vim_clap", 0)
 endif
 
 " Remark:
@@ -2439,16 +2473,16 @@ let s:nvim_telescope.dependencies = ['nvim-lua/plenary.nvim', 'nvim-telescope/te
 " nvim-telescope/telescope-live-grep-args.nvim
 function! s:setup() dict
   " Find files using Telescope command-line sugar.
-  nnoremap <C-p> <cmd>Telescope find_files<cr>
-  nnoremap <leader>m <cmd>Telescope oldfiles<cr>
-  nnoremap <leader>b <cmd>Telescope buffers<cr>
+  nnoremap <C-p> <Cmd>Telescope find_files<CR>
+  nnoremap <leader>m <Cmd>Telescope oldfiles<CR>
+  nnoremap <leader>b <Cmd>Telescope buffers<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.m = [':Telescope oldfiles', 'Browse MRU']
     let g:which_key_map.b = [':Telescope buffers', 'Browse Buffers']
   endif
 
   " Requires tags to be generate (manually or via vim-gutentags)
-  nnoremap <leader>p <cmd>Telescope tags<cr>
+  nnoremap <leader>p <Cmd>Telescope tags<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.p = [':Telescope tags', 'Browse Tags']
   endif
@@ -2668,7 +2702,7 @@ function! s:setup() dict
   command! -nargs=* Ack CtrlSF <args>
 endfunction
 let s:ctrlsf.setup = funcref("s:setup")
-call s:addplugin(s:ctrlsf, "ctrlsf")
+call s:addplugin(s:ctrlsf, "ctrlsf", 1)
 " }}}
 
 " Ferret
@@ -2706,13 +2740,14 @@ let s:nerdtree = {}
 let s:nerdtree.url = 'scrooloose/nerdtree'
 let s:nerdtree.options = { 'on':  'NERDTreeToggle' }
 function! s:setup() dict
-  let NERDTreeMinimalUI = 1
-  let NERDTreeDirArrows = 1
+  let g:NERDTreeMinimalUI = 1
+  let g:NERDTreeDirArrows = 1
+  let g:NERDTreeWinSize = 40
 
   " let NERDTreeHijackNetrw = 1
 
   " noremap <F4> :NERDTreeToggle<CR>
-  nnoremap <leader>tn :NERDTreeToggle <CR>
+  nnoremap <leader>tn <Cmd>NERDTreeToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.n = [':NERDTreeToggle', 'Toggle Nerd Tree']
   endif
@@ -2721,8 +2756,8 @@ function! s:setup() dict
   " in order to replace the default m that is used by signature
   " It seems that <S-F10> can't be assigned to NerdTree
   " let NERDTreeMapMenu = '<S-F10>'
-  let NERDTreeMapMenu = '<F2>'
-  let NERDTreeMapChangeRoot = 'D'
+  let g:NERDTreeMapMenu = '<F2>'
+  let g:NERDTreeMapChangeRoot = 'D'
 
   " Allow to explore:
   " - Current working directory with :E .
@@ -2755,7 +2790,7 @@ function! s:setup() dict
   lua require("config/nvimtree")
 
   " noremap <F4> :NvimTreeToggle<CR>
-  nnoremap <leader>tn :NvimTreeToggle<CR>
+  nnoremap <leader>tn <Cmd>NvimTreeToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.n = [':NvimTreeToggle', 'Toggle Nvim Tree']
   endif
@@ -2862,13 +2897,13 @@ function! s:setup() dict
   endif
 
   " Display the active session
-  nnoremap <Leader>sn :echo v:this_session<CR>
+  nnoremap <Leader>sn <Cmd>echo v:this_session<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.s.n = [':echo v:this_session', 'Session Name']
   endif
 
   " Pause session update with \sp
-  nnoremap <Leader>sp :Obsession<CR>
+  nnoremap <Leader>sp <Cmd>Obsession<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.s.p = [':Obsession', 'Session Update']
   endif
@@ -2892,7 +2927,7 @@ call s:addplugin('dhruvasagar/vim-prosession', "vim_prosession", 0)
 let s:vim_signature = {}
 let s:vim_signature.url = 'kshenoy/vim-signature'
 function! s:setup() dict
-  nnoremap <leader>tm :SignatureToggleSigns <CR>
+  nnoremap <leader>tm <Cmd>SignatureToggleSigns <CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.m = [':SignatureToggleSigns', 'Toggle Marks']
   endif
@@ -2936,7 +2971,7 @@ function! s:setup() dict
 
   let g:undotree_ShortIndicators = 1
 
-  nnoremap <leader>tu :UndotreeToggle<CR>
+  nnoremap <leader>tu <Cmd>UndotreeToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.u = [':UndotreeToggle', 'Toggle Undo Tree']
   endif
@@ -3027,7 +3062,7 @@ function! s:setup() dict
   " Disable signify by default
   let g:signify_disable_by_default = 1
 
-  nnoremap <leader>tf :SignifyToggle<CR>
+  nnoremap <leader>tf <Cmd>SignifyToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.f = [':SignifyToggle', 'Toggle Git Signs']
   endif
@@ -3060,7 +3095,7 @@ function! s:setup() dict
     " let g:gitgutter_git_executable = 'C:/Progra~1/Git/bin/git.exe'
     let g:gitgutter_git_executable = fnamemodify('C:/Program Files/Git/bin/git.exe', ':8')
   endif
-  let g:gitgutter_grep=''
+  " let g:gitgutter_grep=''
 
   let g:gitgutter_map_keys = 1
   if s:ispluginactive('which_key')
@@ -3071,6 +3106,7 @@ function! s:setup() dict
       let g:which_key_map.h.u = ['<Plug>(GitGutterUndoHunk)', 'Hunk Undo']
     endif
   endif
+  nnoremap <leader>tg <Cmd>GitGutterToggle<CR>
 endfunction
 let s:vim_gitgutter.setup = funcref("s:setup")
 call s:addplugin(s:vim_gitgutter, "vim_gitgutter")
@@ -3102,7 +3138,7 @@ function! s:setup() dict
   let g:indentLine_char = '│'
   " set listchars+=lead:\
 
-  nnoremap <leader>ti :IndentLinesToggle<CR>
+  nnoremap <leader>ti <Cmd>IndentLinesToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.i = [':IndentLinesToggle', 'Toggle Indent Guide']
   endif
@@ -3118,7 +3154,7 @@ function! s:setup() dict
   let g:indent_guides_enable_on_vim_startup = 1
   let g:indent_guides_guide_size = 1
 
-  nnoremap <leader>ti :IndentGuidesToggle<CR>
+  nnoremap <leader>ti <Cmd>IndentGuidesToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.i = [':IndentGuidesToggle', 'Toggle Indent Guide']
   endif
@@ -3167,6 +3203,9 @@ function! s:setup() dict
   xmap ga <Plug>(EasyAlign)
   " Start interactive EasyAlign for a motion/text object (e.g. gaip)
   nmap ga <Plug>(EasyAlign)
+  let g:easy_align_delimiters = {
+  \  ';': { 'pattern': ';',  'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+  \ }
 
   " Align PSI format file using vim-easy-align plugin
   function! AlignFormat()
@@ -3444,8 +3483,8 @@ function! s:setup() dict
   " hi TagbarScope guifg=#7b8b93 ctermfg=Grey
 
   " nnoremap <F8> :TagbarToggle<CR>
-  nnoremap <leader>tg :TagbarOpen fj<CR>
-  nnoremap <leader>tt :TagbarToggle <CR>
+  nnoremap <leader>to <Cmd>TagbarOpen fj<CR>
+  nnoremap <leader>tt <Cmd>TagbarToggle <CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.g = [':TagbarOpen fj', 'Tag Go']
     let g:which_key_map.t.t = [':TagbarToggle', 'Toggle Tags']
@@ -3553,12 +3592,15 @@ let s:vista_vim = {}
 let s:vista_vim.url = 'liuchengxu/vista.vim'
 let s:vista_vim.options = {}
 function! s:setup() dict
-  nnoremap <leader>tt :Vista!!<CR>
+  nnoremap <leader>tt <Cmd>Vista!!<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.t = [':Vista!!', 'Toggle Tags']
   endif
 
   let g:vista_sidebar_width = 40
+
+  " Don't change the alt (#) buffer when using Vista
+  let g:vista_sidebar_keepalt = 1
 
   " How each level is indented and what to prepend.
   " This could make the display more compact or more spacious.
@@ -3574,25 +3616,28 @@ function! s:setup() dict
   " Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
   let g:vista#renderer#enable_icon = 1
 
+  " Make Vista scroll to the symbol when navigating to the symbol tree:
+  let g:vista_echo_cursor_strategy = "scroll"
+
+  let g:vista_disable_statusline = 0
+
   " The default icons can't be suitable for all the filetypes, you can extend it as you wish.
   " let g:vista#renderer#icons = {
-  " \   "member": "m",
-  " \   "class": "c",
-  " \   "function": "f",
-  " \   "script": "s",
-  " \   "variable": "v",
-  " \  }
+  "     \   "member": "m",
+  "     \   "class": "c",
+  "     \   "function": "f",
+  "     \   "script": "s",
+  "     \   "variable": "v",
+  "     \ }
 
   " let g:vista#renderer#icons = {
-  " \   "function": "\uf794",
-  " \   "variable": "\uf71b",
-  " \  }
-  let g:vista#renderer#icons = {
-        \   "member": "",
-        \   "function": "",
-        \   "variable": "",
-        \  }
-
+  "     \   "member": "",
+  "     \   "class": "",
+  "     \   "function": "󰊕",
+  "     \   "script": "󰯁",
+  "     \   "variable": "",
+  "     \ }
+  
   " let g:vista_ctags_executable = "C:\\Softs\\ctags.exe"
 
   " let g:vista_log_file = 'C:\\Users\\vds\\vista.log'
@@ -3601,23 +3646,37 @@ function! s:setup() dict
   " let g:vista_psi_executive = 'ctags'
   let g:vista_executive_for = {
         \ 'psi': 'ctags',
-        \ 'cpp': 'vim_lsp',
-        \ 'php': 'vim_lsp',
+        \ 'python': 'coc',
+        \ 'cpp': 'coc',
+        \ 'php': 'coc',
         \ }
 
-  if s:ispluginactive('coc_nvim')
-    let g:vista_executive_for.python = 'coc_nvim'
-  endif
+  " if s:ispluginactive('coc_nvim')
+  "   let g:vista_executive_for.python = 'coc_nvim'
+  " endif
 
   " \ 'md': 'markdown2ctags.exe -f - --sort=yes --sro=»',
   let g:vista_ctags_cmd = {
         \ 'rst': 'rst2ctags.exe -f - --sort=yes',
         \ }
 
-  hi VistaPublic     guifg=#a3be8c    ctermfg=Green
-  hi VistaProtected  guifg=#ebcb8b    ctermfg=Yellow
-  hi VistaPrivate    guifg=#bf616a    ctermfg=Red
-  hi VistaTag        guifg=#d8dee9    ctermfg=White
+  function! FixVistaNord()
+    " Nord Theme
+    hi VistaPublic     guifg=#a3be8c    ctermfg=Green
+    hi VistaProtected  guifg=#ebcb8b    ctermfg=Yellow
+    hi VistaPrivate    guifg=#bf616a    ctermfg=Red
+    hi VistaTag        guifg=#d8dee9    ctermfg=White
+  endfunction
+  autocmd ColorScheme nord call FixVistaNord()
+
+  function! FixVistaGruvbox()
+    " Gruvbox Theme
+    hi VistaPublic     guifg=#b8bb26    ctermfg=Green
+    hi VistaProtected  guifg=#fabd2f    ctermfg=Yellow
+    hi VistaPrivate    guifg=#fb4934    ctermfg=Red
+    hi VistaTag        guifg=#ebdbb2    ctermfg=White
+  endfunction
+  autocmd ColorScheme gruvbox call FixVistaGruvbox()
 endfunction
 let s:vista_vim.setup = funcref("s:setup")
 call s:addplugin(s:vista_vim, "vista_vim", 0)
@@ -3639,7 +3698,7 @@ if 0
   let Tlist_Exit_OnlyWindow = 1
 
   " nnoremap <F8> :TlistToggle<CR>
-  nnoremap <leader>tt :TlistToggle<CR>
+  nnoremap <leader>tt <Cmd>TlistToggle<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.t = [':TlistToggle', 'Toggle Tags']
   endif
@@ -3711,8 +3770,13 @@ function! s:setup() dict abort
 
   " Make <CR> to accept selected completion item or notify coc.nvim to format
   " <C-g>u breaks current undo, please make your own choice.
-  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-        \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  autocmd! FileType *
+    \ if expand("<amatch>") != "wiki" |
+    \   inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+    \   : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>" |
+    \ endif
+  " inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+  "       \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
   function! CheckBackspace() abort
     let col = col('.') - 1
@@ -3879,7 +3943,7 @@ function! s:setup() dict abort
   command! CocToggle call CocToggle()
 
   " nnoremap <leader>tj <cmd>CocToggle<CR>
-  nnoremap <leader>tj <cmd>CocCommand document.toggleInlayHint<CR>
+  nnoremap <leader>tj <Cmd>CocCommand document.toggleInlayHint<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.j = [':CocCommand document.toggleInlayHint', 'Toggle Inlay Hints']
   endif
@@ -3924,7 +3988,7 @@ function! s:setup() dict
   lua require("config.mason")
   lua require("handlers").setup()
 
-  nnoremap <leader>tj <cmd>:lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<cr>
+  nnoremap <leader>tj <Cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.j = [':lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())', 'Toggle Inlay Hints']
   endif
@@ -4155,7 +4219,7 @@ function! s:setup() dict
   " Where pip is the version associated to Vim
   " To know which version of Python is associated with Vim execute:
   " :py3 print(sys.version)
-  let g:vim_isort_map = ''
+  let g:vim_isort_map = '<leader>i'
   let g:vim_isort_python_version = 'python3'
 endfunction
 let s:vim_isort.setup = funcref("s:setup")
@@ -4282,7 +4346,7 @@ function! s:setup() dict
   let g:ale_exclude_highlights =['E501: line too long.*', 'line too long.*']
 
   " let g:ale_fix_on_save = 1
-  nnoremap <leader>ta :ALEToggle <CR>
+  nnoremap <leader>ta <Cmd>ALEToggle <CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.t.a = [':ALEToggle', 'Toggle ALE']
   endif
@@ -4450,7 +4514,6 @@ call s:addplugin(s:vim_floaterm, "vim_floaterm", 0)
 call s:addplugin('voldikss/clap-floaterm', "clap_floaterm", 0)
 " }}}
 
-
 " ToggleTerm 
 " ----------- {{{
 
@@ -4466,7 +4529,6 @@ if has('nvim')
 endif
 " }}}
 
-
 " Terminus
 " -------- {{{
 
@@ -4480,7 +4542,6 @@ endfunction
 let s:terminus.setup = funcref("s:setup")
 call s:addplugin(s:terminus, "terminus", 0)
 " }}}
-
 
 " Codi
 " ---- {{{
@@ -4503,7 +4564,6 @@ if has('nvim')
   call s:addplugin(s:codi_vim, "codi_vim", 0)
 endif
 " }}}
-
 
 " Jupyter-Vim
 " ----------- {{{
@@ -4701,7 +4761,7 @@ function! s:setup() dict
   lua require("dapui").setup()
   lua require('dap-python').setup('C:\\Python39_x64\\python.exe')
 
-  nnoremap <leader>td :lua require("dapui").toggle()<CR>
+  nnoremap <leader>td <Cmd>lua require("dapui").toggle()<CR>
 
   nnoremap <F5> :lua require('dap').continue()<CR>
   nnoremap <C-F5> :lua require('dap').terminate()<CR>
@@ -4757,7 +4817,7 @@ function! s:setup() dict
   command! Synstax echo synstax#UnderCursor()
 endfunction
 let s:vim_synstax.setup = funcref("s:setup")
-call s:addplugin(s:vim_synstax, "vim_synstax")
+call s:addplugin(s:vim_synstax, "vim_synstax", 1)
 " }}}
 
 " 2.25.2. Markdown
@@ -5162,7 +5222,7 @@ function! s:setup() dict
   let g:vimtex_imaps_disabled = ['b', 'B', 'c', 'f', '/', '-']
 endfunction
 let s:vimtex.setup = funcref("s:setup")
-call s:addplugin(s:vimtex, "vimtex", 0)
+call s:addplugin(s:vimtex, "vimtex", 1)
 
 
 let s:vim_latex = {}
@@ -5180,6 +5240,14 @@ call s:addplugin(s:vim_latex, "vim_latex", 0)
 
 call s:addplugin('tweekmonster/helpful.vim', "helpful", 1)
 " }}}
+
+" 2.25.11 Agda
+" ------------ {{{
+
+let s:agda_vim = {}
+let s:agda_vim.url = 'victortaelin/agda-vim'
+call s:addplugin(s:agda_vim, "agda_vim", 0)
+" }}}
 " }}}
 
 " 2.26. Select Plugins
@@ -5196,6 +5264,8 @@ endif
 let s:colorscheme_desired = 'gruvbox'
 " let s:colorscheme_desired = 'nord'
 
+" call s:selectplugins('100')
+
 " call s:selectplugins('11110001')
 " call s:selectplugins('101111')
 
@@ -5210,6 +5280,50 @@ let s:colorscheme_desired = 'gruvbox'
 " call s:deactivateplugins(['vim_easymotion'])
 " call s:activateplugins(['vim_gruvbox'])
 
+call s:selectplugins('0000000000')
+call s:activateplugins([
+      \ "coc_nvim",
+      \ "context",
+      \ "ctrlsf",
+      \ "matchit_legacy",
+      \ "traces",
+      \ "undotree",
+      \ "ultisnips",
+      \ "vim_barmaid",
+      \ "vim_bbye",
+      \ "vim_commentary",
+      \ "vim_fugitive",
+      \ "vim_gitgutter",
+      \ "vim_gruvbox",
+      \ "vim_highlightedyank",
+      \ "vim_isort",
+      \ "vim_jinja2_syntax",
+      \ "vim_lightline",
+      \ "vim_log_highligthing",
+      \ "vim_relatively_complete",
+      \ "vim_rooter",
+      \ "vim_signature",
+      \ "vim_surround",
+      \ "vim_term",
+      \ "vim_unimpaired",
+      \ "vim_visual_star_search",
+      \ "vimspector",
+      \ "wilder",
+      \ "vim_gutentags",
+      \ "vista_vim",
+      \ "vim_css_color",
+      \ "vim_synstax",
+      \ "nerdtree",
+      \ "vim_clap",
+      \ "unicode_helper",
+      \ "vimwiki",
+      \ "vim_easy_align",
+      \ "simpylfold",
+      \ "agda_vim",
+      \ ])
+call s:activateplugins(['startuptime'])
+      " \ "tagbar",
+      " \ "fzf",
 call s:installplugins()
 
 try
@@ -5392,6 +5506,7 @@ endif
 " ---------------------- {{{
 
 set grepprg=rg\ --vimgrep
+" set grepprg=rg\ -H\ --no-heading\ --vimgrep\ --smart-case\ -g\ !tags
 set grepformat=%f:%l:%c:%m
 " }}}
 
@@ -5766,6 +5881,7 @@ function! CorrectCommand()
   call add(l:substitutions, ['\C\v^(h%[elp])>(.*)', 'Help\2'])
   if s:ispluginactive('vim_bbye')
     call add(l:substitutions, ['\C\v^(bd>)(.*)', 'Bd\2'])
+    call add(l:substitutions, ['\C\v^(bw>)(.*)', 'Bw\2'])
   endif
   let g:substitutions = l:substitutions
 
@@ -5888,20 +6004,27 @@ endif
 
 " Add the search clipboard shortcut
 function! SearchClipboard()
-  let pattern='\V' . @*
-  let pattern = pattern->substitute('/', '\/', 'g')
+  let pattern='\V' . escape(@*, '\')
+  let pattern = pattern->substitute("\n", '\\n', 'g')
+  " echo pattern
 
   " Trim last carriage return to easy searching Excel cell copy
-  if pattern[-1:] == "\n"
-    let pattern = pattern[:-2]
+  if pattern[-2:] == '\n'
+    let pattern = pattern[:-3]
   endif
 
-  let @/=pattern
+  " Trim last carriage return to easy searching Excel cell copy
+  " if pattern[-1:] == "\n"
+  "   let pattern = pattern[:-2]
+  " endif
+
+  let @/ = pattern
+  call histadd("/", @/)
 
   call search(pattern)
 endfunction
 
-nnoremap <leader>* :call SearchClipboard()<CR>
+nnoremap <leader>* <Cmd>call SearchClipboard()<CR>
 if s:ispluginactive('which_key')
   let g:which_key_map['*'] = [':call SearchClipboard()', 'Search Clipboard']
 endif
@@ -5914,18 +6037,14 @@ endif
 " (that trim the trailing white spaces ;-) )
 function! TrimWhitespaces() range
   let cmd = a:firstline . ',' . a:lastline . 's/\s\+$//e'
-  mark Z
   " echom cmd
   execute cmd
   " if line("'Z") != line(".")
   "   echo "Some white spaces trimmed"
-  " endif
-  normal `Z
-  delmarks Z
 endfunction
 
 " Add the TrimWhitespaces command
-command! -range=% TrimWhitespaces <line1>,<line2>call TrimWhitespaces()
+command! -range=% TrimWhitespaces mark z|<line1>,<line2>call TrimWhitespaces()|execute "normal `z"|delmark z
 " }}}
 
 " 3.21. WipeReg
@@ -5949,12 +6068,15 @@ if has('win32')
   if has('nvim')
     " Seems to be a Neovim parameters used by some plugins
     let g:python3_host_prog='C:\Python39_x64\python.exe'
+    " let g:python3_host_prog='C:\Python313_x64\python.exe'
   else
-    " set pythonthreedll=python39.dll
-    " set pythonthreehome=C:\Python39_x64
+    " set pythonthreedll=python313.dll
+    " set pythonthreehome=C:\Python313_x64
 
     " Used by wilder:
     let g:python3_host_prog='C:\Python39_x64\python.exe'
+    " set pythonthreehome=C:\\python39_x64\\python.exe
+    " let g:python3_host_prog='C:\Python313_x64\python.exe'
   endif
 endif
 " }}}

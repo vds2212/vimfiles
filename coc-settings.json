@@ -5,8 +5,12 @@
     "diagnostic.infoSign": "?",
     "diagnostic.hintSign": "!",
     "diagnostic.enable" : true,
-    "diagnostic.virtualText" : false,
+    "diagnostic.virtualText" : true,
     "diagnostic.enableMessage": "never",
+    "diagnostic.checkCurrentLine": true,
+
+    "inlayHint.enable": true,
+    "inlayHint.display" : false,
 
     "python.pythonPath": "C:\\Python39_x64\\python.exe",
 
@@ -15,9 +19,9 @@
     "python.linting.pylintEnabled": false,
 
     "python.formatting.provider": "black",
-    "python.formatting.blackPath": "C:\\Python39_x64\\Scripts\\black.exe",
+    "python.formatting.blackPath": "C:\\Python313_x64\\Scripts\\black.exe",
 
-    "python.sortImports.path": "C:\\Python39_x64\\Scripts\\isort.exe",
+    "python.sortImports.path": "C:\\Python313_x64\\Scripts\\isort.exe",
 
     "languageserver": {
         "bash": {

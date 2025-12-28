@@ -9,6 +9,16 @@ syn region  fooString matchgroup=fooQuotes
       \ start=+\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
       \ contains=fooEscape
 
+syn region  squareBracketRegex_A start="\(!\@<!\[\)\@<=" skip="\[[^\]]*\]" end="\ze\]" keepend oneline contains=squareBracketRegex_B
+syn region  squareBracketRegex_B start="\(!\[\)\@<=" skip="!\[[^\]]!*\]!" end="\ze\]!" keepend oneline contains=squareBracketRegex_A
+hi ColorGreen guifg=#008000
+hi ColorRed guifg=#FF0000
+hi def link squareBracketRegex_A ColorGreen
+hi def link squareBracketRegex_B ColorRed
+
+hi def link squareBracketRegex_A ColorGreen
+hi def link squareBracketRegex_B ColorRed
+
 syn match   fooEscape   +\\[abfnrtv'"\\]+ contained
 
 syn match   fooNumber   "\<\%([1-9]\d*\|0\)[Ll]\=\>"
