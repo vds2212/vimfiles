@@ -5467,7 +5467,7 @@ function! Refresh()
     SignatureRefresh
   endif
   if s:ispluginactive('vim_gitgutter')
-    if gitgutter#utility#is_active(winnr())
+    if g:gitgutter_enabled
       GitGutterEnable
     endif
   endif
