@@ -5466,6 +5466,11 @@ function! Refresh()
     " let s:refresh .= ':SignatureRefresh<cr>'
     SignatureRefresh
   endif
+  if s:ispluginactive('vim_gitgutter')
+    if gitgutter#utility#is_active(winnr())
+      GitGutterEnable
+    endif
+  endif
   " let s:refresh .= '<C-l>'
   execute "normal \<C-l>"
   call winrestview(l:view)
