@@ -1,3 +1,6 @@
+# To trigger:
+# - main
+# - <Ctrl-s>
 snippet main "Cpp default program"
 #include <iostream>
 
@@ -6,6 +9,18 @@ int main(int argc, const char *argv[])
 	std::cout << "Hello World!" << std::endl;
 	return 0;
 }
-
+endsnippet
+# To trigger:
+# - Select the text
+# - <Ctrl-s>
+# - if
+# - <Ctrl-s>
+snippet if "Make conditional"
+if ($1) {
+	${VISUAL:code}
+}
 endsnippet
 
+snippet lrb "left\{ right\}" i
+\left\\{ ${1:${VISUAL}} \right\\} $0
+endsnippet

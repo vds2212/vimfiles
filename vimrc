@@ -750,6 +750,38 @@ nnoremap <C-^> <Cmd>call SwitchBuffer()<CR>
 if !has('nvim')
   nnoremap <C-$> <C-]>
 endif
+
+" Python Configuration
+" -------------------- {{{
+
+" Enable all Python syntax highlighting features
+" let python_highlight_all = 1
+
+let g:python_recommended_style = 1
+let g:pyindent_open_paren = shiftwidth()
+
+" The 'pythonthreedll' needs to be set before Python is initialized by a
+" plugin (e.g. UltiSnips)
+
+set pyxversion=3
+if has('win32')
+  if has('nvim')
+    let g:python3_host_prog='C:\Python39_x64\python.exe'
+    " let g:python3_host_prog='C:\Python313_x64\python.exe'
+  else
+    " set pythonthreedll=C:\Python310_x64\python310.dll
+    " set pythonthreehome=C:\Python310_x64
+
+    " set pythonthreedll=C:\Users\vds\AppData\Roaming\uv\python\cpython-3.14.3-windows-x86_64-none\python3.dll
+    " set pythonthreehome=C:\Users\vds\AppData\Roaming\uv\python\cpython-3.14.3-windows-x86_64-none
+
+    " g:python3_host_prog is a Neovim parameters but it is used by some plugins
+    " e.g.: wilder:
+    let g:python3_host_prog='C:\Python39_x64\python.exe'
+  endif
+endif
+" }}}
+
 " }}}
 
 " 2. Plugins
@@ -1753,7 +1785,8 @@ endif
 
 " Allows you to close buffer without closing the corresponding window
 " Introducing the :Bd command
-call s:addplugin('moll/vim-bbye', "vim_bbye")
+" call s:addplugin('moll/vim-bbye', "vim_bbye")
+call s:addplugin('vds2212/vim-bbye', "vim_bbye")
 
 " Re-size windows
 " Split management
@@ -2396,16 +2429,16 @@ let s:vim_clap = {}
 let s:vim_clap.url = 'liuchengxu/vim-clap'
 let s:vim_clap.options = { 'do': { -> clap#installer#force_download() } }
 function! s:setup() dict
-  nnoremap <C-p> :LeaveSideBar <bar> Clap files<CR>
-  nnoremap <leader>m <Cmd>LeaveSideBar <bar> Clap history<CR>
-  nnoremap <leader>b <Cmd>LeaveSideBar <bar> Clap buffers<CR>
+  nnoremap <C-p> :LeaveSideBar<CR><Cmd>Clap files<CR>
+  nnoremap <leader>m <Cmd>LeaveSideBar<CR><Cmd>Clap history<CR>
+  nnoremap <leader>b <Cmd>LeaveSideBar<CR><Cmd>Clap buffers<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.m = [':Clap history', 'Browse MRU']
     let g:which_key_map.b = [':Clap buffers', 'Browse Buffers']
   endif
 
   " Requires Vista and maple
-  nnoremap <leader>p <Cmd>LeaveSideBar <bar> Clap proj_tags<CR>
+  nnoremap <leader>p <Cmd>LeaveSideBar<CR><Cmd>Clap proj_tags<CR>
   if s:ispluginactive('which_key')
     let g:which_key_map.p = [':Clap proj_tags', 'Browse Tags']
   endif
@@ -4647,12 +4680,17 @@ let s:vim_term = {}
 let s:vim_term.url = 'vim-term'
 let s:vim_term.manager = "packadd"
 function! s:setup() dict
+  let g:term_commands = []
   if has('win32')
     if has('nvim')
       let g:term_command = 'cmd.exe /s /k C:\Softs\Clink\Clink.bat inject'
     else
       let g:term_command = 'cmd.exe /k C:\Softs\Clink\Clink.bat inject >nul'
     endif
+    call add(g:term_commands, g:term_command)
+    call add(g:term_commands, 'C:/msys64/msys2_shell.cmd -defterm -here -no-start -ucrt64')
+    " call add(g:term_commands, 'powershell.exe -NoLogo')
+    call add(g:term_commands, 'pwsh.exe -NoLogo')
   endif
 
   let g:term_width = 100
@@ -5042,7 +5080,7 @@ function! s:setup() dict
 
   " use a custom highlight style must absolute path
   " like '/Users/username/highlight.css' or expand('~/highlight.css')
-  let g:mkdp_highlight_css = ''
+  let g:mkdp_highlight_css = s:datafolder() . 'markdownpreview/highlight.css'
 
   " use a custom port to start server or random for empty
   let g:mkdp_port = ''
@@ -5319,11 +5357,17 @@ call s:activateplugins([
       \ "vimwiki",
       \ "vim_easy_align",
       \ "simpylfold",
-      \ "agda_vim",
+      \ "markdown_preview",
+      \ "vim_scriptease",
+      \ "helpful",
+      \ "vim_abolish",
+      \ "vim_dispatch",
       \ ])
 call s:activateplugins(['startuptime'])
       " \ "tagbar",
       " \ "fzf",
+      " \ "large_file",
+      " \ "agda_vim",
 call s:installplugins()
 
 try
@@ -6074,33 +6118,6 @@ command! -range=% TrimWhitespaces mark z|<line1>,<line2>call TrimWhitespaces()|e
 command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
 " }}}
 
-" 3.23. Python Configuration
-" -------------------------- {{{
-
-" Enable all Python syntax highlighting features
-" let python_highlight_all = 1
-
-let g:python_recommended_style = 1
-let g:pyindent_open_paren = shiftwidth()
-
-set pyxversion=3
-if has('win32')
-  if has('nvim')
-    " Seems to be a Neovim parameters used by some plugins
-    let g:python3_host_prog='C:\Python39_x64\python.exe'
-    " let g:python3_host_prog='C:\Python313_x64\python.exe'
-  else
-    " set pythonthreedll=python313.dll
-    " set pythonthreehome=C:\Python313_x64
-
-    " Used by wilder:
-    let g:python3_host_prog='C:\Python39_x64\python.exe'
-    " set pythonthreehome=C:\\python39_x64\\python.exe
-    " let g:python3_host_prog='C:\Python313_x64\python.exe'
-  endif
-endif
-" }}}
-
 " 3.24. py_compile
 " ---------------- {{{
 
@@ -6247,7 +6264,7 @@ command! -complete=dir -nargs=? Browse call Browse(<f-args>)
 " 3.30 Reformatting
 " ----------------- {{{
 
-function! Reformat(...)
+function! FormatFile(...)
   if a:0 >= 1
     let l:path = a:1
   else
@@ -6274,9 +6291,24 @@ function! Reformat(...)
   endif
 endfunction
 
-command! -complete=file -nargs=? Reformat call Reformat(<f-args>)
+command! -complete=file -nargs=? FormatFile call FormatFile(<f-args>)
 " }}}
 
+" Fullscreen
+" ---------- {{{
+"
+
+command ToggleFullscreen {
+  if &guioptions =~# 's'
+    set guioptions-=s
+  else
+    set guioptions+=s
+  endif
+}
+
+map <expr> <leader><F11> &go =~# 's' ? ":se go-=s<CR>" : ":se go+=s<CR>"
+" }}}
+"
 " Vertical Divider
 " ---------------- {{{
 
@@ -6323,4 +6355,3 @@ endfunction
 " }}}
 
 " vim:foldmethod=marker:
-
